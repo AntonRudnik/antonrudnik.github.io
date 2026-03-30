@@ -46,7 +46,12 @@
   align-items: center;
   padding-inline: 0;
   position: relative;
-  overflow: hidden;
+}
+
+@media (min-width: 960px) {
+  .p-snap__screen {
+    overflow: hidden;
+  }
 }
 
 @media (min-width: 960px) {
