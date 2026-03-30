@@ -15,8 +15,8 @@
   'use strict';
 
   var STORAGE_KEY = 'portfolio-sound-v2';
-  var HOVER_SRC = 'sounds/01-hover.wav';
-  var CLICK_SRC = 'sounds/02-click.wav';
+  var HOVER_SRC = '/sounds/01-hover.wav';
+  var CLICK_SRC = '/sounds/02-click.wav';
   var ctx = null;
   var hoverBuffer = null;
   var clickBuffer = null;

@@ -102,6 +102,17 @@
       <a href="/about" class="p-header__link">Опыт</a>
     </nav>
     <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
     <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
   </div>
 </header>
@@ -500,6 +511,7 @@
   <img alt="">
 </div>
 
+<script src="../sound.js" defer></script>
 <script src="../interactions.js" defer></script>
 <script>
   (function() {
