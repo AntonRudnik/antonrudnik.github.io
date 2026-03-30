@@ -139,6 +139,8 @@
       el.textContent = sign + prefix.replace('+','') + (isFloat ? v.toFixed(1).replace('.', ',') : Math.round(v)) + suffix;
       if (p < 1) {
         requestAnimationFrame(tick);
+      } else {
+        el.style.minWidth = '';
       }
     })(start);
   }
@@ -428,7 +430,7 @@
     });
     var cs = getComputedStyle(detail);
     var padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-    detail.style.height = (maxH + padV) + 'px';
+    detail.style.minHeight = (maxH + padV) + 'px';
 
     employers.forEach(function(emp) {
       emp.addEventListener('click', function() {

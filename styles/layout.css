@@ -26,8 +26,13 @@
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
-  scroll-snap-type: y mandatory;
   scrollbar-width: none;
+}
+
+@media (min-width: 960px) {
+  .p-snap {
+    scroll-snap-type: y mandatory;
+  }
 }
 
 .p-snap::-webkit-scrollbar {
@@ -37,12 +42,17 @@
 .p-snap__screen {
   min-height: 100vh;
   min-height: 100dvh;
-  scroll-snap-align: start;
   display: flex;
   align-items: center;
   padding-inline: 0;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 960px) {
+  .p-snap__screen {
+    scroll-snap-align: start;
+  }
 }
 
 /* Все экраны — safe area под header */
