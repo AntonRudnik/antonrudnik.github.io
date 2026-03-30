@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Персональные предложения — Антон Рудник</title>
+  <meta name="description" content="Запустил канал продаж на входящей линии контакт-центра с нуля. Конверсия горячего потока — 31,5%, CSI — 97%, прогноз NPV +500 млн ₽/год. Кейс Антона Рудника.">
+  <!-- Favicon -->
+  <link rel="icon" href="../../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../favlog/favicon-180.png">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/tokens.css">
+  <link rel="stylesheet" href="../../styles/reset.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/typography.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/animations.css">
+  <link rel="stylesheet" href="../../styles/case.css">
+  <link rel="stylesheet" href="../../styles/protect.css">
+
+  <style>
+    body { background: var(--bg-dark); color: var(--text-on-dark); }
+
+    /* Contribution list */
+    .ct-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+    .ct-list li { color: var(--text-warm); font-size: var(--text-lg); line-height: var(--leading-relaxed); padding-left: var(--space-5); position: relative; }
+    .ct-list li::before { content: "—"; position: absolute; left: 0; color: var(--text-on-dark-60); }
+
+    /* Lightbox */
+    .cs-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; padding: var(--space-6); cursor: zoom-in; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; overflow: hidden; }
+    .cs-lightbox--open { opacity: 1; pointer-events: auto; }
+    .cs-lightbox--zoomed { cursor: zoom-out; overflow: auto; align-items: flex-start; justify-content: flex-start; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging { cursor: grabbing; }
+    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.3s ease, max-height 0.3s ease; }
+    .cs-lightbox--zoomed img { max-width: none; max-height: none; cursor: zoom-out; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging img { cursor: grabbing; }
+    .cs-lightbox__close { position: fixed; top: var(--space-5); right: var(--space-5); z-index: 10000; width: 44px; height: 44px; border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
+    .cs-lightbox__close:hover { opacity: 1; }
+    .cs-browser--zoomable { cursor: zoom-in; }
+
+    /* Split cards — два потока (стэк) */
+    .ct-splits { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-8); }
+    .ct-split {
+      padding: var(--space-6) var(--space-8);
+      background: var(--bg-dark-raised);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      display: flex; flex-direction: column; gap: var(--space-3);
+    }
+    .ct-split__badge {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      font-family: var(--font-mono); font-size: var(--text-xs);
+      letter-spacing: var(--tracking-wide); text-transform: uppercase;
+      color: var(--text-on-dark-40);
+    }
+    .ct-split__badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .ct-split__badge-dot--hot { background: var(--accent); }
+    .ct-split__badge-dot--cold { background: var(--text-on-dark-40); }
+    .ct-split__title {
+      font-size: var(--text-xl); font-weight: var(--weight-semibold);
+      color: var(--text-on-dark); line-height: var(--leading-snug);
+    }
+    .ct-split__desc {
+      font-size: var(--text-base); color: var(--text-on-dark-60);
+      line-height: var(--leading-relaxed); max-width: 62ch;
+    }
+    .ct-split--hot { border-color: rgba(232,115,74,0.2); background: rgba(232,115,74,0.04); }
+
+    /* Gemba voices — боли операторов */
+    .ct-pain {
+      display: flex; flex-direction: column; gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    .ct-pain__item {
+      padding: var(--space-6) var(--space-8);
+      background: var(--bg-dark-raised);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+    }
+    .ct-pain__title {
+      font-size: var(--text-base); font-weight: var(--weight-semibold);
+      color: var(--text-on-dark); line-height: var(--leading-snug);
+    }
+    .ct-pain__desc {
+      font-size: var(--text-base); color: var(--text-on-dark-60);
+      line-height: var(--leading-relaxed); margin-top: var(--space-2);
+      max-width: 62ch;
+    }
+
+    /* Priority levels */
+    .ct-priorities { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-8); }
+    .ct-priority {
+      display: flex; align-items: flex-start; gap: var(--space-5);
+      padding: var(--space-6) var(--space-8);
+      background: var(--bg-dark-raised);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+    }
+    .ct-priority__num {
+      width: 40px; height: 40px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; border: 1.5px solid var(--border-dark);
+      font-family: var(--font-mono); font-size: var(--text-base);
+      font-weight: var(--weight-bold); color: var(--text-on-dark-40);
+    }
+    .ct-priority--1 { border-color: rgba(232,115,74,0.25); background: rgba(232,115,74,0.04); }
+    .ct-priority--1 .ct-priority__num { border-color: var(--accent); color: var(--accent); }
+    .ct-priority__body { display: flex; flex-direction: column; gap: var(--space-1); }
+    .ct-priority__title {
+      font-size: var(--text-base); font-weight: var(--weight-semibold);
+      color: var(--text-on-dark); line-height: var(--leading-snug);
+    }
+    .ct-priority__desc {
+      font-size: var(--text-base); color: var(--text-on-dark-60);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* Offer card items — full-width stacked */
+    .ct-offer-cards {
+      display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-6);
+    }
+    .ct-offer-cards img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-dark);
+    }
+
+    /* Decision cards — single column, horizontal layout */
+    .ct-decisions { grid-template-columns: 1fr; }
+    .ct-decision { flex-direction: row; align-items: flex-start; padding: var(--space-6) var(--space-8); gap: var(--space-5); }
+    .ct-decision__body { display: flex; flex-direction: column; gap: var(--space-2); }
+
+    /* Heading/prose → component: внутренний отступ меньше внешнего */
+    .ct-h3 + .ct-pain,
+    .ct-h3 + .ct-splits,
+    .ct-h3 + .ct-priorities,
+    .ct-h3 + .ct-offer-cards,
+    .ct-prose + .ct-splits,
+    .ct-prose + .ct-priorities,
+    .ct-prose + .ct-pain { margin-top: var(--space-5); }
+
+    /* Timeline — нейтральный стиль */
+    .ct-timeline__line { background: var(--border-dark); }
+    .ct-timeline__dot { border: 1.5px solid var(--border-dark); color: var(--text-on-dark-40); box-shadow: none; }
+    .ct-timeline__card { background: var(--bg-dark-raised); border: 1px solid var(--border-dark); }
+    .ct-timeline__period { color: var(--text-on-dark-40); }
+
+    /* Spacing helpers */
+    .cs--gap-6 { margin-top: var(--space-6); }
+    .cs--gap-8 { margin-top: var(--space-8); }
+    .cs--gap-10 { margin-top: var(--space-10); }
+
+    /* ═══ MOBILE ═══ */
+    @media (max-width: 640px) {
+      /* Heading/prose → component: ещё теснее */
+      .ct-h3 + .ct-pain,
+      .ct-h3 + .ct-splits,
+      .ct-h3 + .ct-priorities,
+      .ct-h3 + .ct-offer-cards,
+      .ct-prose + .ct-splits,
+      .ct-prose + .ct-priorities,
+      .ct-prose + .ct-pain { margin-top: var(--space-4); }
+
+      .cs-browser { border-radius: 0; }
+      .cs-browser__bar { border-radius: 0; }
+      .cs-browser__screen { border-radius: 0; }
+      .cs-browser__screen img { border-radius: 0; }
+
+      /* Split cards */
+      .ct-split { padding: var(--space-5) var(--space-5); }
+
+      /* Pain cards */
+      .ct-pain { gap: var(--space-3); }
+      .ct-pain__item { padding: var(--space-5); }
+
+      /* Priority cards */
+      .ct-priority { gap: var(--space-4); padding: var(--space-5); }
+      .ct-priority__num { width: 36px; height: 36px; font-size: var(--text-sm); }
+
+      /* Decision cards */
+      .ct-decision { padding: var(--space-5) var(--space-5); gap: var(--space-4); }
+
+      /* Offer card images */
+      .ct-offer-cards { gap: var(--space-3); }
+      .ct-offer-cards img { border-radius: var(--radius-sm); }
+
+      /* Screenshot spacing на мобилке */
+      .cs-browser[style*="margin-top"] { margin-top: var(--space-8) !important; }
+
+      /* Quote spacing */
+      .cs-quote[style*="margin-top"] { margin-top: var(--space-8) !important; }
+    }
+
+    @media (max-width: 420px) {
+      .ct-decision { flex-direction: column; gap: var(--space-3); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<!-- TOC -->
+<div class="ct-toc" id="case-toc">
+  <div class="ct-toc__inner">
+    <a href="#s-result"><span class="ct-toc__num">01</span><span class="ct-toc__label">Результат</span></a>
+    <a href="#s-stage1"><span class="ct-toc__num">02</span><span class="ct-toc__label">Витрина</span></a>
+    <a href="#s-stage2"><span class="ct-toc__num">03</span><span class="ct-toc__label">Продажи</span></a>
+    <a href="#s-gemba"><span class="ct-toc__num">04</span><span class="ct-toc__label">Гемба</span></a>
+    <a href="#s-stage3"><span class="ct-toc__num">05</span><span class="ct-toc__label">Приоритеты</span></a>
+    <a href="#s-contribution"><span class="ct-toc__num">06</span><span class="ct-toc__label">Вклад</span></a>
+    <a href="#s-evolution"><span class="ct-toc__num">07</span><span class="ct-toc__label">Эволюция</span></a>
+  </div>
+  <div class="ct-toc__progress"><div class="ct-toc__bar" id="ct-progress"></div></div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="ct-scroll-wrap">
+  <button class="ct-scroll-top" id="scroll-top" aria-label="Наверх">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious" style="padding-top: calc(var(--header-h) + var(--space-16));">
+  <div class="ct-wide" style="max-width: 900px;">
+    <h1 class="ct-h1 p-reveal">Персональные предложения</h1>
+    <span class="ct-section-num p-reveal p-reveal--delay-1" style="margin-top: var(--space-3);">Запуск канала продаж на&nbsp;входящей линии · 6&nbsp;400&nbsp;операторов · три этапа за&nbsp;1,5&nbsp;года</span>
+    <p class="ct-lead p-reveal p-reveal--delay-2" style="margin-top: var(--space-5); max-width: 640px;">Продаж на&nbsp;входящей линии контакт-центра не&nbsp;было. Мы&nbsp;запустили их&nbsp;с&nbsp;нуля&nbsp;&mdash; два потока, горячий и&nbsp;сервисный. Конверсия горячего потока итеративно выросла до&nbsp;31,5%, CSI&nbsp;&mdash; 97%</p>
+
+    <div class="cs-hero-meta p-reveal p-reveal--delay-3">
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Период</span><span class="cs-hero-meta__dd">Конец 2022&nbsp;&mdash; лето 2024</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Канал</span><span class="cs-hero-meta__dd">Голос и&nbsp;чат · Рабочее место оператора</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Роль</span><span class="cs-hero-meta__dd">Product Designer (end&#8209;to&#8209;end)</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Команда</span><span class="cs-hero-meta__dd">Продакт · аналитик · фронтенд · бэкенд</span></div>
+    </div>
+  </div>
+
+  <!-- Hero screenshot -->
+  <div class="p-reveal" style="margin-top: var(--space-12); width: 100%;">
+    <div class="cs-browser cs-browser--flush cs-browser--zoomable" style="border-radius: 0; box-shadow: none;">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/personal-offers</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/personal-offers/Список ПП-2.png" alt="Персональные предложения — финальная версия с приоритетами" loading="eager">
+      </div>
+    </div>
+    <p class="ct-figcaption" style="max-width: 900px; margin: var(--space-3) auto 0; padding: 0 var(--page-pad);">Финальная версия раздела «Персональные предложения» с&nbsp;системой приоритетов</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     01 · РЕЗУЛЬТАТ
+     ═══════════════════════════════════════════ -->
+<section id="s-result" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">01 · Результат</span>
+    <h2 class="ct-h2 p-reveal">Коротко о&nbsp;результате</h2>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-6);">Лето 2024&nbsp;&mdash; проект передан другой команде. Два потока продаж, разные метрики.</p>
+
+    <!-- Горячий поток -->
+    <h3 class="ct-h3 ct-h3--major p-reveal">Горячий поток</h3>
+    <p class="ct-p p-reveal" style="color: var(--text-on-dark-60);">Клиент сам звонит по&nbsp;предложению. Операторы-продажники.</p>
+    <div class="cs-results p-reveal" style="margin-top: var(--space-5);">
+      <div class="cs-result">
+        <span class="cs-result__num">31,5%</span>
+        <span class="cs-result__label">Конверсия</span>
+        <span class="cs-result__sub">Было 20,5%&nbsp;&mdash; рост за&nbsp;год</span>
+      </div>
+      <div class="cs-result">
+        <span class="cs-result__num">97%</span>
+        <span class="cs-result__label">CSI</span>
+        <span class="cs-result__sub">Удовлетворённость клиентов</span>
+      </div>
+    </div>
+
+    <!-- Сервисный поток -->
+    <h3 class="ct-h3 p-reveal" style="margin-top: var(--space-10);">Сервисный поток · холодные продажи</h3>
+    <p class="ct-p p-reveal" style="color: var(--text-on-dark-60);">Клиент звонит с&nbsp;обычным вопросом. Обычные операторы без&nbsp;навыка продаж.</p>
+    <div class="cs-results p-reveal" style="margin-top: var(--space-5);">
+      <div class="cs-result">
+        <span class="cs-result__num">4,8%</span>
+        <span class="cs-result__label">Конверсия</span>
+        <span class="cs-result__sub">От&nbsp;входящего звонка до&nbsp;продукта</span>
+      </div>
+      <div class="cs-result">
+        <span class="cs-result__num">+500&nbsp;млн</span>
+        <span class="cs-result__label">Прогноз NPV ₽/год</span>
+        <span class="cs-result__sub">При масштабировании тиража</span>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Три этапа за&nbsp;1,5&nbsp;года</h3>
+
+    <div class="ct-timeline p-reveal">
+      <div class="ct-timeline__line"></div>
+      <div class="ct-timeline__step">
+        <div class="ct-timeline__dot">1</div>
+        <div class="ct-timeline__card">
+          <div class="ct-timeline__head">
+            <span class="ct-timeline__period ct-timeline__period--ok">Конец 2022</span>
+          </div>
+          <p class="ct-timeline__card-title">Витрина предложений</p>
+          <p class="ct-timeline__card-desc">Дали операторам доступ к&nbsp;предложениям из&nbsp;других каналов. Систематизация статусов, санитизация названий.</p>
+        </div>
+      </div>
+      <div class="ct-timeline__step">
+        <div class="ct-timeline__dot">2</div>
+        <div class="ct-timeline__card">
+          <div class="ct-timeline__head">
+            <span class="ct-timeline__period ct-timeline__period--ok">Q1 2023</span>
+          </div>
+          <p class="ct-timeline__card-title">Продажи на&nbsp;входящих</p>
+          <p class="ct-timeline__card-desc">Собственные предложения КЦ. Два потока&nbsp;&mdash; горячий и&nbsp;сервисный. Гемба в&nbsp;Волгограде.</p>
+        </div>
+      </div>
+      <div class="ct-timeline__step">
+        <div class="ct-timeline__dot">3</div>
+        <div class="ct-timeline__card">
+          <div class="ct-timeline__head">
+            <span class="ct-timeline__period ct-timeline__period--ok">Начало 2024</span>
+          </div>
+          <p class="ct-timeline__card-title">Единый пул и&nbsp;приоритеты</p>
+          <p class="ct-timeline__card-desc">Объединение предложений из&nbsp;всех каналов. Трёхуровневая приоритизация. Передача проекта.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 · ЭТАП 1 — ВИТРИНА ПРЕДЛОЖЕНИЙ
+     ═══════════════════════════════════════════ -->
+<section id="s-stage1" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">02 · Этап&nbsp;1 · конец 2022</span>
+    <h2 class="ct-h2 p-reveal">Витрина предложений</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Персональные предложения создаются кампейнерами (те, кто заводит кампании в&nbsp;каждом канале) и&nbsp;попадают в&nbsp;платформу персональных предложений, которая агрегирует все кампании и&nbsp;распределяет их&nbsp;по&nbsp;каналам. Это массовая персонализация: пачка типовых предложений уходит на&nbsp;клиентов, подобранных по&nbsp;определённым критериям.</p>
+      <p class="ct-p">Клиент мог позвонить в&nbsp;банк и&nbsp;спросить: «Вы&nbsp;мне предлагали вклад с&nbsp;такими-то условиями&nbsp;&mdash; оно ещё действует?» Оператору нужно было найти это предложение, посмотреть статус и&nbsp;при&nbsp;необходимости изменить отклик.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal">Что спроектировал</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">На&nbsp;первом этапе я&nbsp;спроектировал интерфейс в&nbsp;SmartCare (рабочее место оператора контакт-центра) для&nbsp;этого сценария:</p>
+    </div>
+
+    <div class="ct-decisions p-reveal" style="margin-top: var(--space-6);">
+      <div class="ct-decision"><span class="ct-decision__icon">📋</span><div class="ct-decision__body"><span class="ct-decision__title">Список предложений</span><span class="ct-decision__desc">Название, канал поступления (пуш, СМС, звонок) и&nbsp;дата действия</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🔍</span><div class="ct-decision__body"><span class="ct-decision__title">Детализация</span><span class="ct-decision__desc">Подробности: ставка, лимит, срок, ежемесячный платёж</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">✅</span><div class="ct-decision__body"><span class="ct-decision__title">Блок отклика</span><span class="ct-decision__desc">Дата и&nbsp;возможность изменить отклик</span></div></div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal">Систематизация откликов</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Отдельной задачей стала работа с&nbsp;данными. Я&nbsp;собрал все возможные статусы откликов из&nbsp;разных источников, отсортировал их&nbsp;и&nbsp;привёл к&nbsp;понятной системе, которую оператор мог считать с&nbsp;экрана без&nbsp;подсказок. Также я&nbsp;собрал сценарий изменения отклика&nbsp;&mdash; полный пользовательский путь от&nbsp;выбора предложения до&nbsp;фиксации нового статуса. Начиная со&nbsp;второго этапа реализацию сценария передали другой команде, но&nbsp;они строили его по&nbsp;моему дизайну.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal">Проблема с&nbsp;наименованиями</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Предложения заводят десятки команд-каналов, каждая&nbsp;&mdash; как придётся. Вместо «Кредитная СберКарта» в&nbsp;данных приходило «КК СГ», аббревиатуры транслитом, капслок, произвольные символы.</p>
+      <p class="ct-p">Я&nbsp;инициировал решение: совместно с&nbsp;редактором написали пять правил именования&nbsp;&mdash; только кириллица, с&nbsp;заглавной буквы, без&nbsp;аббревиатур, понятно без&nbsp;контекста. Разослали всем каналам&nbsp;&mdash; часть проигнорировала. Тогда мы&nbsp;предложили фронтенд-санитизацию: автоматическое снятие капслока, удаление спецсимволов, раскрытие типовых аббревиатур. Комбинация правил и&nbsp;санитизации сработала&nbsp;&mdash; названия стали читаемыми.</p>
+    </div>
+
+    <div class="cs-insight p-reveal" style="margin-top: var(--space-8);">
+      <div class="cs-insight__label">Принцип</div>
+      <p class="cs-insight__text">Когда организационное решение работает частично&nbsp;&mdash; дополняй его техническим. Правила именования + фронтенд-санитизация = читаемые названия.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal">Точка входа</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Персональные предложения положили в&nbsp;основное меню&nbsp;&mdash; совместное решение с&nbsp;бизнесом и&nbsp;платформой. Индикатор наличия предложений&nbsp;&mdash; фиолетовая молния. Иконку проверили на&nbsp;юзабилити-тесте: операторы верно считали её&nbsp;значение.</p>
+    </div>
+  </div>
+</section>
+
+
+<div class="cs-statement-break p-reveal">
+  <p class="cs-statement">От&nbsp;витрины предложений&nbsp;&mdash; к&nbsp;полноценному каналу продаж</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     03 · ЭТАП 2 — ПРОДАЖИ НА ВХОДЯЩИХ
+     ═══════════════════════════════════════════ -->
+<section id="s-stage2" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">03 · Этап&nbsp;2 · Q1 2023</span>
+    <h2 class="ct-h2 p-reveal">Продажи на&nbsp;входящих</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Идея сделать контакт-центр каналом продаж была с&nbsp;самого начала, но&nbsp;технически мы&nbsp;пришли к&nbsp;ней не&nbsp;сразу: не&nbsp;было готового API для&nbsp;смены откликов и&nbsp;создания отдельных предложений для&nbsp;КЦ. На&nbsp;втором этапе эти ограничения удалось снять&nbsp;&mdash; и&nbsp;появились собственные предложения для&nbsp;контакт-центра.</p>
+    </div>
+
+    <div class="cs-callout p-reveal" style="margin-top: var(--space-8);">
+      <span class="cs-callout__icon">🎯</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text"><strong>Ключевой принцип:</strong> не&nbsp;навязывать, а&nbsp;подстраиваться под&nbsp;жизненную ситуацию клиента. Берёт кредит на&nbsp;ремонт&nbsp;&mdash; предлагаем кредитную карту как&nbsp;подстраховку. Много денег на&nbsp;счёте&nbsp;&mdash; предлагаем вклад.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Два потока&nbsp;&mdash; два сценария</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Звонки на&nbsp;входящей линии разделились на&nbsp;два потока. Разница&nbsp;&mdash; в&nbsp;мотивации клиента и&nbsp;в&nbsp;том, кто работает на&nbsp;каждом:</p>
+    </div>
+
+    <div class="ct-splits p-reveal">
+      <div class="ct-split ct-split--hot">
+        <span class="ct-split__badge"><span class="ct-split__badge-dot ct-split__badge-dot--hot"></span>Поток 1</span>
+        <span class="ct-split__title">Горячий поток</span>
+        <span class="ct-split__desc">Клиент сам звонит по&nbsp;предложению: «Мне предлагали кредитную карту». Его направляют на&nbsp;операторов-продажников&nbsp;&mdash; людей с&nbsp;навыком продаж. Продукты: кредитные карты, потребительские кредиты, вклады.</span>
+      </div>
+      <div class="ct-split">
+        <span class="ct-split__badge"><span class="ct-split__badge-dot ct-split__badge-dot--cold"></span>Поток 2</span>
+        <span class="ct-split__title">Сервисный (холодные продажи)</span>
+        <span class="ct-split__desc">Клиент звонит с&nbsp;обычным вопросом, но&nbsp;у&nbsp;него есть персональное предложение. Обычные сервисные операторы без&nbsp;опыта продаж. Оператор сначала решает вопрос, затем, если клиент на&nbsp;позитиве, предлагает продукт. Согласован тираж с&nbsp;прогнозом +500&nbsp;млн&nbsp;NPV/год.</span>
+      </div>
+    </div>
+
+    <!-- Флоу продаж -->
+    <div class="cs-browser cs-browser--wide cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">Карта флоу продаж в&nbsp;ЕРКЦ</span>
+      </div>
+      <div class="cs-browser__screen" style="background: #fff;">
+        <img src="../../images/Cases/personal-offers/prodazhi-flow-preview.png" data-full="../../images/Cases/personal-offers/Продажи в ЕРКЦ.png" alt="Карта флоу — продажи на&nbsp;входящей линии ЕРКЦ" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Карта флоу продаж на&nbsp;входящей линии контакт-центра</p>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Интерфейс второго этапа</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">На&nbsp;этом этапе появились два таба: «Продажи для&nbsp;ЕРКЦ» и&nbsp;«Предложения из&nbsp;других каналов». Это не&nbsp;разделение по&nbsp;сплитам&nbsp;&mdash; оба таба видны всем операторам. Табы разделяют разные задачи: в&nbsp;«Продажах для&nbsp;ЕРКЦ» оператор может сделать предложение, зафиксировать отклик и&nbsp;отправить СМС&nbsp;&mdash; это полноценная продажа. В&nbsp;«Предложениях из&nbsp;других каналов»&nbsp;&mdash; консультация: посмотреть, что клиент уже получил, и&nbsp;при&nbsp;необходимости изменить отклик. Разные сервисы, разные API, разные задачи&nbsp;&mdash; поэтому разные табы.</p>
+      <p class="ct-p">Названия табов прошли несколько итераций с&nbsp;тестированием и&nbsp;встречами с&nbsp;редакторами&nbsp;&mdash; нужно было найти формулировки, понятные операторам.</p>
+      <p class="ct-p">Внутри каждого таба&nbsp;&mdash; «Актуальные» и&nbsp;«Отвеченные» со&nbsp;статусами: «нет отклика», «подумает», «сбой звонка», «отказался», «согласен», «не&nbsp;подходит по&nbsp;условиям».</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     STATEMENT BREAK
+     ═══════════════════════════════════════════ -->
+<div class="cs-statement-break p-reveal">
+  <p class="cs-statement">Не&nbsp;навязывать, а&nbsp;подстраиваться под&nbsp;жизненную ситуацию клиента</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     04 · ГЕМБА — ВОЛГОГРАД
+     ═══════════════════════════════════════════ -->
+<section id="s-gemba" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">04 · Гемба · июль 2023</span>
+    <h2 class="ct-h2 p-reveal">Волгоград&nbsp;&mdash; наблюдение на&nbsp;местах</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">После запуска второго этапа мы&nbsp;поехали на&nbsp;гембу в&nbsp;Волгоград: сидели рядом с&nbsp;операторами, наблюдали за&nbsp;работой, слушали звонки, проводили глубинные интервью с&nbsp;операторами и&nbsp;руководителями групп.</p>
+      <p class="ct-p">Все находки относились к&nbsp;сервисному потоку&nbsp;&mdash; именно там обычные операторы без&nbsp;навыка продаж пытались предлагать продукты клиентам.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal">Что увидели на&nbsp;звонках</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">За&nbsp;15&nbsp;минут наблюдения за&nbsp;одним оператором&nbsp;&mdash; 2&nbsp;из&nbsp;5&nbsp;предложений по&nbsp;кредитной карте показали лимит «0» (баг: предложение есть, а&nbsp;сумма не&nbsp;подтягивается). Другой оператор&nbsp;&mdash; за&nbsp;15&nbsp;звонков зашла в&nbsp;персональные предложения лишь дважды, попробовала предложить с&nbsp;первой страницы и&nbsp;быстро сдалась, не&nbsp;заходя в&nbsp;детали.</p>
+      <p class="ct-p">Конверсия по&nbsp;словам операторов&nbsp;&mdash; примерно 1&nbsp;согласие из&nbsp;7–10&nbsp;предложений. Самый популярный продукт&nbsp;&mdash; кредитная карта.</p>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Ключевые боли</h3>
+
+    <div class="ct-pain p-reveal">
+      <div class="ct-pain__item">
+        <span class="ct-pain__title">Операторы не&nbsp;умеют работать с&nbsp;возражениями</span>
+        <span class="ct-pain__desc">«Популярные отказы&nbsp;&mdash; на&nbsp;них ответы-заготовки. Неплохо было&nbsp;бы.» Фразы в&nbsp;действующей инструкции оценивались как&nbsp;нелогичные. Конкретный запрос&nbsp;&mdash; подсказки прямо в&nbsp;SmartCare: «Он&nbsp;говорит, и&nbsp;ты&nbsp;нажал&nbsp;&mdash; и&nbsp;подсказка нам на&nbsp;это возражение.»</span>
+      </div>
+      <div class="ct-pain__item">
+        <span class="ct-pain__title">Не&nbsp;хватает контекста жизненной ситуации клиента</span>
+        <span class="ct-pain__desc">Оператор: «Клиент 70&nbsp;лет, срок у&nbsp;него почти, когда уже по&nbsp;требованиям не&nbsp;подходит. По&nbsp;настрою понимаю.»&nbsp;&mdash; решение принималось интуитивно.</span>
+      </div>
+      <div class="ct-pain__item">
+        <span class="ct-pain__title">Два предложения сразу&nbsp;&mdash; перегруз</span>
+        <span class="ct-pain__desc">Операторы озвучивали оба предложения разом, не&nbsp;связывая их&nbsp;в&nbsp;одну историю.</span>
+      </div>
+      <div class="ct-pain__item">
+        <span class="ct-pain__title">Внутреннее сопротивление продажам</span>
+        <span class="ct-pain__desc">Оператор с&nbsp;12-летним стажем: «Мне без&nbsp;работы с&nbsp;возражениями ок. Продавливать не&nbsp;очень хочу.» Те, кто воспринимал предложение как&nbsp;помощь, работали увереннее.</span>
+      </div>
+      <div class="ct-pain__item">
+        <span class="ct-pain__title">Технические баги</span>
+        <span class="ct-pain__desc">Лимит «0» по&nbsp;кредитным картам. При смене клиента внутри звонка предложения не&nbsp;обновлялись.</span>
+      </div>
+    </div>
+
+    <figure class="cs-quote p-reveal" style="margin-top: var(--space-12);">
+      <blockquote class="cs-quote__text">Мне без&nbsp;работы с&nbsp;возражениями ок. Продавливать не&nbsp;очень хочу.</blockquote>
+      <figcaption class="cs-quote__cite">Оператор с&nbsp;12-летним стажем · гемба, Волгоград</figcaption>
+    </figure>
+
+    <div class="cs-insight p-reveal" style="margin-top: var(--space-8);">
+      <div class="cs-insight__label">Инсайт</div>
+      <p class="cs-insight__text">Те, кто воспринимал предложение как&nbsp;помощь клиенту, работали увереннее. Те, кто видел в&nbsp;нём «впаривание»,&nbsp;&mdash; избегали.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     05 · ЭТАП 3 — ОБЪЕДИНЕНИЕ И ПРИОРИТЕТЫ
+     ═══════════════════════════════════════════ -->
+<section id="s-stage3" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">05 · Этап&nbsp;3 · начало 2024</span>
+    <h2 class="ct-h2 p-reveal">Единый пул и&nbsp;система приоритетов</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Между вторым и&nbsp;третьим этапами произошёл редизайн всего SmartCare&nbsp;&mdash; новый UI дал больше пространства в&nbsp;центральной части, что позволило перейти на&nbsp;двухколоночную вёрстку предложений.</p>
+      <p class="ct-p">До&nbsp;третьего этапа предложения для&nbsp;КЦ и&nbsp;предложения из&nbsp;других каналов хранились на&nbsp;платформе раздельно. Каждый кампейнер мог завести предложение в&nbsp;своём канале&nbsp;&mdash; и&nbsp;одно и&nbsp;то&nbsp;же предложение существовало как&nbsp;несколько разных записей. На&nbsp;третьем этапе платформа объединила их&nbsp;в&nbsp;общий пул: одно предложение&nbsp;&mdash; одна запись, с&nbsp;последней точкой касания.</p>
+    </div>
+
+    <!-- Before/After -->
+    <div class="cs-compare p-reveal" style="margin-top: var(--space-8);">
+      <div class="cs-compare__card">
+        <span class="cs-compare__badge">Было · этап&nbsp;2</span>
+        <span class="cs-compare__metric">2&nbsp;таба</span>
+        <p class="cs-compare__desc">Предложения разделены по&nbsp;источнику. Неявная приоритизация. Одноколоночная вёрстка.</p>
+      </div>
+      <div class="cs-compare__card cs-compare__card--after">
+        <span class="cs-compare__badge">Стало · этап&nbsp;3</span>
+        <span class="cs-compare__metric">1&nbsp;пул</span>
+        <p class="cs-compare__desc">Единый пул предложений. Явная трёхуровневая приоритизация. Двухколоночная вёрстка.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Карточка предложения</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Все данные в&nbsp;карточку поступают от&nbsp;кампейнеров. На&nbsp;третьем этапе карточка изменилась:</p>
+    </div>
+
+    <div class="ct-decisions p-reveal" style="margin-top: var(--space-6);">
+      <div class="ct-decision"><span class="ct-decision__icon">🏷️</span><div class="ct-decision__body"><span class="ct-decision__title">Название и&nbsp;тип продукта</span><span class="ct-decision__desc">Кредиты, вклады, доверительное управление, брокерское обслуживание, онлайн-услуги, мобильная связь</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🔴</span><div class="ct-decision__body"><span class="ct-decision__title">Статус с&nbsp;иконкой</span><span class="ct-decision__desc">Цветовая дифференциация: «ещё не&nbsp;предлагали», «сбой звонка», «подумает», «согласен», «отказ», «не&nbsp;подходит», «направлена рассылка»</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">📨</span><div class="ct-decision__body"><span class="ct-decision__title">Канал и&nbsp;касание</span><span class="ct-decision__desc">Каналы сгруппированы по&nbsp;смыслу: почта, СМС и&nbsp;пуш объединены в&nbsp;«рассылку». Дата последнего касания, если через наш КЦ</span></div></div>
+    </div>
+
+    <!-- Карточки статусов -->
+    <div class="ct-offer-cards p-reveal" style="margin-top: var(--space-8);">
+      <img src="../../images/Cases/personal-offers/Персональные предложенияItem-1.png" alt="Карточка предложения — статус «Сбой звонка»" loading="lazy">
+      <img src="../../images/Cases/personal-offers/Персональные предложенияItem.png" alt="Карточка предложения — статус «Подумает»" loading="lazy">
+    </div>
+    <p class="ct-figcaption">Карточки предложений со&nbsp;статусами «Сбой звонка» и&nbsp;«Подумает»</p>
+
+    <h3 class="ct-h3 ct-h3--major p-reveal">Система приоритетов</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Вопрос приоритизации обсуждался долго: как ранжировать предложения, как выделить то, которое нужно продвигать в&nbsp;первую очередь. На&nbsp;предыдущих этапах упорядочение было неявным&nbsp;&mdash; верхнее считалось актуальнее, но&nbsp;жёсткого правила не&nbsp;было. На&nbsp;третьем этапе приоритизация стала явной&nbsp;&mdash; с&nbsp;отдельными уровнями и&nbsp;правилом: нельзя предлагать другие, не&nbsp;предложив главное.</p>
+    </div>
+
+    <div class="ct-priorities p-reveal">
+      <div class="ct-priority ct-priority--1">
+        <span class="ct-priority__num">1</span>
+        <div class="ct-priority__body">
+          <span class="ct-priority__title">Приоритетное предложение</span>
+          <span class="ct-priority__desc">Одно самое важное. Оператор обязан озвучить его первым. Рядом&nbsp;&mdash; подсказка: «Начни с&nbsp;приоритетного предложения. Попробуй связать несколько исходя из&nbsp;данных о&nbsp;клиенте или его жизненной ситуации.»</span>
+        </div>
+      </div>
+      <div class="ct-priority">
+        <span class="ct-priority__num">2</span>
+        <div class="ct-priority__body">
+          <span class="ct-priority__title">Второй приоритет</span>
+          <span class="ct-priority__desc">До&nbsp;четырёх предложений. Оператор выбирает из&nbsp;них, ориентируясь на&nbsp;контекст обращения.</span>
+        </div>
+      </div>
+      <div class="ct-priority">
+        <span class="ct-priority__num">3</span>
+        <div class="ct-priority__body">
+          <span class="ct-priority__title">Остальные предложения</span>
+          <span class="ct-priority__desc">Оператор может предложить, если есть время и&nbsp;уместный контекст. Жёстких ограничений нет&nbsp;&mdash; оператор может связать приоритетное с&nbsp;любым другим.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Скриншот: приоритеты -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/personal-offers</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/personal-offers/Список ПП-2.png" alt="Финальная версия с приоритетами — таб «Актуальные»" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Таб «Актуальные» с&nbsp;системой приоритетов и&nbsp;подсказкой оператору</p>
+
+    <!-- Скриншот: общий список -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/personal-offers</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/personal-offers/Список ПП-1.png" alt="Персональные предложения — список с табами «Актуальные» и «Отвеченные»" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Список предложений&nbsp;&mdash; табы «Актуальные» и&nbsp;«Отвеченные»</p>
+
+    <!-- Детализация -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/personal-offers/detail</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/personal-offers/Персональное-предложение-внутри.png" alt="Детализация предложения с кнопкой «Изменить отклик»" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Детализация предложения с&nbsp;кнопкой «Изменить отклик»</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 · ВКЛАД
+     ═══════════════════════════════════════════ -->
+<section id="s-contribution" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">06 · Вклад</span>
+    <h2 class="ct-h2 p-reveal">Мой вклад</h2>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-6);">Единственный дизайнер на&nbsp;проекте с&nbsp;конца 2022&nbsp;до&nbsp;лета 2024. Все дизайн-решения&nbsp;&mdash; от&nbsp;первой витрины до&nbsp;системы приоритетов&nbsp;&mdash; мои.</p>
+
+    <div class="ct-decisions p-reveal" style="margin-top: var(--space-10);">
+      <div class="ct-decision"><span class="ct-decision__icon">🏗️</span><div class="ct-decision__body"><span class="ct-decision__title">IA и&nbsp;навигация</span><span class="ct-decision__desc">Витрина предложений, система статусов и&nbsp;откликов, структура карточки, табы и&nbsp;сценарии двух потоков&nbsp;&mdash; вся навигационная архитектура раздела</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🧹</span><div class="ct-decision__body"><span class="ct-decision__title">Санитизация данных</span><span class="ct-decision__desc">Инициировал правила именования + фронтенд-санитизацию. Комбинация организационного и&nbsp;технического решения</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🎯</span><div class="ct-decision__body"><span class="ct-decision__title">Визуализация приоритетов</span><span class="ct-decision__desc">Бизнес определил три уровня. Я&nbsp;перевёл это в&nbsp;интерфейс: акцентная карточка, подсказка оператору, блокировка до&nbsp;озвучивания главного</span></div></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🔍</span><div class="ct-decision__body"><span class="ct-decision__title">Гемба и&nbsp;исследования</span><span class="ct-decision__desc">Полевое исследование в&nbsp;Волгограде. Находки определили roadmap&nbsp;&mdash; скрипты по&nbsp;возражениям и&nbsp;кросс-продажи появились после передачи</span></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     07 · ЭВОЛЮЦИЯ ПОСЛЕ ПЕРЕДАЧИ
+     ═══════════════════════════════════════════ -->
+<section id="s-evolution" class="cs cs--base cs--compact">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">07 · Эволюция</span>
+    <h2 class="ct-h2 p-reveal">После передачи</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">На&nbsp;гембе операторы просили подсказки по&nbsp;работе с&nbsp;возражениями и&nbsp;помощь в&nbsp;понимании жизненной ситуации клиента. Мы&nbsp;сделали концепты, но&nbsp;до&nbsp;передачи проекта реализовать не&nbsp;успели.</p>
+      <p class="ct-p">Позже, уже силами другой команды, в&nbsp;сценариях появились скрипты по&nbsp;возражениям и&nbsp;зачатки кросс-продаж&nbsp;&mdash; во&nbsp;многом основанные на&nbsp;тех находках. Система приоритетов и&nbsp;единый пул предложений стали фундаментом для&nbsp;дальнейшего развития канала.</p>
+    </div>
+
+    <div class="cs-insight p-reveal" style="margin-top: var(--space-8);">
+      <div class="cs-insight__label">Принцип</div>
+      <p class="cs-insight__text">Исследование формирует roadmap за&nbsp;пределами собственного проекта. Находки с&nbsp;гембы продолжили работать после передачи.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CASE NAV -->
+<section class="cs cs--base" style="padding: var(--space-20) var(--page-pad);">
+  <div class="ct-container" style="padding: 0;">
+    <div class="ct-nav">
+      <a href="/case/arrests" class="ct-nav__link"><span class="ct-nav__dir">&larr; Предыдущий</span><p class="ct-nav__title">Аресты и&nbsp;взыскания</p></a>
+      <a href="/case/ai-tax" class="ct-nav__link ct-nav__link--next"><span class="ct-nav__dir">Следующий &rarr;</span><p class="ct-nav__title">AI&#8209;агент по&nbsp;налогам</p></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<div class="p-contain"><hr style="border:none;border-top:1px solid var(--border-dark);margin:0;"></div>
+<footer class="p-footer" style="min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+  <div class="p-contain">
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;&mdash; пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener"><img src="../../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">Написать</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow><svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Скачать резюме</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;&mdash; я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">&copy; 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+        <a href="mailto:z-ark@yandex.ru" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="cs-lightbox" id="cs-lightbox" aria-hidden="true">
+  <button class="cs-lightbox__close" id="cs-lightbox-close" aria-label="Закрыть">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script src="../../interactions.js" defer></script>
+<script src="../../sound.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* TOC SCROLLSPY */
+  var tocIds=['s-result','s-stage1','s-stage2','s-gemba','s-stage3','s-contribution','s-evolution'];
+  var tocLinks=document.querySelectorAll('.ct-toc a');
+  var tocWrap=document.getElementById('case-toc');
+  var progressBar=document.getElementById('ct-progress');
+  var scrollTopBtn=document.getElementById('scroll-top');
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(l){l.classList.remove('ct-toc--active');});var a=document.querySelector('.ct-toc a[href="#'+entry.target.id+'"]');if(a){a.classList.add('ct-toc--active');a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}}});},{rootMargin:'-120px 0px -60% 0px',threshold:0});
+  tocIds.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+
+  /* SCROLL */
+  window.addEventListener('scroll',function(){var y=window.scrollY||0;var h=document.documentElement.scrollHeight-window.innerHeight;var p=h>0?(y/h)*100:0;if(progressBar)progressBar.style.width=p+'%';if(tocWrap){tocWrap.style.maxHeight=y>400?'64px':'0';tocWrap.style.opacity=y>400?'1':'0';}if(scrollTopBtn){scrollTopBtn.style.opacity=y>600?'0.9':'0';scrollTopBtn.style.transform=y>600?'scale(1)':'scale(0.8)';scrollTopBtn.style.pointerEvents=y>600?'auto':'none';}},{passive:true});
+  if(scrollTopBtn)scrollTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  /* TOC SMOOTH SCROLL */
+  tocLinks.forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();var id=l.getAttribute('href').substring(1);var t=document.getElementById(id);if(t){t.scrollIntoView({behavior:'smooth',block:'start'});history.pushState(null,null,'#'+id);}});});
+
+  /* LIGHTBOX */
+  var lb=document.getElementById('cs-lightbox');
+  var lbImg=lb?lb.querySelector('img'):null;
+  var lbDrag={active:false,x:0,y:0,sx:0,sy:0};
+
+  function lbClose(){
+    if(!lb)return;
+    lb.classList.remove('cs-lightbox--open','cs-lightbox--zoomed','cs-lightbox--dragging');
+    lb.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.cs-browser--zoomable').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.cs-browser__bar'))return;
+      var src=el.querySelector('img');
+      if(src&&lb&&lbImg){
+        var fullSrc=src.getAttribute('data-full')||src.src;
+        lbImg.src=fullSrc;lbImg.alt=src.alt;
+        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      }
+    });
+  });
+
+  var lbCloseBtn=document.getElementById('cs-lightbox-close');
+  if(lbCloseBtn)lbCloseBtn.addEventListener('click',function(e){e.stopPropagation();lbClose();});
+
+  if(lb){
+    lb.addEventListener('click',function(e){
+      if(e.target===lbCloseBtn)return;
+      if(lbDrag.moved)return;
+      var zoomed=lb.classList.contains('cs-lightbox--zoomed');
+      if(!zoomed){
+        lb.classList.add('cs-lightbox--zoomed');
+        var rect=lb.getBoundingClientRect();
+        var ratioX=e.clientX/rect.width;
+        var ratioY=e.clientY/rect.height;
+        requestAnimationFrame(function(){
+          lb.scrollLeft=(lb.scrollWidth-rect.width)*ratioX;
+          lb.scrollTop=(lb.scrollHeight-rect.height)*ratioY;
+        });
+      } else {
+        lb.classList.remove('cs-lightbox--zoomed');
+        lb.scrollLeft=0;lb.scrollTop=0;
+      }
+    });
+
+    lb.addEventListener('mousedown',function(e){
+      if(!lb.classList.contains('cs-lightbox--zoomed'))return;
+      lbDrag.active=true;lbDrag.moved=false;
+      lbDrag.x=e.clientX;lbDrag.y=e.clientY;
+      lbDrag.sx=lb.scrollLeft;lbDrag.sy=lb.scrollTop;
+      lb.classList.add('cs-lightbox--dragging');
+      e.preventDefault();
+    });
+    lb.addEventListener('mousemove',function(e){
+      if(!lbDrag.active)return;
+      var dx=e.clientX-lbDrag.x,dy=e.clientY-lbDrag.y;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)lbDrag.moved=true;
+      lb.scrollLeft=lbDrag.sx-dx;
+      lb.scrollTop=lbDrag.sy-dy;
+    });
+    lb.addEventListener('mouseup',function(){
+      lbDrag.active=false;
+      lb.classList.remove('cs-lightbox--dragging');
+    });
+  }
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb&&lb.classList.contains('cs-lightbox--open'))lbClose();});
+});
+</script>
+<script src="../../protect.js" defer></script>
+</body>
+</html>

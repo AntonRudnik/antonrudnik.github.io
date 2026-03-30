@@ -1,0 +1,1214 @@
+/* ============================================================
+   COVER ENGINE — Interactive case covers
+   Shared styles for all 6 case cover variants.
+
+   Structure:
+   .p-cover-wrap          — perspective container
+     .p-cover             — main card (tilt, bg layers, overflow)
+       .p-cover__bg       — gradient background
+       .p-cover__dots     — dot grid pattern
+       .p-cover__glow     — cursor-following green glow
+       .p-cover__grid     — CSS Grid for Mac frames
+         .p-cover__frame  — Mac window (titlebar + content)
+       .p-cover__vignette — edge darkening overlay
+
+   HTML usage:
+     <div class="p-case-screen__visual p-reveal p-reveal--scale">
+       <div id="case-01-cover"></div>
+     </div>
+
+   JS: new CoverEngine(document.getElementById('case-01-cover'), { ... })
+   ============================================================ */
+
+/* --- Override visual container for covers --- */
+.p-case-screen__visual:has(.p-cover-wrap) {
+  overflow: visible;
+  /* Remove short-viewport max-height — cover handles its own aspect-ratio */
+  max-height: none;
+}
+
+/* --- Perspective wrapper --- */
+.p-cover-wrap {
+  perspective: 800px;
+}
+
+/* --- Main card --- */
+.p-cover {
+  --mx: 0.5;
+  --my: 0.5;
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* translate — отдельное свойство для lift-эффекта, анимируется CSS.
+     transform (rotateX/Y) — без CSS-transition, smoothing через JS lerp.
+     Разделение нужно чтобы CSS-transition не воевал с lerp-обновлениями. */
+  transition: translate 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.p-cover--hovered {
+  /* Lift через CSS translate (плавно через transition выше).
+     Tilt через transform (плавно через JS lerp, без CSS-transition). */
+  translate: 0 -4px;
+  transform: rotateX(calc((var(--my) - 0.5) * -1.5deg))
+             rotateY(calc((var(--mx) - 0.5) * 1.5deg));
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Кейс-02: без 3D-тилта (скрин пикселизируется), только параллакс-translate */
+.p-cover--fac.p-cover--hovered {
+  transform: translate(
+    calc((var(--mx) - 0.5) * -6px),
+    calc((var(--my) - 0.5) * -6px)
+  );
+}
+
+
+/* ---- Background layers ---- */
+
+.p-cover__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, #0f1218 0%, #151c24 50%, #0f1218 100%);
+}
+
+.p-cover__dots {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.6) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.p-cover--hovered .p-cover__dots {
+  opacity: 0.045;
+  background-image: radial-gradient(rgba(232, 115, 74, 0.6) 0.5px, transparent 0.5px);
+}
+
+.p-cover__glow {
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232, 115, 74, 0.45) 0%,
+    rgba(232, 115, 74, 0.15) 25%,
+    rgba(232, 115, 74, 0.06) 50%,
+    transparent 70%
+  );
+  left: calc(var(--mx) * 100%);
+  top: calc(var(--my) * 100%);
+  transform: translate(-50%, -50%) translateZ(0);
+  will-change: left, top;
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.p-cover--hovered .p-cover__glow {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+
+/* ---- Frame grid ---- */
+
+.p-cover__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 20px 24px;
+  perspective: 600px;
+}
+
+
+/* ---- Mac window frame ---- */
+
+.p-cover__frame {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #131316;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45),
+              0 1px 4px rgba(0, 0, 0, 0.25);
+  /* translate убран из transition — JS lerp его анимирует.
+     transform (rotateY) и opacity — CSS transition при смене класса. */
+  transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Left frame: prompt — shallow parallax, rotateY toward center */
+.p-cover__frame--left {
+  opacity: 0.75;
+  transform-origin: right center;
+  transition-delay: 0.02s;
+}
+
+.p-cover--hovered .p-cover__frame--left {
+  translate: calc((var(--mx) - 0.5) * -8px) calc((var(--my) - 0.5) * -8px);
+  transform: rotateY(4deg);
+  opacity: 1;
+}
+
+/* Right frame: architecture — deeper parallax, rotateY toward center */
+.p-cover__frame--right {
+  transform-origin: left center;
+}
+
+.p-cover--hovered .p-cover__frame--right {
+  translate: calc((var(--mx) - 0.5) * -20px) calc((var(--my) - 0.5) * -20px);
+  transform: rotateY(-4deg);
+}
+
+/* No tilt on touch devices — keep glow, dots, opacity etc. */
+@media (hover: none) {
+  .p-cover--hovered .p-cover__frame--left,
+  .p-cover--hovered .p-cover__frame--right {
+    translate: none;
+    transform: none;
+  }
+}
+
+
+/* ---- Titlebar ---- */
+
+.p-cover__titlebar {
+  height: 30px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #222226 0%, #1c1c1f 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.p-cover__traffic {
+  display: flex;
+  gap: 4.5px;
+}
+
+.p-cover__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.p-cover__dot--close    { background: #ff5f57; }
+.p-cover__dot--minimize { background: #febc2e; }
+.p-cover__dot--maximize { background: #28c840; }
+
+.p-cover__filename {
+  flex: 1;
+  text-align: center;
+  font-size: 9px;
+  font-family: var(--font-sans);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.p-cover__titlebar-spacer {
+  width: 36px;
+}
+
+
+/* ---- Content area ---- */
+
+.p-cover__content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+
+/* ---- Prompt content ---- */
+
+.p-cover__prompt {
+  padding: 10px 12px;
+  background: #0e0e11;
+  height: 100%;
+}
+
+.p-cover__line {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.p-cover__line--key {
+  color: rgba(200, 150, 90, 0.8);
+}
+
+/* Blinking cursor — pure CSS animation, visible only on hover */
+.p-cover__cursor {
+  display: none;
+  width: 5px;
+  height: 12px;
+  background: rgba(200, 150, 90, 0.7);
+  margin-left: 1px;
+  vertical-align: middle;
+}
+
+.p-cover--hovered .p-cover__cursor {
+  display: inline-block;
+  animation: p-cover-blink 1.06s step-end infinite;
+}
+
+@keyframes p-cover-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+
+/* ---- Architecture content ---- */
+
+.p-cover__arch {
+  padding: 10px 12px 12px;
+  background: #0e0e11;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Node (Клиент, Маршрутизатор, Критик, Ответ) */
+.p-cover__node {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.4s ease;
+}
+
+.p-cover__node--accent {
+  background: rgba(180, 80, 60, 0.12);
+  border-color: rgba(180, 80, 60, 0.22);
+}
+
+.p-cover--hovered .p-cover__node--accent {
+  background: rgba(180, 80, 60, 0.18);
+  border-color: rgba(180, 80, 60, 0.35);
+}
+
+.p-cover__node-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.p-cover__node-name {
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.2;
+}
+
+.p-cover__node-sub {
+  font-size: 7.5px;
+  font-family: var(--font-sans);
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 1px;
+}
+
+/* Connector arrows between nodes */
+.p-cover__connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.p-cover__connector-line {
+  width: 1px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.4s;
+}
+
+.p-cover--hovered .p-cover__connector--lit .p-cover__connector-line {
+  background: rgba(180, 80, 60, 0.4);
+}
+
+.p-cover__connector-text {
+  font-size: 7px;
+  font-family: var(--font-sans);
+  color: rgba(255, 255, 255, 0.2);
+  padding: 0.5px 0;
+  transition: color 0.4s;
+}
+
+.p-cover--hovered .p-cover__connector--lit .p-cover__connector-text {
+  color: rgba(180, 80, 60, 0.5);
+}
+
+/* Function grid (3×2: RAG, IVR, API, SMS, Опер., Возврат) */
+.p-cover__func-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3px;
+}
+
+.p-cover__func {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  padding: 4px 3px 3px;
+  text-align: center;
+  transition: all 0.4s ease;
+}
+
+.p-cover__func--active {
+  background: rgba(180, 80, 60, 0.12);
+  border-color: rgba(180, 80, 60, 0.3);
+  box-shadow: 0 0 8px rgba(180, 80, 60, 0.15);
+}
+
+.p-cover__func--dimmed {
+  opacity: 0.4;
+}
+
+.p-cover__func-icon {
+  font-size: 11px;
+  margin-bottom: 1px;
+  line-height: 1;
+}
+
+.p-cover__func-name {
+  font-size: 7px;
+  font-family: var(--font-sans);
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: var(--weight-medium);
+  transition: color 0.4s;
+}
+
+.p-cover__func--active .p-cover__func-name {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+
+/* ---- Vignette ---- */
+
+.p-cover__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(12, 15, 20, 0.35) 100%);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* --- Tablet (≤960px): static, no hover effects --- */
+@media (max-width: 960px) {
+  .p-cover {
+    border-radius: 14px;
+    cursor: default;
+  }
+
+  .p-cover__grid {
+    gap: 10px;
+    padding: 16px 18px;
+  }
+
+  .p-cover__frame--left {
+    opacity: 0.8;
+  }
+
+  /* frame-and-cards: disable hover transforms, fan shown via p-cover--tablet-open */
+  .p-cover__main-frame {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- Tablet-sm (≤800px): single frame only --- */
+@media (max-width: 800px) {
+  .p-cover {
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-md);
+  }
+
+  .p-cover__grid {
+    grid-template-columns: 1fr;
+    padding: 12px 14px;
+  }
+
+  .p-cover__frame--left {
+    display: none;
+  }
+
+  /* frame-and-cards: flat fixes Chrome preserve-3d + overflow:hidden bug */
+  .p-cover--fac {
+    transform-style: flat;
+  }
+
+  .p-cover__cards {
+    display: none;
+  }
+
+  .p-cover__main-frame {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    padding: 12px 14px;
+    transform: none;
+  }
+
+  .p-cover--fac .p-cover__frame--main {
+    height: 100%;
+  }
+
+  .p-cover--fac .p-cover__screenshot {
+    object-fit: contain;
+    object-position: center top;
+  }
+}
+
+/* --- Mobile (≤640px): 1:1 — хватает высоты чтобы показать все ноды архитектуры --- */
+@media (max-width: 640px) {
+  .p-cover {
+    aspect-ratio: 1 / 1;
+    border-radius: 0; /* full-bleed: визуал идёт от края до края */
+  }
+
+  /* frame-and-cards: single frame → 4/3 fits better than 1/1 */
+  .p-cover--fac {
+    aspect-ratio: 4 / 3;
+  }
+
+  .p-cover__main-frame {
+    padding: 10px 12px;
+  }
+}
+
+/* --- Короткий мобайл (≤640px × ≤700px): возвращаем 4:3 — иначе обложка не влезает на экран --- */
+@media (max-width: 640px) and (max-height: 700px) {
+  .p-cover {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* --- Compact mobile (<360px): scaled down, no subtitles --- */
+@media (max-width: 359px) {
+  .p-cover__grid {
+    padding: 8px 10px;
+  }
+
+  .p-cover__main-frame {
+    padding: 8px 10px;
+  }
+
+  .p-cover__frame {
+    border-radius: 8px;
+  }
+
+  .p-cover__node {
+    padding: 3px 6px;
+    gap: 3px;
+    border-radius: 5px;
+  }
+
+  .p-cover__node-icon  { font-size: 11px; }
+  .p-cover__node-name  { font-size: 8px; }
+  .p-cover__node-sub   { display: none; }
+
+  .p-cover__func {
+    padding: 2px 1.5px 1.5px;
+    border-radius: 4px;
+  }
+
+  .p-cover__func-grid  { gap: 1.5px; }
+  .p-cover__func-icon  { font-size: 9px; }
+  .p-cover__func-name  { font-size: 6px; }
+
+  .p-cover__connector-text { display: none; }
+  .p-cover__connector-line { height: 2px; }
+}
+
+
+/* --- Large desktop (≥1920px): scale up internals ~1.4× --- */
+@media (min-width: 1920px) {
+  .p-cover__grid {
+    gap: 16px;
+    padding: 28px 32px;
+  }
+
+  .p-cover__frame {
+    border-radius: 14px;
+  }
+
+  /* Titlebar */
+  .p-cover__titlebar {
+    height: 40px;
+    padding: 0 14px;
+    gap: 8px;
+  }
+
+  .p-cover__traffic { gap: 6px; }
+
+  .p-cover__dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .p-cover__filename { font-size: 12px; }
+  .p-cover__titlebar-spacer { width: 48px; }
+
+  /* Prompt */
+  .p-cover__prompt { padding: 14px 16px; }
+  .p-cover__line   { font-size: 12px; }
+
+  .p-cover__cursor {
+    width: 6px;
+    height: 16px;
+  }
+
+  /* Architecture */
+  .p-cover__arch { padding: 14px 16px 16px; }
+
+  .p-cover__node {
+    padding: 7px 14px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+
+  .p-cover__node-icon { font-size: 17px; }
+  .p-cover__node-name { font-size: 13px; }
+  .p-cover__node-sub  { font-size: 10px; margin-top: 2px; }
+
+  .p-cover__connector-line { height: 5px; }
+  .p-cover__connector-text { font-size: 9px; padding: 1px 0; }
+
+  .p-cover__func-grid { gap: 4px; }
+
+  .p-cover__func {
+    border-radius: 7px;
+    padding: 5px 4px 4px;
+  }
+
+  .p-cover__func-icon { font-size: 14px; margin-bottom: 2px; }
+  .p-cover__func-name { font-size: 9px; }
+
+  /* frame-and-cards */
+  .p-cover__card-img {
+    border-radius: 14px;
+  }
+
+  /* На 2K: transform-style:flat фиксит Chrome-баг (preserve-3d + overflow:hidden
+     не клипит 3D-детей). В flat-режиме overflow:hidden работает корректно.
+     perspective() встроен в transform обложки — compositing layer теряет
+     перспективу от родителя.
+
+     .p-cover__grid perspective увеличена 600→1400px: на 2K фреймы ~700px
+     шириной, rotateY(4deg) с 600px проецирует край на ~68px за layout-границу
+     (padding 32px → вылезает 36px). С 1400px — ~28px, остаётся в пределах. */
+  .p-cover {
+    transform-style: flat;
+  }
+
+  .p-cover__grid {
+    perspective: 1400px;
+  }
+
+  .p-cover--hovered {
+    transform: perspective(800px)
+               rotateX(calc((var(--my) - 0.5) * -1.5deg))
+               rotateY(calc((var(--mx) - 0.5) * 1.5deg));
+  }
+
+  /* carousel-stack: на 2К расширяем стек до 92% + центрируем с оптическим смещением вверх */
+  .p-cover__cs-wrapper {
+    top: 0;
+    left: 4%;
+    right: 4%;
+    padding-bottom: calc(92% * 1066 / 2000 + 30px);
+    margin-top: calc(2.5% - 15px);
+  }
+
+  .p-cover--cs-wide .p-cover__cs-wrapper {
+    padding-bottom: calc(92% * 750 / 1216 + 40px); /* titlebar 40px на 2K */
+  }
+
+  /* peek-хинты перенесены ниже базовых правил — см. отдельный блок после строки 852 */
+}
+
+
+/* --- Reduced motion: disable all animations & transforms --- */
+@media (prefers-reduced-motion: reduce) {
+  .p-cover,
+  .p-cover__frame,
+  .p-cover__main-frame,
+  .p-cover__card,
+  .p-cover__dots,
+  .p-cover__glow,
+  .p-cover__node,
+  .p-cover__func,
+  .p-cover__connector-line,
+  .p-cover__connector-text {
+    transition: none !important;
+  }
+
+  .p-cover--hovered {
+    translate: none;
+    transform: none;
+  }
+
+  .p-cover--hovered .p-cover__frame--left,
+  .p-cover--hovered .p-cover__frame--right {
+    translate: none;
+    transform: none;
+  }
+
+  .p-cover--hovered .p-cover__main-frame,
+  .p-cover--hovered .p-cover__card {
+    translate: none;
+    transform: none;
+  }
+
+  .p-cover--hovered .p-cover__cursor {
+    animation: none;
+    display: inline-block;
+    opacity: 1;
+  }
+}
+
+
+/* ============================================================
+   LAYOUT: FRAME-AND-CARDS (кейс 02)
+   Main Mac frame (62% left) + card fan (33% right)
+   ============================================================ */
+
+/* --- Grain texture overlay --- */
+.p-cover__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: soft-light;
+}
+
+/* Mac window fills its wrapper height */
+.p-cover__main-frame > .p-cover__frame {
+  height: 100%;
+}
+
+/* --- Main Mac frame --- */
+.p-cover__main-frame {
+  position: absolute;
+  top: 4%;
+  left: 3%;
+  width: 90%;
+  height: 90%;
+  z-index: 3;
+  /* translate: shift-left on hover, animated by CSS transition.
+     transform: parallax from lerp (no CSS transition to avoid conflict). */
+  transition: translate 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: right center;
+}
+
+.p-cover--hovered .p-cover__main-frame {
+  translate: -10px 0;
+  transform: translate(
+    calc((var(--mx) - 0.5) * 4px),
+    calc((var(--my) - 0.5) * 4px)
+  );
+}
+
+/* Terracotta border on the Mac window inside main frame */
+.p-cover--hovered .p-cover__frame--main {
+  border-color: rgba(180, 80, 60, 0.2);
+}
+
+/* --- Card fan container --- */
+.p-cover__cards {
+  position: absolute;
+  top: 8%;
+  right: 4%;
+  width: 34%;
+  height: 80%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Individual card --- */
+/* transform: fan spread + rotation — CSS transition on hover class change.
+   translate: cursor parallax — no CSS transition, lerp drives it silently. */
+.p-cover__card {
+  position: absolute;
+  width: 92%;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translateY(calc(var(--card-ry, 0) * 1px))
+             rotate(calc(var(--card-rrot, 0) * 1deg));
+}
+
+.p-cover--hovered .p-cover__card {
+  transform: translateY(calc(var(--card-hy, 0) * 1px))
+             rotate(calc(var(--card-hrot, 0) * 1deg));
+  /* Parallax via separate translate — no CSS transition, lerp is smooth */
+  translate: calc((var(--mx) - 0.5) * var(--card-depth, 0) * 1px)
+             calc((var(--my) - 0.5) * var(--card-depth, 0) * 1px);
+  opacity: 1;
+}
+
+/* Tablet: анимация при скролле к секции — повторяет ховер-состояние */
+.p-cover--tablet-open .p-cover__card {
+  transform: translateY(calc(var(--card-hy, 0) * 1px))
+             rotate(calc(var(--card-hrot, 0) * 1deg));
+  opacity: 1;
+}
+
+.p-cover--tablet-open .p-cover__main-frame {
+  translate: -10px 0;
+}
+
+.p-cover--tablet-open .p-cover__frame-glow {
+  opacity: 1;
+}
+
+.p-cover--tablet-open .p-cover__frame--main {
+  border-color: rgba(180, 80, 60, 0.2);
+}
+
+.p-cover__card-img {
+  width: 100%;
+  display: block;
+  border-radius: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22),
+              0 2px 8px rgba(0, 0, 0, 0.14);
+}
+
+/* --- Screenshot inside Mac frame --- */
+.p-cover__screenshot {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+  /* Отдельный GPU-слой — предотвращает размытие при 3D-трансформе родителя */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+
+/* ============================================================
+   SHARED EFFECTS (все обложки: кейсы 01, 02, 03)
+   ============================================================ */
+
+/* --- Frame glow — терракотовое свечение за фреймом --- */
+.p-cover__frame-glow {
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  right: 3%;
+  bottom: 5%;
+  z-index: 1;
+  border-radius: 16px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(232, 115, 74, 0.12) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.p-cover--hovered .p-cover__frame-glow {
+  opacity: 1;
+}
+
+/* --- Peek hints — имитация стопки карточек под фреймом ---
+   Позиционированы внутри .p-cover__cs-wrapper (overflow: visible).
+   top: 100% = нижняя граница wrapper = низ фрейма. */
+.p-cover__peek-1,
+.p-cover__peek-2 {
+  position: absolute;
+  pointer-events: none;
+}
+
+.p-cover__peek-1 {
+  top: 100%;   /* прямо под фреймом */
+  left: 2%;    /* чуть уже wrapper — эффект глубины стопки */
+  right: 2%;
+  height: 7px;
+  border-radius: 0 0 7px 7px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.p-cover__peek-2 {
+  top: calc(100% + 7px);   /* под peek-1 */
+  left: 4%;
+  right: 4%;
+  height: 5px;
+  border-radius: 0 0 5px 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.05s;
+}
+
+.p-cover--hovered .p-cover__peek-1,
+.p-cover--autocycle .p-cover__peek-1 { opacity: 1; }
+
+.p-cover--hovered .p-cover__peek-2,
+.p-cover--autocycle .p-cover__peek-2 { opacity: 0.85; }
+
+/* peek-хинты на 2К: ДОЛЖНЫ идти ПОСЛЕ базовых правил, иначе каскад перекрывает */
+@media (min-width: 1920px) {
+  .p-cover__peek-1 {
+    height: 18px;
+    border-radius: 0 0 12px 12px;
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.20);
+  }
+
+  .p-cover__peek-2 {
+    height: 13px;
+    top: calc(100% + 18px);
+    border-radius: 0 0 10px 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+}
+
+/* Carousel-stack: dots — фиксированный низ обложки */
+.p-cover--cs .p-cover__pdots { bottom: 2%; }
+
+
+/* ============================================================
+   LAYOUT: CAROUSEL-STACK (кейс 03)
+   Single Mac frame, screens cycle via slide-push animation.
+   ============================================================ */
+
+/* Override: no 3D tilt (screenshots pixelate under rotateX/Y),
+   only lift — parallax goes on cs-stack directly */
+.p-cover--cs.p-cover--hovered {
+  translate: 0 -4px;
+  transform: none;
+}
+
+/* Stack wrapper — внешний контейнер: позиционирование + точная высота.
+   overflow: visible (дефолт) → peek-хинты (top: 100%) видны ниже фрейма. */
+.p-cover__cs-wrapper {
+  position: absolute;
+  top: 20px;
+  left: 7.5%;
+  right: 7.5%;
+  height: 0;
+  padding-bottom: calc(85% * 1066 / 2000 + 30px); /* screenshot_h + titlebar */
+  z-index: 3;
+}
+
+/* Stack container — внутренний: только клиппинг слайд-анимации */
+.p-cover__cs-stack {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Subtle parallax on the whole stack — driven by lerp --mx/--my */
+.p-cover--hovered .p-cover__cs-wrapper {
+  transform: translate(
+    calc((var(--mx) - 0.5) * 4px),
+    calc((var(--my) - 0.5) * 4px)
+  );
+}
+
+/* Individual frame slot */
+.p-cover__cs-slot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.p-cover__cs-slot--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.p-cover__cs-slot--exiting {
+  z-index: 3;
+  animation: p-cover-sp-out 0.6s ease-in-out forwards;
+}
+
+.p-cover__cs-slot--entering {
+  opacity: 1;
+  z-index: 2;
+  animation: p-cover-sp-in 0.6s ease-in-out forwards;
+}
+
+/* Mac frame fills slot */
+.p-cover__cs-slot .p-cover__frame {
+  height: 100%;
+}
+
+/* Screenshot: fill frame exactly — контейнер подогнан под AR скрина (1066/2000),
+   object-fit:fill растягивает по размеру без обрезки */
+.p-cover__cs-slot .p-cover__screenshot {
+  object-fit: fill;
+}
+
+/* Wide screenshots (landscape, ~1216×750): wrapper подгоняем под ландшафтный AR.
+   Формула: horizontal_span% × (img_h / img_w) + titlebar.
+   contain — обе картинки (738 и 750) влезают без обрезки и без искажения;
+   бо́льшая заполняет точно, меньшая — с невидимым ~1% зазором снизу. */
+.p-cover--cs-wide .p-cover__cs-wrapper {
+  padding-bottom: calc(85% * 750 / 1216 + 30px);
+}
+
+.p-cover--cs-wide .p-cover__cs-slot .p-cover__screenshot {
+  object-fit: fill;
+}
+
+/* Маска скруглений: картинки имеют baked-in border-radius сверху —
+   полоска цвета фрейма прячет их под тайтлбаром.
+   Живёт внутри .p-cover__content → анимируется вместе со слотом. */
+.p-cover--cs-wide .p-cover__content {
+  position: relative;
+}
+
+.p-cover--cs-wide .p-cover__content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #FFFFFF;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Slide-push keyframes */
+@keyframes p-cover-sp-in {
+  0%   { transform: translateY(10%); opacity: 0; }
+  100% { transform: translateY(0%);  opacity: 1; }
+}
+
+@keyframes p-cover-sp-out {
+  0%   { transform: translateY(0%);  opacity: 1; }
+  100% { transform: translateY(-8%); opacity: 0; }
+}
+
+/* --- Pagination dots --- */
+.p-cover__pdots {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.p-cover--hovered .p-cover__pdots,
+.p-cover--autocycle .p-cover__pdots {
+  opacity: 1;
+}
+
+.p-cover__pdot {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.p-cover__pdot--active {
+  width: 14px;
+  background: rgba(232, 115, 74, 0.95);
+}
+
+
+/* ============================================================
+   CAROUSEL-STACK RESPONSIVE
+   ============================================================ */
+
+/* Tablet-sm: tighter inset (≤800px) — тот же трюк, другой отступ */
+@media (max-width: 800px) {
+  .p-cover__cs-wrapper {
+    top: 12px;
+    left: 14px;
+    right: 14px;
+    padding-bottom: calc((100% - 28px) * 1066 / 2000 + 30px);
+  }
+
+  .p-cover--cs-wide .p-cover__cs-wrapper {
+    padding-bottom: calc((100% - 28px) * 750 / 1216 + 30px);
+  }
+}
+
+/* Mobile: 4:3 aspect ratio */
+@media (max-width: 640px) {
+  .p-cover--cs {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Short mobile: override to 4:3 if not already */
+@media (max-width: 640px) and (max-height: 700px) {
+  .p-cover--cs {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* --- Wide carousel (landscape screenshots, e.g. Case 06) ---
+   Landscape AR (750/1216 ≈ 0.617) слишком близок к базовому 16:9 (0.5625)
+   и 16:10 (0.625) → wrapper overflow. Решение: тянем cover вверх до 3:2.
+   Только .p-cover--cs-wide — остальные обложки не затрагиваются.
+   transform-style: flat — фиксит Chrome-баг preserve-3d + overflow:hidden. */
+.p-cover--cs-wide {
+  transform-style: flat;
+}
+
+@media (min-width: 641px) {
+  .p-cover--cs-wide {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+/* 2K: cover достаточно большой — 16/10 даёт нужный запас */
+@media (min-width: 1920px) {
+  .p-cover--cs-wide {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+
+/* ============================================================
+   REDUCED MOTION — carousel-stack additions
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .p-cover__cs-slot,
+  .p-cover__frame-glow,
+  .p-cover__peek-1,
+  .p-cover__peek-2,
+  .p-cover__pdots,
+  .p-cover__pdot {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .p-cover__cs-slot--exiting {
+    opacity: 0;
+  }
+
+  .p-cover__cs-slot--entering {
+    opacity: 1;
+  }
+}
+
+
+/* ============================================================
+   MOBILE CARD STACK — рендерится CoverEngine из config.mobile.cards
+   Позиционируется поверх фонового слоя (.p-cover), под вигнеткой (z-index:6).
+   ============================================================ */
+
+/* Скрываем десктопный контент только на мобайле (< 640px) */
+@media (max-width: 639px) {
+  .p-cover--fac .p-cover__main-frame,
+  .p-cover--fac .p-cover__cards,
+  .p-cover--cs .p-cover__cs-wrapper,
+  .p-cover--cs .p-cover__peek-1,
+  .p-cover--cs .p-cover__peek-2,
+  .p-cover--cs .p-cover__pdots {
+    display: none;
+  }
+}
+
+/* Мобильный стек — только телефоны (< 640px), на планшетах скрыт */
+.p-cover__mobile-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: none; /* скрыт по умолчанию */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+  gap: var(--space-2);
+}
+
+@media (max-width: 639px) {
+  .p-cover__mobile-stack {
+    display: flex;
+  }
+}
+
+.p-cover__mobile-card {
+  width: 93%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+
+/* Entrance stagger — fires when IntersectionObserver adds --visible */
+@keyframes p-cover-card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.p-cover__mobile-stack--visible .p-cover__mobile-card {
+  animation: p-cover-card-in 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.p-cover__mobile-stack--visible .p-cover__mobile-card:nth-child(1) { animation-delay: 0ms; }
+.p-cover__mobile-stack--visible .p-cover__mobile-card:nth-child(2) { animation-delay: 110ms; }
+.p-cover__mobile-stack--visible .p-cover__mobile-card:nth-child(3) { animation-delay: 220ms; }
+.p-cover__mobile-stack--visible .p-cover__mobile-card:nth-child(4) { animation-delay: 330ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .p-cover__mobile-card { opacity: 1; }
+  .p-cover__mobile-stack--visible .p-cover__mobile-card { animation: none; }
+}
+
+/* Cover as link — контейнер обложки оборачивается в <a> */
+.p-cover-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}

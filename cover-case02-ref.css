@@ -1,0 +1,673 @@
+/* ═══════════════════════════════════════════════════════════
+   cover.css — Стили обложек для всех 6 кейсов портфолио
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Tokens ──────────────────────────────────────────────── */
+:root {
+  --cover-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --cover-duration: 0.6s;
+  --cover-radius: 16px;
+  --cover-radius-tablet: 14px;
+  --cover-radius-mobile: 12px;
+
+  /* Mac frame */
+  --mac-bar-h: 26px;
+  --mac-bar-bg: linear-gradient(180deg, #222226 0%, #1c1c1f 100%);
+  --mac-bar-border: rgba(255,255,255,0.07);
+  --mac-dot-size: 7px;
+  --mac-dot-gap: 4.5px;
+  --mac-dots: #ff5f57, #febc2e, #28c840;
+  --mac-title-color: rgba(255,255,255,0.35);
+  --mac-frame-border: rgba(255,255,255,0.1);
+  --mac-frame-bg: #131316;
+  --mac-content-bg: #0e0e11;
+
+  /* Dot grid */
+  --dotgrid-color: rgba(255,255,255,0.6);
+  --dotgrid-size: 0.5px;
+  --dotgrid-step: 24px;
+  --dotgrid-opacity: 0.025;
+  --dotgrid-opacity-hover: 0.05;
+
+  /* Prompt (case 01) */
+  --prompt-color: rgba(255,255,255,0.45);
+  --prompt-accent: rgba(200,150,90,0.8);
+  --prompt-font: 'Courier New', monospace;
+  --prompt-line-height: 1.7;
+  --prompt-size: 7px;
+
+  /* Architecture (case 01) */
+  --arch-node-bg: rgba(255,255,255,0.04);
+  --arch-node-border: rgba(255,255,255,0.07);
+  --arch-accent-bg: rgba(180,80,60,0.12);
+  --arch-accent-border: rgba(180,80,60,0.22);
+  --arch-accent-bg-glow: rgba(180,80,60,0.18);
+  --arch-accent-border-glow: rgba(180,80,60,0.35);
+  --arch-func-bg: rgba(255,255,255,0.025);
+  --arch-func-border: rgba(255,255,255,0.06);
+  --arch-func-active-bg: rgba(180,80,60,0.12);
+  --arch-func-active-border: rgba(180,80,60,0.3);
+  --arch-connector: rgba(255,255,255,0.1);
+  --arch-connector-lit: rgba(180,80,60,0.4);
+}
+
+/* ─── Cover container ─────────────────────────────────────── */
+.cover {
+  --mx: 0.5;
+  --my: 0.5;
+  perspective: 800px;
+}
+
+.cover__inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--cover-radius);
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition:
+    transform var(--cover-duration) var(--cover-ease),
+    box-shadow var(--cover-duration) var(--cover-ease);
+  /* Tilt — driven by --mx, --my */
+  transform:
+    translateY(0)
+    rotateX(calc((var(--my) - 0.5) * 0deg))
+    rotateY(calc((var(--mx) - 0.5) * 0deg));
+  box-shadow:
+    0 2px 12px rgba(0,0,0,0.2),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.cover--hovered .cover__inner {
+  transform:
+    translateY(-4px)
+    rotateX(calc((var(--my) - 0.5) * -2deg))
+    rotateY(calc((var(--mx) - 0.5) * 2deg));
+  box-shadow:
+    0 2px 12px rgba(0,0,0,0.2),
+    inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+
+/* ─── Background layers ───────────────────────────────────── */
+.cover__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.cover__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: soft-light;
+  z-index: 1;
+}
+
+.cover__dotgrid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--dotgrid-color) var(--dotgrid-size), transparent var(--dotgrid-size));
+  background-size: var(--dotgrid-step) var(--dotgrid-step);
+  pointer-events: none;
+  opacity: var(--dotgrid-opacity);
+  transition: opacity var(--cover-duration) var(--cover-ease);
+  z-index: 2;
+}
+
+.cover--hovered .cover__dotgrid {
+  opacity: var(--dotgrid-opacity-hover);
+}
+
+.cover__glow {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: all var(--cover-duration) var(--cover-ease);
+  z-index: 2;
+  left: calc(var(--mx) * 100%);
+  top: calc(var(--my) * 100%);
+  transform: translate(-50%, -50%);
+}
+
+.cover--hovered .cover__glow {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.cover__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(12,15,20,0.3) 100%);
+}
+
+/* ─── Mac Frame ───────────────────────────────────────────── */
+.cover__mac {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.25);
+  border: 1px solid var(--mac-frame-border);
+  background: var(--mac-frame-bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: border var(--cover-duration) var(--cover-ease);
+}
+
+.cover--hovered .cover__mac--main {
+  border-color: rgba(180,80,60,0.2);
+}
+
+.cover__mac-bar {
+  height: var(--mac-bar-h);
+  flex-shrink: 0;
+  background: var(--mac-bar-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  gap: 6px;
+  border-bottom: 1px solid var(--mac-bar-border);
+}
+
+.cover__mac-dots {
+  display: flex;
+  gap: var(--mac-dot-gap);
+}
+
+.cover__mac-dot {
+  width: var(--mac-dot-size);
+  height: var(--mac-dot-size);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.cover__mac-dot:nth-child(1) { background: #ff5f57; }
+.cover__mac-dot:nth-child(2) { background: #febc2e; }
+.cover__mac-dot:nth-child(3) { background: #28c840; }
+
+.cover__mac-title {
+  flex: 1;
+  text-align: center;
+  font-size: 7.5px;
+  font-family: 'Inter', sans-serif;
+  color: var(--mac-title-color);
+}
+
+.cover__mac-spacer {
+  width: 36px;
+}
+
+.cover__mac-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── Layout: two-frames (Case 01) ────────────────────────── */
+.cover__frames {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 20px 24px;
+  perspective: 600px;
+}
+
+.cover__frame {
+  transition: all var(--cover-duration) var(--cover-ease);
+  transform-style: preserve-3d;
+}
+
+/* Parallax via --mx, --my */
+.cover__frame--left {
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 0px),
+      calc((var(--my) - 0.5) * 0px)
+    )
+    rotateY(0deg);
+  transform-origin: right center;
+  opacity: 0.75;
+  transition-delay: 0.02s;
+}
+
+.cover--hovered .cover__frame--left {
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 4px),
+      calc((var(--my) - 0.5) * 4px)
+    )
+    rotateY(4deg);
+  opacity: 1;
+}
+
+.cover__frame--right {
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 0px),
+      calc((var(--my) - 0.5) * 0px)
+    )
+    rotateY(0deg);
+  transform-origin: left center;
+}
+
+.cover--hovered .cover__frame--right {
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 10px),
+      calc((var(--my) - 0.5) * 10px)
+    )
+    rotateY(-4deg);
+}
+
+/* ─── Layout: frame-and-cards (Case 02) ───────────────────── */
+.cover__main-frame {
+  position: absolute;
+  top: 5%;
+  left: 3%;
+  width: 62%;
+  height: 90%;
+  z-index: 3;
+  transition: all var(--cover-duration) var(--cover-ease);
+  transition-delay: 0.02s;
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 0px),
+      calc((var(--my) - 0.5) * 0px)
+    )
+    rotateY(0deg)
+    translateX(0px);
+  transform-origin: right center;
+}
+
+.cover--hovered .cover__main-frame {
+  transform:
+    translate(
+      calc((var(--mx) - 0.5) * 4px),
+      calc((var(--my) - 0.5) * 4px)
+    )
+    rotateY(2deg)
+    translateX(-10px);
+}
+
+.cover__cards {
+  position: absolute;
+  top: 4%;
+  right: 3%;
+  width: 33%;
+  height: 92%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover__card {
+  position: absolute;
+  width: 92%;
+  transition: all var(--cover-duration) var(--cover-ease);
+}
+
+/* Card fan — rest positions via CSS custom properties set by JS */
+.cover__card { 
+  transform:
+    translate(
+      calc(var(--card-rx, 0) * 1px + (var(--mx) - 0.5) * 0px),
+      calc(var(--card-ry, 0) * 1px + (var(--my) - 0.5) * 0px)
+    )
+    rotate(calc(var(--card-rrot, 0) * 1deg));
+  opacity: var(--card-opacity, 1);
+}
+
+.cover--hovered .cover__card {
+  transform:
+    translate(
+      calc(var(--card-hx, 0) * 1px + (var(--mx) - 0.5) * var(--card-depth, 0) * 1px),
+      calc(var(--card-hy, 0) * 1px + (var(--my) - 0.5) * var(--card-depth, 0) * 1px)
+    )
+    rotate(calc(var(--card-hrot, 0) * 1deg));
+  opacity: 1;
+}
+
+.cover__card-img {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ─── Screenshot in Mac frame ─────────────────────────────── */
+.cover__screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ─── Prompt content (Case 01) ────────────────────────────── */
+.cover__prompt {
+  padding: 8px 10px;
+  background: var(--mac-content-bg);
+  height: 100%;
+  overflow: hidden;
+}
+
+.cover__prompt-line {
+  font-size: var(--prompt-size);
+  font-family: var(--prompt-font);
+  color: var(--prompt-color);
+  line-height: var(--prompt-line-height);
+  white-space: pre;
+}
+
+.cover__prompt-line--accent {
+  color: var(--prompt-accent);
+}
+
+.cover__prompt-cursor {
+  display: none;
+  width: 4px;
+  height: 10px;
+  background: rgba(200,150,90,0.7);
+  margin-left: 1px;
+  vertical-align: middle;
+}
+
+.cover--hovered .cover__prompt-cursor {
+  display: inline-block;
+  animation: cover-blink 1.06s step-end infinite;
+}
+
+@keyframes cover-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ─── Architecture content (Case 01) ─────────────────────── */
+.cover__arch {
+  padding: 8px 10px 10px;
+  background: var(--mac-content-bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cover__arch-node {
+  border-radius: 7px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--arch-node-bg);
+  border: 1px solid var(--arch-node-border);
+  transition: all 0.4s ease;
+}
+
+.cover__arch-node--accent {
+  background: var(--arch-accent-bg);
+  border-color: var(--arch-accent-border);
+}
+
+.cover--hovered .cover__arch-node--accent {
+  background: var(--arch-accent-bg-glow);
+  border-color: var(--arch-accent-border-glow);
+}
+
+.cover__arch-node-icon {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.cover__arch-node-name {
+  font-size: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.2;
+}
+
+.cover__arch-node-sub {
+  font-size: 6px;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.4);
+  margin-top: 1px;
+}
+
+.cover__arch-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cover__arch-connector-line {
+  width: 1px;
+  height: 3px;
+  background: var(--arch-connector);
+  transition: background 0.4s;
+}
+
+.cover--hovered .cover__arch-connector-line {
+  background: var(--arch-connector-lit);
+}
+
+.cover__arch-connector-label {
+  font-size: 5.5px;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.2);
+  padding: 0.5px 0;
+  transition: color 0.4s;
+}
+
+.cover--hovered .cover__arch-connector-label {
+  color: rgba(180,80,60,0.5);
+}
+
+.cover__arch-funcs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+}
+
+.cover__arch-func {
+  border-radius: 5px;
+  padding: 3px 2px 2px;
+  text-align: center;
+  flex: 1;
+  background: var(--arch-func-bg);
+  border: 1px solid var(--arch-func-border);
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.cover__arch-func--active {
+  background: var(--arch-func-active-bg);
+  border-color: var(--arch-func-active-border);
+  box-shadow: 0 0 8px rgba(180,80,60,0.15);
+}
+
+/* Dimmed when another is active (class added by JS) */
+.cover__arch-func--dimmed {
+  opacity: 0.4;
+}
+
+.cover__arch-func-icon {
+  font-size: 9px;
+  margin-bottom: 1px;
+}
+
+.cover__arch-func-name {
+  font-size: 5.5px;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+  transition: color 0.4s;
+}
+
+.cover__arch-func--active .cover__arch-func-name {
+  color: rgba(255,255,255,0.8);
+}
+
+/* ─── Breakpoints ─────────────────────────────────────────── */
+
+/* Tablet: 801–960 */
+@media (max-width: 960px) {
+  .cover__inner {
+    border-radius: var(--cover-radius-tablet);
+    cursor: default;
+  }
+
+  /* Two-frames: static, smaller padding */
+  .cover__frames {
+    gap: 10px;
+    padding: 16px 18px;
+  }
+
+  .cover__frame--left {
+    opacity: 0.8;
+    transform: none;
+  }
+
+  .cover__frame--right {
+    transform: none;
+  }
+
+  /* Frame-and-cards: static fan = hover positions */
+  .cover__main-frame {
+    transform: none;
+  }
+}
+
+/* Tablet-sm: 641–800 — single frame only */
+@media (max-width: 800px) {
+  .cover__inner {
+    aspect-ratio: 16 / 10;
+  }
+
+  .cover__frames {
+    display: flex;
+    padding: 12px 14px;
+  }
+
+  .cover__frame--left {
+    display: none;
+  }
+
+  .cover__frame--right {
+    width: 100%;
+    height: 100%;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Hide cards on small screens */
+  .cover__cards {
+    display: none;
+  }
+
+  .cover__main-frame {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    padding: 12px 14px;
+    transform: none;
+  }
+
+  /* Show mobile-only frame */
+  .cover__mobile-frame {
+    display: block;
+  }
+}
+
+/* Mobile: ≤640 */
+@media (max-width: 640px) {
+  .cover__inner {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--cover-radius-mobile);
+  }
+
+  .cover__frames {
+    padding: 10px 12px;
+  }
+
+  .cover__main-frame {
+    padding: 10px 12px;
+  }
+}
+
+/* Mobile narrow: <360 */
+@media (max-width: 359px) {
+  .cover__inner {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+  }
+
+  .cover__frames {
+    padding: 8px 10px;
+  }
+
+  .cover__main-frame {
+    padding: 8px 10px;
+  }
+
+  .cover__mac {
+    border-radius: 8px;
+  }
+
+  .cover__arch-node-sub {
+    display: none;
+  }
+
+  .cover__arch-node-icon {
+    font-size: 9px;
+  }
+
+  .cover__arch-node-name {
+    font-size: 6.5px;
+  }
+}
+
+/* ─── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cover__inner,
+  .cover__frame,
+  .cover__main-frame,
+  .cover__card,
+  .cover__dotgrid,
+  .cover__glow,
+  .cover__mac,
+  .cover__arch-node,
+  .cover__arch-func,
+  .cover__arch-connector-line,
+  .cover__arch-connector-label {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .cover--hovered .cover__inner {
+    transform: none;
+  }
+
+  .cover--hovered .cover__frame--left,
+  .cover--hovered .cover__frame--right,
+  .cover--hovered .cover__main-frame {
+    transform: none;
+  }
+
+  .cover--hovered .cover__prompt-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}

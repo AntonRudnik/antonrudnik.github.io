@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Голосовой AI-агент по налогу на вклады — Антон Рудник</title>
+  <meta name="description" content="Как AI-агент освободил 4 штатные единицы, закрыв 70% обращений по налогам на вклады без эскалации. Кейс Антона Рудника.">
+  <!-- Favicon -->
+  <link rel="icon" href="../../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../favlog/favicon-180.png">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/tokens.css">
+  <link rel="stylesheet" href="../../styles/reset.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/typography.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/animations.css">
+  <link rel="stylesheet" href="../../styles/case.css">
+  <link rel="stylesheet" href="../../styles/protect.css">
+
+  <style>
+    /* Page-specific: body background */
+    body { background: var(--bg-dark); color: var(--text-on-dark); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<!-- TOC (оригинальная) -->
+<div class="ct-toc" id="case-toc">
+  <div class="ct-toc__inner">
+    <a href="#s-result"><span class="ct-toc__num">01</span><span class="ct-toc__label">Результат</span></a>
+    <a href="#s-context"><span class="ct-toc__num">02</span><span class="ct-toc__label">Контекст</span></a>
+    <a href="#s-research"><span class="ct-toc__num">03</span><span class="ct-toc__label">Исследование</span></a>
+    <a href="#s-limits"><span class="ct-toc__num">04</span><span class="ct-toc__label">Ограничения</span></a>
+    <a href="#s-design"><span class="ct-toc__num">05</span><span class="ct-toc__label">Проектирование</span></a>
+    <a href="#s-dev"><span class="ct-toc__num">06</span><span class="ct-toc__label">Разработка</span></a>
+    <a href="#s-contribution"><span class="ct-toc__num">07</span><span class="ct-toc__label">Вклад</span></a>
+  </div>
+  <div class="ct-toc__progress"><div class="ct-toc__bar" id="ct-progress"></div></div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="ct-scroll-wrap">
+  <button class="ct-scroll-top" id="scroll-top" aria-label="Наверх">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO — заголовок, лид, мета
+     Spacious: много воздуха, масштаб за 3 секунды
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious" style="padding-top: calc(var(--header-h) + var(--space-16));">
+  <div class="ct-wide" style="max-width: 900px;">
+    <h1 class="ct-h1 p-reveal">Голосовой AI&#8209;агент по&nbsp;налогу на&nbsp;вклады</h1>
+    <p class="ct-lead p-reveal p-reveal--delay-1" style="margin-top: var(--space-5); max-width: 580px;">6&nbsp;000&nbsp;звонков в&nbsp;месяц. Оператор тратил на&nbsp;каждый 7&nbsp;минут. AI&#8209;агент справляется за&nbsp;5&nbsp;минут</p>
+
+    <div class="cs-hero-meta p-reveal p-reveal--delay-2">
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Период</span><span class="cs-hero-meta__dd">Q3–Q4 2025</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Канал</span><span class="cs-hero-meta__dd">IVR · Голосовой <span class="cs-wave" aria-hidden="true"><span class="cs-wave__bar"></span><span class="cs-wave__bar"></span><span class="cs-wave__bar"></span><span class="cs-wave__bar"></span><span class="cs-wave__bar"></span></span></span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Роль</span><span class="cs-hero-meta__dd">Product Designer (end&#8209;to&#8209;end)</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Команда</span><span class="cs-hero-meta__dd">Аналитик · бэкендер · тестировщик · продакт</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     01 · РЕЗУЛЬТАТ — иерархия метрик
+     Главная метрика доминирует, остальные рядом
+     ═══════════════════════════════════════════ -->
+<section id="s-result" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">01 · Результат</span>
+    <h2 class="ct-h2 p-reveal">Коротко о&nbsp;результате</h2>
+
+    <div class="cs-results">
+      <div class="cs-result p-reveal">
+        <span class="cs-result__num">4&nbsp;FTE</span>
+        <span class="cs-result__label">Освобождено ресурсов</span>
+        <span class="cs-result__sub">~4,5&nbsp;млн&nbsp;₽/год экономии</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-1">
+        <span class="cs-result__num">&minus;25%</span>
+        <span class="cs-result__label">Среднее время обслуживания</span>
+        <span class="cs-result__sub">~7&nbsp;мин &rarr; ~5&nbsp;мин</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-2">
+        <span class="cs-result__num">~70%</span>
+        <span class="cs-result__label">Обращений закрыто агентом</span>
+        <span class="cs-result__sub">Остальное&nbsp;&mdash; эскалация или возврат</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-3">
+        <span class="cs-result__num">6&nbsp;000</span>
+        <span class="cs-result__label">Звонков в&nbsp;месяц</span>
+        <span class="cs-result__sub">Масштаб тематики</span>
+      </div>
+    </div>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-12);">Агент закрыл <strong>~70% обращений</strong> без эскалации на&nbsp;оператора. Остальные 30%&nbsp;&mdash; негатив клиента (переход на&nbsp;оператора) или&nbsp;вопрос не&nbsp;по&nbsp;теме (возврат для&nbsp;переклассификации). Критерий запуска&nbsp;&mdash; <strong>85%+ точности</strong>&nbsp;&mdash; был пройден на&nbsp;пилоте из&nbsp;<strong>~300&nbsp;диалогов</strong>.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 · КОНТЕКСТ — стандартный ритм, callout
+     ═══════════════════════════════════════════ -->
+<section id="s-context" class="cs cs--base cs--compact">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">02 · Контекст</span>
+    <h2 class="ct-h2 p-reveal">Откуда появилась задача</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">В&nbsp;2025&nbsp;году в&nbsp;банке запустили стратегию агентизации контакт-центра&nbsp;&mdash; долгосрочный переход от&nbsp;консультаций людьми к&nbsp;виртуальному ассистенту на&nbsp;базе мультиагентной системы, неотличимому от&nbsp;человека.</p>
+      <p class="ct-p">Продуктовые команды запускают AI&#8209;агентов в&nbsp;своих зонах ответственности. Каждый агент закрывает отдельную тематику и&nbsp;даёт измеримый эффект в&nbsp;FTE.</p>
+    </div>
+
+    <div class="cs-callout p-reveal" style="margin-top: var(--space-8);">
+      <span class="cs-callout__icon">🎯</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text"><strong>Задача:</strong> автоматизировать консультации по&nbsp;налогам на&nbsp;доходы по&nbsp;вкладам с&nbsp;помощью AI&#8209;агента.</p>
+        <p class="cs-callout__text"><strong>Цель:</strong> сократить FTE и&nbsp;снизить нагрузку на&nbsp;поддержку в&nbsp;пиковый налоговый период.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3">Почему налоги на&nbsp;вклады</h3>
+    <div class="ct-prose">
+      <p class="ct-p">С&nbsp;2024&nbsp;года доходы по&nbsp;вкладам облагаются налогом. Для&nbsp;клиентов это была новая ситуация&nbsp;&mdash; они не&nbsp;понимали, как всё устроено, и&nbsp;начинали звонить в&nbsp;поддержку.</p>
+      <p class="ct-p">Сначала я&nbsp;проверил с&nbsp;бизнесом, подходит&nbsp;ли тема для&nbsp;агента: консультации длинные (6–7&nbsp;минут), вопросы типовые, логика легко формализуется. По&nbsp;теме&nbsp;&mdash; ~6&nbsp;000&nbsp;звонков в&nbsp;месяц с&nbsp;пиком осенью.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     03 · ИССЛЕДОВАНИЕ — цитаты-карточки, mockup, insight
+     ═══════════════════════════════════════════ -->
+<section id="s-research" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">03 · Исследование</span>
+    <h2 class="ct-h2 p-reveal">Звонки, боли, паттерны</h2>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-6);">Прослушал ~<strong>120&nbsp;записей реальных звонков</strong> в&nbsp;поддержку. Выделил два типовых сценария: клиент сначала разбирается в&nbsp;общем&nbsp;&mdash; как работает налог, либо сразу уточняет персональные данные.</p>
+
+    <!-- Голоса клиентов -->
+    <div class="cs-voices p-reveal" style="margin-top: var(--space-6);">
+      <div class="cs-voice">«Нужно&nbsp;ли платить налог со&nbsp;вклада?»</div>
+      <div class="cs-voice">«Какая сумма не&nbsp;облагается налогом?»</div>
+      <div class="cs-voice">«Хотел узнать размер дохода по&nbsp;вкладам для&nbsp;уплаты налога»</div>
+      <div class="cs-voice">«Почему в&nbsp;ЛК ФНС вижу другую сумму?»</div>
+    </div>
+
+    <h3 class="ct-h3">Где операторы теряли время</h3>
+    <p class="ct-p p-reveal">Персональные данные клиента находились в&nbsp;SmartCare, а&nbsp;справочная информация&nbsp;&mdash; в&nbsp;отдельной интерактивной схеме. На&nbsp;переключение уходило <strong>от&nbsp;20&nbsp;секунд до&nbsp;2&nbsp;минут</strong> в&nbsp;рамках одного звонка.</p>
+
+    <!-- Browser mockup -->
+    <div class="cs-browser cs-browser--wide p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/tax-consult</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/ai-tax/Tax-old.png" alt="Интерфейс SmartCare для налоговых консультаций" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Интерфейс SmartCare, который операторы использовали для&nbsp;консультаций</p>
+
+    <div class="cs-insight p-reveal">
+      <div class="cs-insight__label">Инсайт</div>
+      <p class="cs-insight__text">Много времени уходило на&nbsp;поиск информации и&nbsp;переключение между источниками, а&nbsp;не&nbsp;на&nbsp;саму консультацию.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     04 · ОГРАНИЧЕНИЯ — dramatic «7 сек», compact
+     ═══════════════════════════════════════════ -->
+<section id="s-limits" class="cs cs--base cs--compact">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">04 · Ограничения</span>
+    <h2 class="ct-h2 p-reveal">Рамки и&nbsp;договорённости</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Параллельно с&nbsp;исследованием звонков я&nbsp;общался с&nbsp;командой канала виртуального ассистента, чтобы понять технические рамки интеграции.</p>
+      <p class="ct-p">Сроки поджимали&nbsp;&mdash; выделить отдельный интент не&nbsp;успевали. Агент встроен в&nbsp;существующий интент и&nbsp;вызывается по&nbsp;ключевому слову «налог». Платформа накладывает жёсткое ограничение&nbsp;&mdash; <strong>до&nbsp;7&nbsp;секунд на&nbsp;ответ</strong>, после чего контекст сбрасывается.</p>
+    </div>
+
+    <!-- Dramatic: ограничение как визуальный якорь -->
+    <div class="cs-dramatic p-reveal">
+      <span class="cs-dramatic__num">7 секунд</span>
+      <span class="cs-dramatic__text">Лимит на&nbsp;ответ. После&nbsp;&mdash; контекст сбрасывается. Ограничение превратили в&nbsp;UX&#8209;приём: фраза «Секундочку, уточню информацию» отправляется сразу. Клиент воспринимает паузу как&nbsp;естественную.</span>
+    </div>
+
+    <h3 class="ct-h3">Договорённости с&nbsp;бизнесом</h3>
+    <div class="ct-prose">
+      <p class="ct-p">До&nbsp;проектирования архитектуры договорились, как агент должен вести себя в&nbsp;сложных ситуациях: при несогласии клиента с&nbsp;суммами&nbsp;&mdash; эскалация на&nbsp;оператора, при ошибочной тематике&nbsp;&mdash; возврат в&nbsp;IVR для&nbsp;переклассификации, для&nbsp;фиксации данных&nbsp;&mdash; SMS со&nbsp;ссылкой на&nbsp;справку о&nbsp;доходах.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     05 · ПРОЕКТИРОВАНИЕ — spacious, statement-кульминация
+     ═══════════════════════════════════════════ -->
+<section id="s-design" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">05 · Проектирование</span>
+    <h2 class="ct-h2 p-reveal">Архитектура агента</h2>
+
+    <!-- Timeline -->
+    <div class="ct-timeline">
+      <div class="ct-timeline__line"></div>
+      <div class="ct-timeline__step p-reveal">
+        <div class="ct-timeline__dot ct-timeline__dot--fail">✕</div>
+        <div class="ct-timeline__card ct-timeline__card--fail">
+          <div class="ct-timeline__head">
+            <span class="ct-timeline__period ct-timeline__period--fail">Неделя 1–2</span>
+            <span class="ct-timeline__badge ct-timeline__badge--fail">Не&nbsp;сработало</span>
+          </div>
+          <p class="ct-timeline__card-title">Планировщик &rarr; Исполнитель &rarr; Критик</p>
+          <p class="ct-timeline__card-desc">Один агент последовательно выполнял три роли. Терял контекст, формировал длинные ответы, не&nbsp;укладывался в&nbsp;лимит 7&nbsp;секунд.</p>
+        </div>
+      </div>
+      <div class="ct-timeline__step p-reveal p-reveal--delay-2">
+        <div class="ct-timeline__dot ct-timeline__dot--ok">✓</div>
+        <div class="ct-timeline__card ct-timeline__card--ok">
+          <div class="ct-timeline__head">
+            <span class="ct-timeline__period ct-timeline__period--ok">Неделя 3+</span>
+            <span class="ct-timeline__badge ct-timeline__badge--ok">Финальное решение</span>
+          </div>
+          <p class="ct-timeline__card-title">Маршрутизатор + Критик + Определение периода</p>
+          <p class="ct-timeline__card-desc">Один шаг&nbsp;&mdash; один источник. Быстро, предсказуемо, укладывается в&nbsp;ограничения. Бизнес обновляет RAG-базу самостоятельно.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATEMENT — кульминация кейса -->
+    <div class="cs-statement-break p-reveal" style="margin-top: var(--space-8);">
+      <p class="cs-statement">Один шаг диалога&nbsp;&mdash; один источник данных</p>
+    </div>
+
+    <div class="cs-roles p-reveal">
+      <div class="cs-role">
+        <span class="cs-role__name">Маршрутизатор</span>
+        <span class="cs-role__desc">Определяет намерение &rarr; вызывает 1&nbsp;из&nbsp;6&nbsp;функций &rarr; формирует ответ</span>
+      </div>
+      <div class="cs-role">
+        <span class="cs-role__name">Критик</span>
+        <span class="cs-role__desc">Валидирует: правильно&nbsp;ли понят вопрос, закрыта&nbsp;ли потребность</span>
+      </div>
+      <div class="cs-role">
+        <span class="cs-role__name">Определение периода</span>
+        <span class="cs-role__desc">Извлекает год из&nbsp;вопроса. Если не&nbsp;указан&nbsp;&mdash; прошлый год</span>
+      </div>
+    </div>
+
+    <!-- Flow diagram -->
+    <div class="ct-flow p-reveal" style="margin-top: var(--space-12);">
+      <div class="ct-flow__center"><div class="ct-flow-node"><span class="ct-flow-node__icon">📞</span><div class="ct-flow-node__info"><span class="ct-flow-node__label">Клиент</span><span class="ct-flow-node__sub">Звонок на&nbsp;900</span></div></div></div>
+      <div class="ct-flow-connector"><div class="ct-flow-connector__line"></div><span class="ct-flow-connector__label">вопрос</span><div class="ct-flow-connector__line"></div><div class="ct-flow-connector__arrow"></div></div>
+      <div class="ct-flow__center"><div class="ct-flow-node ct-flow-node--accent ct-flow-node--wide"><span class="ct-flow-node__icon">🧠</span><div class="ct-flow-node__info"><span class="ct-flow-node__label">Маршрутизатор</span><span class="ct-flow-node__sub">Определяет намерение &rarr; вызывает 1&nbsp;из&nbsp;6&nbsp;функций</span></div></div></div>
+      <div class="ct-flow-connector"><div class="ct-flow-connector__line"></div><span class="ct-flow-connector__label">1 из 6</span><div class="ct-flow-connector__line"></div><div class="ct-flow-connector__arrow"></div></div>
+      <div class="ct-flow-grid">
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">📚</span><span class="ct-flow-func__label">RAG</span><span class="ct-flow-func__sub">Справочная информация</span></div>
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">🔊</span><span class="ct-flow-func__label">IVR-ролик</span><span class="ct-flow-func__sub">Голосовой ответ</span></div>
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">🏦</span><span class="ct-flow-func__label">API банка</span><span class="ct-flow-func__sub">Персональные данные</span></div>
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">📱</span><span class="ct-flow-func__label">SMS</span><span class="ct-flow-func__sub">Ссылка на&nbsp;справку</span></div>
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">👤</span><span class="ct-flow-func__label">Оператор</span><span class="ct-flow-func__sub">Эскалация (негатив)</span></div>
+        <div class="ct-flow-func"><span class="ct-flow-func__icon">🔄</span><span class="ct-flow-func__label">IVR возврат</span><span class="ct-flow-func__sub">Переклассификация</span></div>
+      </div>
+      <div class="ct-flow-connector"><div class="ct-flow-connector__line"></div><span class="ct-flow-connector__label">ответ</span><div class="ct-flow-connector__line"></div><div class="ct-flow-connector__arrow"></div></div>
+      <div class="ct-flow__center"><div class="ct-flow-node ct-flow-node--wide"><span class="ct-flow-node__icon">✅</span><div class="ct-flow-node__info"><span class="ct-flow-node__label">Критик</span><span class="ct-flow-node__sub">Проверяет: вопрос понят? потребность закрыта? год корректен?</span></div></div></div>
+      <div class="ct-flow-connector"><div class="ct-flow-connector__line"></div><div class="ct-flow-connector__line"></div><div class="ct-flow-connector__arrow"></div></div>
+      <div class="ct-flow__center"><div class="ct-flow-node"><span class="ct-flow-node__icon">💬</span><div class="ct-flow-node__info"><span class="ct-flow-node__label">Ответ клиенту</span><span class="ct-flow-node__sub">Естественная речь, до&nbsp;7&nbsp;секунд</span></div></div></div>
+    </div>
+
+    <h3 class="ct-h3">Почему RAG, а&nbsp;не&nbsp;промпт</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Изначально хотели хранить справочную информацию в&nbsp;промпте маршрутизатора. Но&nbsp;реальных вопросов оказалось слишком много&nbsp;&mdash; промпт раздувался и&nbsp;замедлял ответы.</p>
+      <p class="ct-p">Вынесли справочную базу в&nbsp;RAG: бизнес заполнял её&nbsp;в&nbsp;формате «вопрос&nbsp;&mdash; ответ». Стало быстрее и&nbsp;проще обновлять.</p>
+    </div>
+
+    <!-- Demo: вот как это работает вживую -->
+    <h3 class="ct-h3" style="margin-top: var(--space-16);">Как это звучит</h3>
+    <div class="ct-demo p-reveal" style="margin-top: var(--space-6);">
+      <div class="ct-demo__header">
+        <div class="ct-demo__agent">
+          <div class="ct-demo__avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
+          <div><div class="ct-demo__name">AI-агент · Налоги на&nbsp;вклады</div><div class="ct-demo__channel">Голосовой канал 900</div></div>
+        </div>
+        <button class="ct-demo__btn" id="ct-demo-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 1.5v11l9-5.5L3 1.5z" fill="currentColor"/></svg> Запустить демо</button>
+      </div>
+      <div class="ct-demo__chat" id="ct-demo-chat">
+        <div class="ct-demo__empty" id="ct-demo-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg>
+          <span class="ct-demo__empty-text">Нажмите «Запустить демо»</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Before / After -->
+    <div class="cs-compare p-reveal" style="margin-top: var(--space-16);">
+      <div class="cs-compare__card">
+        <span class="cs-compare__badge">Было</span>
+        <span class="cs-compare__metric">Оператор</span>
+        <span class="cs-compare__desc">2&nbsp;системы, переключение на&nbsp;каждый вопрос. Средний звонок&nbsp;&mdash; <strong>7&nbsp;минут</strong></span>
+      </div>
+      <div class="cs-compare__card cs-compare__card--after">
+        <span class="cs-compare__badge">Стало</span>
+        <span class="cs-compare__metric">AI&#8209;агент</span>
+        <span class="cs-compare__desc">Звонок за&nbsp;<strong>5&nbsp;минут</strong>, 70% без эскалации. Минус <strong>4&nbsp;FTE</strong></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 · РАЗРАБОТКА — compact, аккордеоны
+     ═══════════════════════════════════════════ -->
+<section id="s-dev" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">06 · Разработка</span>
+    <h2 class="ct-h2 p-reveal">Разработка и&nbsp;запуск</h2>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-6);">Работал через <strong>Гигапромпт</strong>&nbsp;&mdash; внутренний конструктор банка. Писал промпт, тестировал на&nbsp;типичных фразах клиентов, бэкендер интегрировал в&nbsp;код, вместе с&nbsp;аналитиком валидировали и&nbsp;итерировали до&nbsp;85%+ точности.</p>
+
+    <div class="ct-accordions p-reveal">
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Фрагмент промпта маршрутизатора</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p><strong>Роль:</strong> администратор на&nbsp;первой линии поддержки клиентов по&nbsp;вопросам налогов.</p>
+          <p><strong>Ключевые правила:</strong> начислением налогов занимается ФНС, банк называет только сумму процентного дохода. В&nbsp;текущем году платим за&nbsp;прошлый.</p>
+          <p><strong>Стиль:</strong> живая и&nbsp;естественная речь. Без «Сейчас подумаю»&nbsp;&mdash; клиенту важен ответ по&nbsp;сути.</p>
+          <p><strong>Завершение:</strong> убедиться, что вопрос решён. Если да&nbsp;&mdash; добавить слово «КОНЕЦ».</p>
+        </div>
+      </details>
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Промпт определения периода</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Определить год, о&nbsp;котором идёт речь в&nbsp;вопросе клиента. Ответ&nbsp;&mdash; только год из&nbsp;четырёх цифр. Если год не&nbsp;указан &rarr; прошлый год.</p>
+        </div>
+      </details>
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Промпт критика</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p><strong>Задача:</strong> проверить, что исполнитель правильно понял вопрос и&nbsp;полностью закрыл потребность.</p>
+          <p>Проверяется смысл ответа, а&nbsp;не&nbsp;точность формулировок.</p>
+          <p><strong>Результат:</strong> если ответ соответствует вопросу &rarr; «success». Если нет &rarr; аргументы, почему.</p>
+        </div>
+      </details>
+    </div>
+
+    <h3 class="ct-h3">Как добились 85%</h3>
+    <div class="ct-prose">
+      <p class="ct-p"><strong>Критерий запуска:</strong> не&nbsp;менее 85% успешных ответов. Успешный ответ&nbsp;&mdash; правильный выбор источника + корректный ответ по&nbsp;существу + правильное завершение диалога.</p>
+      <p class="ct-p">Оценивали вручную: прослушивал записи звонков с&nbsp;аналитиком, фиксировал ошибки, дорабатывал промпты.</p>
+    </div>
+
+    <div class="ct-accordions p-reveal" style="margin-top: var(--space-6);">
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Этапы тестирования и&nbsp;раскатки</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p><strong>1.</strong> Внутреннее тестирование на&nbsp;типичных фразах клиентов</p>
+          <p><strong>2.</strong> Пилот с&nbsp;командой и&nbsp;бизнесом &rarr; ~300&nbsp;реальных звонков &rarr; 85%+</p>
+          <p><strong>3.</strong> Постепенная раскатка: 10% &rarr; 20% &rarr; 30% &rarr; 100%</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     07 · ВКЛАД — spacious, decisions, demo, CTA
+     ═══════════════════════════════════════════ -->
+<section id="s-contribution" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">07 · Вклад</span>
+    <h2 class="ct-h2 p-reveal">Мой вклад</h2>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-6);">Провёл исследование&nbsp;&mdash; прослушал ~120&nbsp;звонков, работал с&nbsp;бизнесом и&nbsp;командой виртуального ассистента. Спроектировал архитектуру агента-маршрутизатора с&nbsp;валидацией через критика. Написал 3&nbsp;промпта с&nbsp;ограничениями, правилами общения и&nbsp;стилем ответов. Провалидировал ~300&nbsp;диалогов вручную, итерируя до&nbsp;85%+ точности.</p>
+
+    <h3 class="ct-h3">Ключевые решения</h3>
+    <div class="ct-decisions p-reveal">
+      <div class="ct-decision"><span class="ct-decision__icon">🧩</span><span class="ct-decision__title">Один шаг&nbsp;&mdash; один источник</span><span class="ct-decision__desc">Вместо избыточной трёхролевой логики&nbsp;&mdash; простой маршрутизатор</span></div>
+      <div class="ct-decision"><span class="ct-decision__icon">⏱️</span><span class="ct-decision__title">7&nbsp;сек &rarr; UX-приём</span><span class="ct-decision__desc">«Секундочку» превращает ограничение платформы в&nbsp;естественную паузу</span></div>
+      <div class="ct-decision"><span class="ct-decision__icon">🛡️</span><span class="ct-decision__title">Ограничения в&nbsp;промпте</span><span class="ct-decision__desc">Чёткие правила и&nbsp;границы позволили избежать большинства ошибок</span></div>
+    </div>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-16);">Тематика полностью закрыта агентом. За&nbsp;время запуска негативных реакций не&nbsp;зафиксировали&nbsp;&mdash; большинство клиентов не&nbsp;догадывалось, что разговаривает с&nbsp;AI.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CTA PROOF — отдельная секция, визуальная пауза
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <div class="ct-cta-proof p-reveal">
+      <div class="ct-cta-proof__icon">📞</div>
+      <p class="ct-cta-proof__text">Позвоните на&nbsp;<strong>900</strong> и&nbsp;скажите «налог на&nbsp;вклады»</p>
+      <p class="ct-cta-proof__sub">Вам ответит AI&#8209;агент, которого я&nbsp;спроектировал</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CASE NAV -->
+<section class="cs cs--base" style="padding: var(--space-20) var(--page-pad);">
+  <div class="ct-container" style="padding: 0;">
+    <div class="ct-nav">
+      <a href="/case/deposit-calculator" class="ct-nav__link"><span class="ct-nav__dir">&larr; Предыдущий</span><p class="ct-nav__title">Подбор вклада и&nbsp;калькулятор</p></a>
+      <a href="/case/arrests" class="ct-nav__link ct-nav__link--next"><span class="ct-nav__dir">Следующий &rarr;</span><p class="ct-nav__title">Аресты и&nbsp;взыскания</p></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<div class="p-contain"><hr style="border:none;border-top:1px solid var(--border-dark);margin:0;"></div>
+<footer class="p-footer" style="min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+  <div class="p-contain">
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;— пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener"><img src="../../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">Написать</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow><svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Скачать резюме</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;— я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">&copy; 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+        <a href="/cdn-cgi/l/email-protection#dda7f0bcafb69da4bcb3b9b8a5f3afa8" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="../../interactions.js" defer></script>
+<script src="../../sound.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* DIALOG DEMO */
+  var dialog = [
+    { role:'system', text:'Здравствуйте! Чем могу помочь?' },
+    { role:'user', text:'Хотел узнать, нужно ли мне платить налог по вкладу?' },
+    { role:'system', text:'Секундочку, уточню информацию…', pause:true },
+    { role:'system', text:'Да, с\u00a02024\u00a0года доходы по вкладам облагаются налогом. Налог рассчитывается ФНС на\u00a0основе данных, которые банк передаёт в\u00a0конце года. Необлагаемый порог\u00a0— 210\u00a0000\u00a0₽ за\u00a02024\u00a0год.' },
+    { role:'user', text:'А какой доход Сбер передал по моим вкладам?' },
+    { role:'system', text:'Секундочку, уточню информацию…', pause:true },
+    { role:'system', text:'За\u00a02024\u00a0год по\u00a0вашим вкладам в\u00a0Сбере сумма процентного дохода составила 187\u00a0430\u00a0₽. Это ниже необлагаемого порога, налог платить не\u00a0нужно. Отправить справку по\u00a0SMS?' },
+    { role:'user', text:'Да, отправьте' },
+    { role:'system', text:'Готово, SMS со\u00a0ссылкой на\u00a0справку отправлена. Могу ещё чем-то помочь?' }
+  ];
+  var chatEl=document.getElementById('ct-demo-chat'),btnEl=document.getElementById('ct-demo-btn'),emptyEl=document.getElementById('ct-demo-empty'),step=-1,running=false;
+  function createBubble(m){var w=document.createElement('div');w.className='ct-demo__msg ct-demo__msg--'+m.role;var b=document.createElement('div');b.className='ct-demo__bubble ct-demo__bubble--'+m.role;if(m.pause){b.classList.add('ct-demo__bubble--pause');b.innerHTML=m.text+'<span class="ct-demo__wave"><span></span><span></span><span></span><span></span><span></span></span>';}else{b.textContent=m.text;}w.appendChild(b);return w;}
+  function showTyping(){var e=document.createElement('div');e.className='ct-demo__typing';e.id='ct-typing';e.innerHTML='<span></span><span></span><span></span>';chatEl.appendChild(e);chatEl.scrollTop=chatEl.scrollHeight;}
+  function removeTyping(){var e=document.getElementById('ct-typing');if(e)e.remove();}
+  function updateBtn(){if(running){btnEl.disabled=true;btnEl.style.opacity='.7';}else{btnEl.disabled=false;btnEl.style.opacity='1';if(step>=0)btnEl.innerHTML='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7a4.5 4.5 0 0 1 7.7-3.2L9 5h3.5V1.5L11.2 2.8A6 6 0 0 0 1 7h1.5z" fill="currentColor"/><path d="M11.5 7a4.5 4.5 0 0 1-7.7 3.2L5 9H1.5v3.5l1.3-1.3A6 6 0 0 0 13 7h-1.5z" fill="currentColor"/></svg> Заново';}}
+  function runDemo(){chatEl.innerHTML='';if(emptyEl)emptyEl.style.display='none';step=-1;running=true;updateBtn();var c=0;function next(){if(c>=dialog.length){running=false;updateBtn();return;}var m=dialog[c];if(m.role==='system'){showTyping();var d=m.pause?800:600+m.text.length*8;setTimeout(function(){removeTyping();step=c;chatEl.appendChild(createBubble(m));chatEl.scrollTop=chatEl.scrollHeight;c++;setTimeout(next,m.pause?300:1200);},m.pause?1500:d);}else{step=c;chatEl.appendChild(createBubble(m));chatEl.scrollTop=chatEl.scrollHeight;c++;setTimeout(next,1000);}}setTimeout(next,500);}
+  if(btnEl)btnEl.addEventListener('click',runDemo);
+
+  /* TOC SCROLLSPY */
+  var tocIds=['s-result','s-context','s-research','s-limits','s-design','s-dev','s-contribution'];
+  var tocLinks=document.querySelectorAll('.ct-toc a');
+  var tocWrap=document.getElementById('case-toc');
+  var progressBar=document.getElementById('ct-progress');
+  var scrollTopBtn=document.getElementById('scroll-top');
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(l){l.classList.remove('ct-toc--active');});var a=document.querySelector('.ct-toc a[href="#'+entry.target.id+'"]');if(a){a.classList.add('ct-toc--active');a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}}});},{rootMargin:'-120px 0px -60% 0px',threshold:0});
+  tocIds.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+
+  /* SCROLL */
+  window.addEventListener('scroll',function(){var y=window.scrollY||0;var h=document.documentElement.scrollHeight-window.innerHeight;var p=h>0?(y/h)*100:0;if(progressBar)progressBar.style.width=p+'%';if(tocWrap){tocWrap.style.maxHeight=y>400?'64px':'0';tocWrap.style.opacity=y>400?'1':'0';}if(scrollTopBtn){scrollTopBtn.style.opacity=y>600?'0.9':'0';scrollTopBtn.style.transform=y>600?'scale(1)':'scale(0.8)';scrollTopBtn.style.pointerEvents=y>600?'auto':'none';}},{passive:true});
+  if(scrollTopBtn)scrollTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  /* TOC SMOOTH SCROLL */
+  tocLinks.forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();var id=l.getAttribute('href').substring(1);var t=document.getElementById(id);if(t){t.scrollIntoView({behavior:'smooth',block:'start'});history.pushState(null,null,'#'+id);}});});
+
+  /* CTA pulse: play only when visible */
+  var ctaProof=document.querySelector('.ct-cta-proof');
+  if(ctaProof){new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('p-reveal--visible',e.isIntersecting);});},{threshold:0.2}).observe(ctaProof);}
+});
+</script>
+<script src="../../protect.js" defer></script>
+</body>
+</html>

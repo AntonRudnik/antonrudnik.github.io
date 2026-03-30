@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Подбор вклада и калькулятор — Антон Рудник</title>
+  <meta name="description" content="Как сценарий на движке телемаркетинга и MVP-калькулятор дали конверсию 24,6% в открытие вклада — без единого релиза продукта.">
+  <!-- Favicon -->
+  <link rel="icon" href="../../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../favlog/favicon-180.png">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/tokens.css">
+  <link rel="stylesheet" href="../../styles/reset.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/typography.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/animations.css">
+  <link rel="stylesheet" href="../../styles/case.css">
+  <link rel="stylesheet" href="../../styles/protect.css">
+
+  <style>
+    /* Page-specific: body background */
+    body { background: var(--bg-dark); color: var(--text-on-dark); }
+
+    /* Decision cards — horizontal layout */
+    .ct-decisions { grid-template-columns: 1fr; }
+    .ct-decision { flex-direction: row; align-items: flex-start; padding: var(--space-6) var(--space-8); gap: var(--space-5); }
+    .ct-decision__icon { font-size: var(--text-2xl); }
+    .ct-decision__body { display: flex; flex-direction: column; gap: var(--space-2); }
+    @media (max-width: 640px) {
+      .ct-decision { padding: var(--space-5) var(--space-6); }
+    }
+
+    /* ── Userflow: pill chains ── */
+    .cs-uf {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-top: var(--space-10);
+    }
+
+    /* Single path — horizontal chain */
+    .cs-uf__path {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    /* Step pill */
+    .cs-uf__step {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--text-on-dark-60);
+      background: var(--bg-dark-raised);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+    /* First pill in chain = sum, slightly brighter */
+    .cs-uf__step:first-child {
+      color: var(--text-warm);
+      background: var(--bg-dark-surface);
+    }
+
+    /* Arrow between pills */
+    .cs-uf__sep {
+      color: var(--text-on-dark-40);
+      font-size: var(--text-sm);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    /* Product badge — terminal pill */
+    .cs-uf__end {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+    .cs-uf__end::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .cs-uf__end--ns { color: #E2B866; background: rgba(226,184,102,0.1); }
+    .cs-uf__end--ns::before { background: #E2B866; }
+    .cs-uf__end--best { color: var(--ct-green); background: rgba(91,168,103,0.1); }
+    .cs-uf__end--best::before { background: var(--ct-green); }
+    .cs-uf__end--sv { color: var(--accent); background: var(--accent-subtle); }
+    .cs-uf__end--sv::before { background: var(--accent); }
+    .cs-uf__end--av { color: #B48EAD; background: rgba(180,142,173,0.1); }
+    .cs-uf__end--av::before { background: #B48EAD; }
+
+    /* Note above flow */
+    .cs-uf__note {
+      font-size: var(--text-sm);
+      color: var(--text-on-dark-40);
+      line-height: var(--leading-relaxed);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-dark-raised);
+      border-radius: var(--radius-md);
+      border-left: 2px solid var(--text-on-dark-20);
+    }
+
+    /* Section divider inside flow */
+    .cs-uf__divider {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      color: var(--text-on-dark-40);
+      padding-top: var(--space-6);
+      margin-top: var(--space-4);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 640px) {
+      .cs-uf { gap: var(--space-2); }
+      .cs-uf__step, .cs-uf__end { font-size: var(--text-xs); padding: var(--space-1) var(--space-3); }
+      .cs-uf__note { font-size: var(--text-xs); }
+    }
+
+    /* Lightbox */
+    .cs-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; padding: var(--space-6); cursor: zoom-in; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; overflow: hidden; }
+    .cs-lightbox--open { opacity: 1; pointer-events: auto; }
+    .cs-lightbox--zoomed { cursor: zoom-out; overflow: auto; align-items: flex-start; justify-content: flex-start; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging { cursor: grabbing; }
+    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.3s ease, max-height 0.3s ease; }
+    .cs-lightbox--zoomed img { max-width: none; max-height: none; cursor: zoom-out; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging img { cursor: grabbing; }
+    .cs-lightbox__close { position: fixed; top: var(--space-5); right: var(--space-5); z-index: 10000; width: 44px; height: 44px; border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
+    .cs-lightbox__close:hover { opacity: 1; }
+    .cs-browser--zoomable { cursor: zoom-in; }
+
+    /* Spacing helpers */
+    .cs--gap-6 { margin-top: var(--space-6); }
+    .cs--gap-8 { margin-top: var(--space-8); }
+    .cs--gap-10 { margin-top: var(--space-10); }
+    .cs--gap-16 { margin-top: var(--space-16); }
+
+    /* Mobile: reduce browser mockup border-radius */
+    @media (max-width: 640px) {
+      .cs-browser { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<!-- TOC -->
+<div class="ct-toc" id="case-toc">
+  <div class="ct-toc__inner">
+    <a href="#s-result"><span class="ct-toc__num">01</span><span class="ct-toc__label">Результат</span></a>
+    <a href="#s-context"><span class="ct-toc__num">02</span><span class="ct-toc__label">Контекст</span></a>
+    <a href="#s-solution"><span class="ct-toc__num">03</span><span class="ct-toc__label">Решение</span></a>
+    <a href="#s-design"><span class="ct-toc__num">04</span><span class="ct-toc__label">Проектирование</span></a>
+    <a href="#s-results-m1"><span class="ct-toc__num">05</span><span class="ct-toc__label">Результаты</span></a>
+    <a href="#s-research"><span class="ct-toc__num">06</span><span class="ct-toc__label">Исследование</span></a>
+    <a href="#s-calculator"><span class="ct-toc__num">07</span><span class="ct-toc__label">Калькулятор</span></a>
+    <a href="#s-handoff"><span class="ct-toc__num">08</span><span class="ct-toc__label">Передача</span></a>
+    <a href="#s-contribution"><span class="ct-toc__num">09</span><span class="ct-toc__label">Вклад</span></a>
+  </div>
+  <div class="ct-toc__progress"><div class="ct-toc__bar" id="ct-progress"></div></div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="ct-scroll-wrap">
+  <button class="ct-scroll-top" id="scroll-top" aria-label="Наверх">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious" style="padding-top: calc(var(--header-h) + var(--space-16));">
+  <div class="ct-wide" style="max-width: 900px;">
+    <h1 class="ct-h1 p-reveal">Подбор вклада и&nbsp;калькулятор</h1>
+    <p class="ct-lead p-reveal p-reveal--delay-1" style="margin-top: var(--space-5); max-width: 640px;">У&nbsp;операторов контакт-центра не&nbsp;было инструмента для&nbsp;подбора вклада. Я&nbsp;спроектировал сценарий на&nbsp;движке телемаркетинга&nbsp;&mdash; конверсия 24,6%, без&nbsp;единого релиза продукта</p>
+
+    <div class="cs-hero-meta p-reveal p-reveal--delay-2">
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Период</span><span class="cs-hero-meta__dd">2023</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Канал</span><span class="cs-hero-meta__dd">Голос · Интерфейс оператора</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Роль</span><span class="cs-hero-meta__dd">Product Designer (end&#8209;to&#8209;end)</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Команда</span><span class="cs-hero-meta__dd">Аналитик · фронтендер · продакт</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     01 · РЕЗУЛЬТАТ
+     ═══════════════════════════════════════════ -->
+<section id="s-result" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">01 · Результат</span>
+    <h2 class="ct-h2 p-reveal">Коротко о&nbsp;результате</h2>
+
+    <div class="cs-results">
+      <div class="cs-result p-reveal">
+        <span class="cs-result__num">24,6%</span>
+        <span class="cs-result__label">Конверсия в&nbsp;открытие вклада</span>
+        <span class="cs-result__sub">8&nbsp;657&nbsp;сценариев &rarr; 2&nbsp;129&nbsp;открытий</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-1">
+        <span class="cs-result__num">8&nbsp;657</span>
+        <span class="cs-result__label">Клиентов прошли подбор за&nbsp;первый месяц</span>
+        <span class="cs-result__sub">100% дошли до&nbsp;результата</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-2">
+        <span class="cs-result__num">17</span>
+        <span class="cs-result__label">Веток в&nbsp;дереве решений</span>
+        <span class="cs-result__sub">57&nbsp;экранов, 4&nbsp;продукта</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-3">
+        <span class="cs-result__num">0</span>
+        <span class="cs-result__label">Релизов продукта</span>
+        <span class="cs-result__sub">Деплой через редакторов, сразу на&nbsp;всех операторов</span>
+      </div>
+    </div>
+
+    <div class="cs-callout p-reveal cs--gap-10">
+      <span class="cs-callout__icon">💡</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Подбора вкладов до&nbsp;этого не&nbsp;существовало&nbsp;&mdash; мы&nbsp;создали канал продаж с&nbsp;нуля. Сценарий подтвердил спрос и&nbsp;стал фундаментом для&nbsp;целевого калькулятора.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 · КОНТЕКСТ
+     ═══════════════════════════════════════════ -->
+<section id="s-context" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">02 · Контекст</span>
+    <h2 class="ct-h2 p-reveal">Откуда появилась задача</h2>
+
+    <h3 class="ct-h3 p-reveal cs--gap-6">Три стороны одной задачи</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Продажа вкладов&nbsp;&mdash; одна из&nbsp;ключевых метрик контакт-центра. Но&nbsp;инструмента для&nbsp;подбора у&nbsp;операторов не&nbsp;было, и&nbsp;канал фактически не&nbsp;работал.</p>
+    </div>
+
+    <div class="ct-feature-grid p-reveal cs--gap-8">
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Клиент</span>
+        <span class="ct-feature-card__desc">Хочет выбрать самый выгодный вклад под&nbsp;свои потребности</span>
+      </div>
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Оператор</span>
+        <span class="ct-feature-card__desc">Должен быстро выявить потребности, презентовать подходящий вклад и&nbsp;довести до&nbsp;продажи</span>
+      </div>
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Бизнес</span>
+        <span class="ct-feature-card__desc">Хочет увеличить привлечённый капитал через контакт-центр</span>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Контекст клиента</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Из&nbsp;записей звонков и&nbsp;обратной связи мы&nbsp;выделили три типичных ситуации обращения:</p>
+    </div>
+
+    <div class="cs-voices p-reveal cs--gap-6">
+      <div class="cs-voice">«Вклад подходит к&nbsp;концу, нужно пристроить деньги»</div>
+      <div class="cs-voice">«Увидел в&nbsp;рекламе хорошую ставку, хочу узнать подробнее»</div>
+      <div class="cs-voice">«Ищу по&nbsp;банкам самую выгодную ставку»</div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Почему это сложнее, чем кажется</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">На&nbsp;итоговую ставку влияло множество факторов: пенсионер&nbsp;ли клиент, зарплатный&nbsp;ли он, хранил&nbsp;ли деньги на&nbsp;вкладах в&nbsp;последний год («старые/новые деньги»), сумма, срок, пополнение, снятие, тип капитализации.</p>
+      <p class="ct-p">Каждый из&nbsp;этих параметров менял доступные вклады и&nbsp;их&nbsp;условия. Подобрать лучший вариант «в&nbsp;уме» оператор не&nbsp;мог.</p>
+    </div>
+
+    <div class="cs-callout cs-callout--accent p-reveal cs--gap-8">
+      <span class="cs-callout__icon">⚠️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text"><strong>Ограничение:</strong> маркер зарплатного клиента получали из&nbsp;интеграции ядра, пенсионера определяли по&nbsp;дате рождения&nbsp;&mdash; но&nbsp;это не&nbsp;покрывало военных пенсионеров. Справочники НСИ с&nbsp;актуальными ставками и&nbsp;продуктами не&nbsp;давали&nbsp;&mdash; обновляли вручную.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     03 · РЕШЕНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-solution" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">03 · Решение</span>
+    <h2 class="ct-h2 p-reveal">Почему сценарий, а&nbsp;не&nbsp;калькулятор</h2>
+
+    <h3 class="ct-h3 p-reveal cs--gap-6">Первоначальный план</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Мы&nbsp;с&nbsp;продактом изначально видели целевое решение как калькулятор: выставляешь нужные условия&nbsp;&mdash; получаешь подходящий вклад. Но&nbsp;количество параметров и&nbsp;отсутствие данных из&nbsp;сервисов делали калькулятор слишком дорогим для&nbsp;первой итерации.</p>
+      <p class="ct-p">Решили сначала проверить спрос дешёвым MVP, а&nbsp;калькулятор строить на&nbsp;основе данных.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Движок телемаркетинга как платформа</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">В&nbsp;качестве MVP мы&nbsp;решили использовать движок телемаркетинга (ТМ). У&nbsp;него было ключевое преимущество&nbsp;&mdash; гибкая настройка сценариев на&nbsp;стандартных компонентах. По&nbsp;кнопке в&nbsp;SmartCare открывался микрофронт ТМ с&nbsp;нашим сценарием.</p>
+      <p class="ct-p">Деплой не&nbsp;требовал релиза продукта: достаточно было отправить файл сценария редакторам, и&nbsp;они загружали его на&nbsp;прод. Изменения попадали в&nbsp;бой в&nbsp;тот&nbsp;же день.</p>
+      <p class="ct-p">Это было критично: ключевая ставка ЦБ&nbsp;в&nbsp;тот период менялась часто, а&nbsp;вместе с&nbsp;ней&nbsp;&mdash; ставки по&nbsp;вкладам. Без возможности обновлять сценарий день в&nbsp;день мы&nbsp;бы&nbsp;просто не&nbsp;успевали за&nbsp;рынком.</p>
+    </div>
+
+    <div class="cs-insight p-reveal cs--gap-10">
+      <div class="cs-insight__label">Осознанный компромисс</div>
+      <p class="cs-insight__text">Ручное обновление ставок&nbsp;&mdash; это стоимость, которую мы&nbsp;приняли. Хотели автоматизировать через справочники НСИ, но&nbsp;доступ не&nbsp;дали. Зато запустились быстро, проверили спрос и&nbsp;получили работающий канал продаж без единого релиза.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     04 · ПРОЕКТИРОВАНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-design" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">04 · Проектирование</span>
+    <h2 class="ct-h2 p-reveal">За&nbsp;2–5&nbsp;шагов до&nbsp;лучшего вклада</h2>
+
+    <h3 class="ct-h3 p-reveal cs--gap-6">Сбор и&nbsp;ранжирование условий</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Я&nbsp;собрал все условия, которые влияют на&nbsp;подбор вклада, ранжировал их&nbsp;по&nbsp;степени влияния на&nbsp;итоговую ставку и&nbsp;выстроил оптимальную последовательность вопросов.</p>
+      <p class="ct-p">Логика строилась от&nbsp;потребности клиента: сначала ключевые параметры&nbsp;&mdash; сумма и&nbsp;срок размещения. Затем дополнительные признаки, влияющие на&nbsp;ставку: зарплатный клиент, пенсионер, «новые деньги». И&nbsp;наконец&nbsp;&mdash; условия по&nbsp;продукту: пополнение, снятие, тип капитализации.</p>
+    </div>
+
+    <div class="cs-statement-break p-reveal cs--gap-16" style="padding-block: var(--space-16);">
+      <p class="cs-statement">57&nbsp;экранов, но&nbsp;оператор проходит 2–5</p>
+    </div>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Итоговый сценарий&nbsp;&mdash; 57&nbsp;экранов, организованных в&nbsp;17&nbsp;веток. Каждая ветка&nbsp;&mdash; отдельный путь через дерево решений в&nbsp;зависимости от&nbsp;комбинации условий клиента. При этом оператор в&nbsp;типичном пути проходил всего 2–5&nbsp;шагов: ранжирование вопросов позволило быстро отсекать неподходящие варианты.</p>
+      <p class="ct-p">По&nbsp;итогам прохождения оператор получал лучший вклад с&nbsp;наивысшей ставкой для&nbsp;конкретного клиента и&nbsp;одну альтернативу.</p>
+    </div>
+
+  </div><!-- /ct-container -->
+
+    <!-- Userflow: pill chains — full width -->
+    <div class="ct-wide">
+    <div class="cs-uf p-reveal cs--gap-10">
+      <p class="cs-uf__note">Перед стартом система проверяет флаги: зарплатный (маркер из&nbsp;ядра, влияет на&nbsp;ставку) и&nbsp;пенсионер (по&nbsp;дате рождения, меняет продукт)</p>
+
+      <!-- === ОСНОВНАЯ ВЕТКА === -->
+
+      <!-- Малая сумма -->
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">3K – 100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+
+      <!-- Средняя сумма -->
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Снимать и&nbsp;пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Только снимать</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Только пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">До&nbsp;1&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Только пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">1–3&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--sv">СберВклад</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Ничего</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">До&nbsp;3&nbsp;мес</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Ничего</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">3&nbsp;мес – 1&nbsp;год</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Способ пополнения</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">100K – 1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Ничего</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">1–3&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--best">Лучший&nbsp;%</span>
+      </div>
+
+      <!-- Большая сумма -->
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">&gt;&nbsp;1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">До&nbsp;6&nbsp;мес</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--ns">Накопительный счёт</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">&gt;&nbsp;1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">От&nbsp;6&nbsp;мес</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Переоформить в&nbsp;Сбере</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--sv">СберВклад</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">&gt;&nbsp;1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">От&nbsp;6&nbsp;мес</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Из&nbsp;другого банка</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--best">Лучший&nbsp;%</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">&gt;&nbsp;1,1M&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">От&nbsp;6&nbsp;мес</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Иной способ</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--sv">СберВклад</span>
+      </div>
+
+      <!-- === ПЕНСИОНЕРЫ (флаг по дате рождения) === -->
+      <div class="cs-uf__divider">Пенсионер (флаг по&nbsp;дате рождения)</div>
+
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">До&nbsp;100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--av">Активный возраст</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">От&nbsp;100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Снимать и&nbsp;пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--av">Активный возраст</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">От&nbsp;100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Только пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">До&nbsp;1&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--av">Активный возраст</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">От&nbsp;100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Только пополнять</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">1–3&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--sv">СберВклад</span>
+      </div>
+      <div class="cs-uf__path">
+        <span class="cs-uf__step">От&nbsp;100K&nbsp;₽</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">Ничего</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__step">3&nbsp;года</span>
+        <span class="cs-uf__sep">&rarr;</span>
+        <span class="cs-uf__end cs-uf__end--best">Лучший&nbsp;%</span>
+      </div>
+    </div>
+    <p class="ct-figcaption">Каждая строка&nbsp;&mdash; путь оператора через сценарий. Длина = количество шагов. Остальные пути пенсионеров зеркалят основную ветку</p>
+    </div><!-- /ct-wide -->
+
+  <div class="ct-container">
+    <h3 class="ct-h3 p-reveal cs--gap-16">Живой сценарий</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Сценарий не&nbsp;был статичным. Когда менялись условия вкладов&nbsp;&mdash; а&nbsp;это происходило регулярно&nbsp;&mdash; менялось и&nbsp;дерево: один вклад становился выгоднее при определённых обстоятельствах, где-то сдвигались вилки сумм. Каждое такое изменение требовало пересборки веток и&nbsp;отправки обновлённого файла редакторам.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     05 · РЕЗУЛЬТАТЫ ПЕРВОГО МЕСЯЦА
+     ═══════════════════════════════════════════ -->
+<section id="s-results-m1" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">05 · Результаты первого месяца</span>
+    <h2 class="ct-h2 p-reveal">Воронка первого месяца</h2>
+
+    <div class="cs-results cs-results--3col">
+      <div class="cs-result p-reveal">
+        <span class="cs-result__num">8&nbsp;657</span>
+        <span class="cs-result__label">Зашли в&nbsp;сценарий</span>
+        <span class="cs-result__sub">100% проходимость&nbsp;&mdash; все дошли до&nbsp;результата</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-1">
+        <span class="cs-result__num">5&nbsp;485</span>
+        <span class="cs-result__label">Получили SMS</span>
+        <span class="cs-result__sub">63,4% согласились на&nbsp;ссылку для&nbsp;открытия</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-2">
+        <span class="cs-result__num">2&nbsp;129</span>
+        <span class="cs-result__label">Открыли вклад</span>
+        <span class="cs-result__sub">24,6% от&nbsp;входа. 50,7% выбрали «Лучший%»</span>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Что показали данные</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Самые популярные суммы&nbsp;&mdash; от&nbsp;100&nbsp;000 до&nbsp;500&nbsp;000&nbsp;рублей. Самые популярные сроки&nbsp;&mdash; 2–4&nbsp;месяца и&nbsp;6&nbsp;месяцев–1&nbsp;год. Клиенты не&nbsp;готовы увеличивать сумму ради более высокой ставки, а&nbsp;длинные сроки (2–3&nbsp;года) выбирают крайне редко.</p>
+      <p class="ct-p">Половина открытых вкладов приходилась на&nbsp;«Лучший%» (50,7%), что подтвердило правильность ранжирования&nbsp;&mdash; сценарий действительно выводил клиентов на&nbsp;самый выгодный продукт.</p>
+    </div>
+
+    <div class="cs-dramatic p-reveal cs--gap-16">
+      <span class="cs-dramatic__num">24,6%</span>
+      <span class="cs-dramatic__text">конверсия от&nbsp;сценария до&nbsp;открытия вклада. Из&nbsp;них 63,4% получили SMS, 38,8% из&nbsp;получивших&nbsp;&mdash; открыли вклад</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     STATEMENT BREAK
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--tight">
+  <div class="ct-container">
+    <div class="cs-statement-break p-reveal" style="padding-block: var(--space-16);">
+      <p class="cs-statement">Данные есть&nbsp;&mdash; пора строить калькулятор</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 · ИССЛЕДОВАНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-research" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">06 · Исследование</span>
+    <h2 class="ct-h2 p-reveal">21&nbsp;интервью и&nbsp;гемба</h2>
+
+    <div class="ct-prose p-reveal cs--gap-6">
+      <p class="ct-p">После запуска я&nbsp;провёл <strong>21&nbsp;глубинное интервью</strong> с&nbsp;операторами и&nbsp;побывал на&nbsp;<strong>гембе</strong>&nbsp;&mdash; наблюдал за&nbsp;работой операторов в&nbsp;контакт-центре. Задача&nbsp;&mdash; найти барьеры, которые мешают конверсии, и&nbsp;собрать требования для&nbsp;калькулятора.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Барьеры клиентов</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Главная боль&nbsp;&mdash; разрыв ожиданий из&nbsp;рекламы. Клиенты приходили за&nbsp;ставкой 12%, но&nbsp;когда узнавали, что для&nbsp;этого нужен вклад на&nbsp;3&nbsp;года&nbsp;&mdash; расстраивались.</p>
+    </div>
+
+    <div class="cs-voices p-reveal cs--gap-6">
+      <div class="cs-voice">«У&nbsp;Сбера вклад 12%, как получить его. Когда узнают про&nbsp;3&nbsp;года, расстраиваются из-за дезинформации и&nbsp;потом просят ставки на&nbsp;3–6&nbsp;месяцев»</div>
+      <div class="cs-voice">«2–3&nbsp;года почти никогда, т.&nbsp;к. ситуация меняется часто в&nbsp;стране. А&nbsp;на&nbsp;два месяца тоже редко, вдруг ЦБ&nbsp;изменит ставку»</div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Барьеры операторов</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Операторам не&nbsp;хватало двух вещей. Первое&nbsp;&mdash; <strong>сравнение с&nbsp;конкурентами</strong> для&nbsp;отработки возражений: клиент говорит «у&nbsp;Альфы лучше», а&nbsp;оператор не&nbsp;может ответить.</p>
+    </div>
+
+    <figure class="cs-quote p-reveal cs--gap-16">
+      <blockquote class="cs-quote__text">«Возможность сравнить с&nbsp;продуктами других банков, чтобы отработать возражения лучше. Например, если клиент говорит, что у&nbsp;Альфы беспроцентный период есть, а&nbsp;я&nbsp;не&nbsp;знаю даже»</blockquote>
+      <figcaption class="cs-quote__cite">Оператор контакт-центра</figcaption>
+    </figure>
+
+    <div class="ct-prose p-reveal cs--gap-16">
+      <p class="ct-p">Второе&nbsp;&mdash; <strong>неаутентифицированные клиенты</strong>. Часть звонящих не&nbsp;проходила аутентификацию, и&nbsp;подобрать вклад с&nbsp;учётом персональных условий было невозможно. Также операторам было сложно объяснять клиентам механику «старых/новых денег».</p>
+    </div>
+
+    <div class="cs-insight p-reveal cs--gap-10">
+      <div class="cs-insight__label">Инсайт</div>
+      <p class="cs-insight__text">Барьеры из&nbsp;интервью напрямую определили, что добавлять в&nbsp;калькулятор&nbsp;&mdash; сравнение с&nbsp;конкурентами и&nbsp;отработку возражений.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     07 · КАЛЬКУЛЯТОР
+     ═══════════════════════════════════════════ -->
+<section id="s-calculator" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">07 · Калькулятор</span>
+    <h2 class="ct-h2 p-reveal">MVP&#8209;калькулятор</h2>
+
+    <div class="ct-prose p-reveal cs--gap-6">
+      <p class="ct-p">Калькулятор был запланирован с&nbsp;самого начала как целевое решение. Сценарий дал нам данные и&nbsp;инсайты, на&nbsp;основе которых мы&nbsp;его спроектировали.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-10">Устройство калькулятора</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p"><strong>Левая панель</strong>&nbsp;&mdash; список всех доступных вкладов с&nbsp;ключевыми опциями: снятие, пополнение, доходность, процентная ставка. Оператор сразу видел полную картину.</p>
+      <p class="ct-p"><strong>Правая панель</strong>&nbsp;&mdash; параметры подбора: сумма, срок, доступные условия клиента, тип капитализации.</p>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-10">Что появилось благодаря исследованию</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Внутри подобранного вклада оператор мог: посмотреть подробные условия продукта, отработать возражения с&nbsp;помощью готовых аргументов, сравнить условия с&nbsp;другими банками и&nbsp;отправить клиенту SMS со&nbsp;ссылкой на&nbsp;открытие вклада.</p>
+    </div>
+
+    <!-- Скриншот: калькулятор -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-10">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / калькулятор вкладов</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/deposit-calculator/Прототип калькулятора.png" alt="MVP-калькулятор вкладов — список вкладов слева, параметры подбора справа, сравнение с конкурентами" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">MVP&#8209;калькулятор&nbsp;&mdash; список вкладов и&nbsp;параметры подбора</p>
+
+    <!-- Скриншот: презентация подобранного вклада -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-10">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / подобранный вклад</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/deposit-calculator/Кальк протик.png" alt="Презентация подобранного вклада — условия продукта, отработка возражений, сравнение с конкурентами" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Внутри подобранного вклада&nbsp;&mdash; условия, отработка возражений, сравнение с&nbsp;конкурентами</p>
+
+    <div class="cs-results p-reveal cs--gap-10">
+      <div class="cs-result">
+        <span class="cs-result__num">5&nbsp;283</span>
+        <span class="cs-result__label">Клика на&nbsp;подбор за&nbsp;первые 4&nbsp;недели</span>
+      </div>
+      <div class="cs-result">
+        <span class="cs-result__num">90%</span>
+        <span class="cs-result__label">Конверсия из&nbsp;входа в&nbsp;выбор продукта</span>
+        <span class="cs-result__sub">4&nbsp;762 клика на&nbsp;конкретный продукт</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     08 · ПЕРЕДАЧА И РАЗВИТИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-handoff" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">08 · Передача и&nbsp;развитие</span>
+    <h2 class="ct-h2 p-reveal">Фундамент для&nbsp;автоматизации</h2>
+
+    <div class="ct-prose p-reveal cs--gap-6">
+      <p class="ct-p">В&nbsp;рамках реорганизации функционал передали следующей команде. К&nbsp;тому моменту они получили то, чего не&nbsp;хватало нам: доступ к&nbsp;справочникам НСИ с&nbsp;актуальными ставками и&nbsp;продуктами. Это позволило уйти от&nbsp;ручного обновления сценария к&nbsp;автоматизированному решению.</p>
+    </div>
+
+    <div class="cs-compare p-reveal cs--gap-10">
+      <div class="cs-compare__card">
+        <span class="cs-compare__badge">Сценарий</span>
+        <span class="cs-compare__metric">Ручной</span>
+        <span class="cs-compare__desc">Ставки и&nbsp;продукты обновляются вручную, файл сценария отправляется редакторам</span>
+      </div>
+      <div class="cs-compare__card cs-compare__card--after">
+        <span class="cs-compare__badge">После передачи</span>
+        <span class="cs-compare__metric">Авто</span>
+        <span class="cs-compare__desc">Ставки и&nbsp;продукты из&nbsp;справочников НСИ, обновление без ручной пересборки</span>
+      </div>
+    </div>
+
+    <div class="cs-callout p-reveal cs--gap-10">
+      <span class="cs-callout__icon">🔗</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Сценарий и&nbsp;калькулятор стали фундаментом: подтвердили спрос, отработали логику подбора и&nbsp;дали конверсию, от&nbsp;которой можно было отталкиваться.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     09 · ВКЛАД
+     ═══════════════════════════════════════════ -->
+<section id="s-contribution" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">09 · Вклад</span>
+    <h2 class="ct-h2 p-reveal">Мой вклад</h2>
+
+    <p class="ct-p p-reveal cs--gap-6"><strong>Product Designer (end&#8209;to&#8209;end).</strong> От&nbsp;обоснования потребности через записи звонков до&nbsp;калькулятора с&nbsp;отработкой возражений&nbsp;&mdash; на&nbsp;основе 21&nbsp;интервью с&nbsp;операторами.</p>
+
+    <div class="ct-contribution-summary p-reveal cs--gap-10">
+      <div class="ct-contribution-item">
+        <div class="ct-contribution-item__title">Исследование</div>
+        <div class="ct-contribution-item__desc">Записи звонков, 21&nbsp;глубинное интервью с&nbsp;операторами + гемба, анализ воронки сценария</div>
+      </div>
+      <div class="ct-contribution-item">
+        <div class="ct-contribution-item__title">Выбор платформы</div>
+        <div class="ct-contribution-item__desc">Совместно с&nbsp;продактом выбрали движок ТМ; разобрался в&nbsp;работе движка с&nbsp;командой телемаркетинга</div>
+      </div>
+      <div class="ct-contribution-item">
+        <div class="ct-contribution-item__title">Проектирование сценария</div>
+        <div class="ct-contribution-item__desc">Собрал и&nbsp;ранжировал все условия подбора, спроектировал дерево решений (57&nbsp;экранов, 17&nbsp;веток, 4&nbsp;продукта)</div>
+      </div>
+      <div class="ct-contribution-item">
+        <div class="ct-contribution-item__title">Калькулятор</div>
+        <div class="ct-contribution-item__desc">Спроектировал MVP с&nbsp;подбором, сравнением с&nbsp;конкурентами и&nbsp;отработкой возражений</div>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 p-reveal cs--gap-16">Ключевые решения</h3>
+    <div class="ct-decisions p-reveal">
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🚀</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Сценарий на&nbsp;движке ТМ как MVP</span><span class="ct-decision__desc">Запуск без релиза, деплой через редакторов, без зависимости от&nbsp;бэкенда</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🎯</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Ранжирование вопросов</span><span class="ct-decision__desc">Из&nbsp;57&nbsp;экранов оператор проходил 2–5&nbsp;шагов&nbsp;&mdash; 100% проходимость сценария</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🔬</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Исследование как фундамент калькулятора</span><span class="ct-decision__desc">Барьеры из&nbsp;интервью определили функциональность: сравнение с&nbsp;конкурентами, отработка возражений</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🔄</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Живой сценарий</span><span class="ct-decision__desc">Обновление ставок день в&nbsp;день при изменении ключевой ставки ЦБ</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CTA PROOF
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <div class="ct-cta-proof p-reveal">
+      <div class="ct-cta-proof__icon">📊</div>
+      <p class="ct-cta-proof__text">24,6% конверсия в&nbsp;открытие вклада</p>
+      <p class="ct-cta-proof__sub">Канал продаж создан с&nbsp;нуля. Сценарий и&nbsp;калькулятор стали фундаментом для&nbsp;автоматизированного решения</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CASE NAV -->
+<section class="cs cs--base" style="padding: var(--space-20) var(--page-pad);">
+  <div class="ct-container" style="padding: 0;">
+    <div class="ct-nav">
+      <a href="/case/redesign-stavka" class="ct-nav__link"><span class="ct-nav__dir">&larr; Предыдущий</span><p class="ct-nav__title">Ставка и&nbsp;надбавки по&nbsp;вкладам</p></a>
+      <a href="/case/ai-tax" class="ct-nav__link ct-nav__link--next"><span class="ct-nav__dir">Следующий &rarr;</span><p class="ct-nav__title">Голосовой AI&#8209;агент по&nbsp;налогам</p></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<div class="p-contain"><hr style="border:none;border-top:1px solid var(--border-dark);margin:0;"></div>
+<footer class="p-footer" style="min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+  <div class="p-contain">
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;— пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener"><img src="../../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">Написать</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow><svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Скачать резюме</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;&mdash; я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">&copy; 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+        <a href="/cdn-cgi/l/email-protection#dda7f0bcafb69da4bcb3b9b8a5f3afa8" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="cs-lightbox" id="cs-lightbox" aria-hidden="true">
+  <button class="cs-lightbox__close" id="cs-lightbox-close" aria-label="Закрыть">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script src="../../interactions.js" defer></script>
+<script src="../../sound.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* TOC SCROLLSPY */
+  var tocIds=['s-result','s-context','s-solution','s-design','s-results-m1','s-research','s-calculator','s-handoff','s-contribution'];
+  var tocLinks=document.querySelectorAll('.ct-toc a');
+  var tocWrap=document.getElementById('case-toc');
+  var progressBar=document.getElementById('ct-progress');
+  var scrollTopBtn=document.getElementById('scroll-top');
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(l){l.classList.remove('ct-toc--active');});var a=document.querySelector('.ct-toc a[href="#'+entry.target.id+'"]');if(a){a.classList.add('ct-toc--active');a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}}});},{rootMargin:'-120px 0px -60% 0px',threshold:0});
+  tocIds.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+
+  /* SCROLL */
+  window.addEventListener('scroll',function(){var y=window.scrollY||0;var h=document.documentElement.scrollHeight-window.innerHeight;var p=h>0?(y/h)*100:0;if(progressBar)progressBar.style.width=p+'%';if(tocWrap){tocWrap.style.maxHeight=y>400?'64px':'0';tocWrap.style.opacity=y>400?'1':'0';}if(scrollTopBtn){scrollTopBtn.style.opacity=y>600?'0.9':'0';scrollTopBtn.style.transform=y>600?'scale(1)':'scale(0.8)';scrollTopBtn.style.pointerEvents=y>600?'auto':'none';}},{passive:true});
+  if(scrollTopBtn)scrollTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  /* TOC SMOOTH SCROLL */
+  tocLinks.forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();var id=l.getAttribute('href').substring(1);var t=document.getElementById(id);if(t){t.scrollIntoView({behavior:'smooth',block:'start'});history.pushState(null,null,'#'+id);}});});
+
+  /* LIGHTBOX */
+  var lb=document.getElementById('cs-lightbox');
+  var lbImg=lb?lb.querySelector('img'):null;
+  var lbDrag={active:false,x:0,y:0,sx:0,sy:0};
+
+  function lbClose(){
+    if(!lb)return;
+    lb.classList.remove('cs-lightbox--open','cs-lightbox--zoomed','cs-lightbox--dragging');
+    lb.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.cs-browser--zoomable').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.cs-browser__bar'))return;
+      var src=el.querySelector('.cs-carousel__slide.is-active')||el.querySelector('img');
+      if(src&&lb&&lbImg){
+        var fullSrc=src.getAttribute('data-full')||src.src;
+        lbImg.src=fullSrc;lbImg.alt=src.alt;
+        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      }
+    });
+  });
+
+  var lbCloseBtn=document.getElementById('cs-lightbox-close');
+  if(lbCloseBtn)lbCloseBtn.addEventListener('click',function(e){e.stopPropagation();lbClose();});
+
+  if(lb){
+    lb.addEventListener('click',function(e){
+      if(e.target===lbCloseBtn)return;
+      if(lbDrag.moved)return;
+      var zoomed=lb.classList.contains('cs-lightbox--zoomed');
+      if(!zoomed){
+        lb.classList.add('cs-lightbox--zoomed');
+        var rect=lb.getBoundingClientRect();
+        var ratioX=e.clientX/rect.width;
+        var ratioY=e.clientY/rect.height;
+        requestAnimationFrame(function(){
+          lb.scrollLeft=(lb.scrollWidth-rect.width)*ratioX;
+          lb.scrollTop=(lb.scrollHeight-rect.height)*ratioY;
+        });
+      } else {
+        lb.classList.remove('cs-lightbox--zoomed');
+        lb.scrollLeft=0;lb.scrollTop=0;
+      }
+    });
+
+    lb.addEventListener('mousedown',function(e){
+      if(!lb.classList.contains('cs-lightbox--zoomed'))return;
+      lbDrag.active=true;lbDrag.moved=false;
+      lbDrag.x=e.clientX;lbDrag.y=e.clientY;
+      lbDrag.sx=lb.scrollLeft;lbDrag.sy=lb.scrollTop;
+      lb.classList.add('cs-lightbox--dragging');
+      e.preventDefault();
+    });
+    lb.addEventListener('mousemove',function(e){
+      if(!lbDrag.active)return;
+      var dx=e.clientX-lbDrag.x,dy=e.clientY-lbDrag.y;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)lbDrag.moved=true;
+      lb.scrollLeft=lbDrag.sx-dx;
+      lb.scrollTop=lbDrag.sy-dy;
+    });
+    lb.addEventListener('mouseup',function(){
+      lbDrag.active=false;
+      lb.classList.remove('cs-lightbox--dragging');
+    });
+  }
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb&&lb.classList.contains('cs-lightbox--open'))lbClose();});
+
+  /* CTA pulse */
+  var ctaProof=document.querySelector('.ct-cta-proof');
+  if(ctaProof){new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('p-reveal--visible',e.isIntersecting);});},{threshold:0.2}).observe(ctaProof);}
+});
+</script>
+<script src="../../protect.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Аресты и взыскания — Антон Рудник</title>
+  <meta name="description" content="AHT −35%, FCR вырос до 70%. За три года спроектировал с нуля платформу работы с долгами, объединившую три старых системы и две линии поддержки. Кейс Антона Рудника.">
+  <!-- Favicon -->
+  <link rel="icon" href="../../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../favlog/favicon-180.png">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/tokens.css">
+  <link rel="stylesheet" href="../../styles/reset.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/typography.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/animations.css">
+  <link rel="stylesheet" href="../../styles/case.css">
+  <link rel="stylesheet" href="../../styles/protect.css">
+
+  <style>
+    /* Page-specific: body background */
+    body { background: var(--bg-dark); color: var(--text-on-dark); }
+
+    /* Contribution list */
+    .ct-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+    .ct-list li { color: var(--text-warm); font-size: var(--text-lg); line-height: var(--leading-relaxed); padding-left: var(--space-5); position: relative; }
+    .ct-list li::before { content: "—"; position: absolute; left: 0; color: var(--text-on-dark-60); }
+
+    /* Lightbox */
+    .cs-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; padding: var(--space-6); cursor: zoom-in; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; overflow: hidden; }
+    .cs-lightbox--open { opacity: 1; pointer-events: auto; }
+    .cs-lightbox--zoomed { cursor: zoom-out; overflow: auto; align-items: flex-start; justify-content: flex-start; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging { cursor: grabbing; }
+    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.3s ease, max-height 0.3s ease; }
+    .cs-lightbox--zoomed img { max-width: none; max-height: none; cursor: zoom-out; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging img { cursor: grabbing; }
+    .cs-lightbox__close { position: fixed; top: var(--space-5); right: var(--space-5); z-index: 10000; width: 44px; height: 44px; border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
+    .cs-lightbox__close:hover { opacity: 1; }
+    .cs-browser--zoomable { cursor: zoom-in; }
+
+    /* Tables (dark theme) */
+    .ct-table-wrap { overflow-x: auto; border: 1px solid var(--border-dark); border-radius: var(--radius-md); }
+    .ct-table { width: 100%; font-size: var(--text-base); border-collapse: collapse; }
+    .ct-table th, .ct-table td { text-align: left; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border-dark); }
+    .ct-table th { font-weight: var(--weight-semibold); color: var(--text-on-dark-40); font-size: var(--text-sm); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
+    .ct-table td { color: var(--text-on-dark); }
+    .ct-table tbody tr:last-child td { border-bottom: none; }
+    .ct-table strong { color: var(--ct-green); font-weight: var(--weight-semibold); }
+    .ct-table td:last-child, .ct-table th:last-child { text-align: right; }
+
+    /* Card type grid */
+    .ct-cards-grid { display: flex; flex-direction: column; gap: var(--space-4); }
+    .ct-card-item { display: flex; flex-direction: column; gap: var(--space-2); }
+    .ct-card-item img { border-radius: var(--radius-md); width: auto; max-width: 100%; height: auto; }
+    .ct-card-item figcaption { font-size: var(--text-sm); color: var(--text-on-dark-60); }
+
+    /* Accordions — wider container for screenshots */
+    .ct-accordions--wide { max-width: none; }
+    .ct-accordion__body p { max-width: 62ch; }
+    .ct-accordions--wide .ct-accordion__body .cs-browser,
+    .ct-accordions--wide .ct-accordion__body .cs-browser.cs-browser--wide { max-width: none; width: 100%; margin-left: 0; }
+
+    /* (mental model styles in case.css as ct-mm) */
+
+    /* Decision cards — single column, horizontal layout */
+    .ct-decisions { grid-template-columns: 1fr; }
+    .ct-decision { flex-direction: row; align-items: flex-start; padding: var(--space-6) var(--space-8); gap: var(--space-5); }
+    .ct-decision__body { display: flex; flex-direction: column; gap: var(--space-2); }
+    @media (max-width: 640px) {
+      .ct-decisions { grid-template-columns: 1fr; }
+      .ct-decision { padding: var(--space-5) var(--space-6); }
+    }
+    @media (max-width: 420px) {
+      .ct-decision { flex-direction: column; gap: var(--space-3); }
+    }
+
+    /* Spacing helpers */
+    .cs--gap-6 { margin-top: var(--space-6); }
+    .cs--gap-8 { margin-top: var(--space-8); }
+    .cs--gap-10 { margin-top: var(--space-10); }
+    .cs--gap-16 { margin-top: var(--space-16); }
+
+    /* Pipeline — arrest lifecycle */
+    .ct-pipeline { display: flex; align-items: stretch; }
+    .ct-pipeline__step {
+      flex: 1; display: flex; align-items: center; gap: var(--space-4);
+      padding: var(--space-5) var(--space-6);
+      background: var(--bg-dark-raised); border: 1px solid var(--border-dark);
+    }
+    .ct-pipeline__step:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+    .ct-pipeline__step:last-child { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+    .ct-pipeline__step--done { border-color: rgba(232,115,74,0.3); background: rgba(232,115,74,0.04); }
+    .ct-pipeline__num {
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; border: 1px solid var(--border-dark);
+      font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-on-dark-40);
+    }
+    .ct-pipeline__step--done .ct-pipeline__num { border-color: var(--accent); color: var(--accent); }
+    .ct-pipeline__body { display: flex; flex-direction: column; gap: 2px; }
+    .ct-pipeline__label { font-size: var(--text-base); font-weight: var(--weight-semibold); color: var(--text-on-dark); line-height: 1.3; }
+    .ct-pipeline__sub { font-size: var(--text-sm); color: var(--text-on-dark-40); }
+    .ct-pipeline__line { width: 1px; flex-shrink: 0; background: var(--border-dark); }
+    @media (max-width: 640px) {
+      .ct-pipeline { flex-direction: column; }
+      .ct-pipeline__step:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+      .ct-pipeline__step:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+      .ct-pipeline__line { width: auto; height: 1px; }
+    }
+    /* Survey results */
+    .ct-survey {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+    .ct-survey__card {
+      display: flex; flex-direction: column;
+      gap: var(--space-3);
+      min-width: 0;
+      padding: var(--space-6);
+      background: var(--bg-dark-raised);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+    }
+    .ct-survey__score {
+      font-family: var(--font-sans);
+      font-size: clamp(1.75rem, 2vw + 1rem, 2.75rem);
+      font-weight: var(--weight-bold);
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .ct-survey__of {
+      font-size: 0.5em;
+      font-weight: var(--weight-normal);
+      color: var(--text-on-dark-40);
+    }
+    .ct-survey__label {
+      font-size: var(--text-base);
+      color: var(--text-on-dark);
+      line-height: var(--leading-relaxed);
+    }
+    .ct-survey__caption {
+      grid-column: 1 / -1;
+      font-size: var(--text-sm);
+      color: var(--text-on-dark-40);
+      margin-top: var(--space-1);
+    }
+    .ct-survey__card--accent {
+      background: rgba(232,115,74,0.06);
+      border-color: rgba(232,115,74,0.15);
+    }
+    .ct-survey__card--accent .ct-survey__score { color: var(--accent); }
+    .ct-survey__card--accent .ct-survey__of { color: rgba(232,115,74,0.45); }
+    @media (max-width: 640px) {
+      .ct-survey { grid-template-columns: 1fr; gap: var(--space-3); }
+      .ct-survey__card { padding: var(--space-5) var(--space-4); }
+      .ct-survey__score { font-size: clamp(1.25rem, 4vw, 1.75rem); }
+    }
+
+    /* Mobile: reduce browser mockup border-radius */
+    @media (max-width: 640px) {
+      .cs-browser { border-radius: 0; }
+      .ct-accordion__body .cs-browser { border-radius: var(--radius-sm); }
+      .ct-cards-grid { gap: var(--space-3); }
+      .ct-accordions--wide { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<!-- TOC -->
+<div class="ct-toc" id="case-toc">
+  <div class="ct-toc__inner">
+    <a href="#s-impact"><span class="ct-toc__num">01</span><span class="ct-toc__label">Импакт</span></a>
+    <a href="#s-context"><span class="ct-toc__num">02</span><span class="ct-toc__label">Контекст</span></a>
+    <a href="#s-stage1"><span class="ct-toc__num">03</span><span class="ct-toc__label">Миграция CRM</span></a>
+    <a href="#s-stage2"><span class="ct-toc__num">04</span><span class="ct-toc__label">Модель долга</span></a>
+    <a href="#s-stage3"><span class="ct-toc__num">05</span><span class="ct-toc__label">Вторая линия</span></a>
+    <a href="#s-contribution"><span class="ct-toc__num">06</span><span class="ct-toc__label">Вклад</span></a>
+  </div>
+  <div class="ct-toc__progress"><div class="ct-toc__bar" id="ct-progress"></div></div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="ct-scroll-wrap">
+  <button class="ct-scroll-top" id="scroll-top" aria-label="Наверх">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious" style="padding-top: calc(var(--header-h) + var(--space-16));">
+  <div class="ct-wide" style="max-width: 900px;">
+    <h1 class="ct-h1 p-reveal">Аресты и&nbsp;взыскания</h1>
+    <span class="ct-section-num p-reveal p-reveal--delay-1" style="margin-top: var(--space-3);">Три легаси-системы → одно рабочее место · 250&nbsp;000&nbsp;обращений · 8&nbsp;700&nbsp;операторов</span>
+    <p class="ct-lead p-reveal p-reveal--delay-2" style="margin-top: var(--space-5); max-width: 640px;">За&nbsp;три года построил информационную архитектуру и&nbsp;интерфейсы раздела, который объединил три устаревшие системы и&nbsp;две линии поддержки в&nbsp;одном рабочем месте. От&nbsp;первого API до&nbsp;последней миграции&nbsp;&mdash; все дизайн-решения мои.</p>
+
+    <div class="cs-hero-meta p-reveal p-reveal--delay-3">
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Период</span><span class="cs-hero-meta__dd">2022–2025</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Канал</span><span class="cs-hero-meta__dd">Чат и&nbsp;голос · Рабочее место оператора</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Роль</span><span class="cs-hero-meta__dd">Product Designer (end&#8209;to&#8209;end)</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Команда</span><span class="cs-hero-meta__dd">Аналитик · фронтендер · бэкендер · исследователь · продакт</span></div>
+    </div>
+  </div>
+  <!-- Hero screenshot — visual anchor -->
+  <div class="p-reveal" style="margin-top: var(--space-12); width: 100%;">
+    <div class="cs-browser cs-browser--flush cs-browser--zoomable" style="border-radius: 0; box-shadow: none;">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/666.png" alt="Раздел «Аресты и взыскания» — финальный вид" loading="eager">
+      </div>
+    </div>
+    <p class="ct-figcaption" style="max-width: 900px; margin: var(--space-3) auto 0; padding: 0 var(--page-pad);">Раздел «Аресты и&nbsp;взыскания» в&nbsp;SmartCare&nbsp;&mdash; итог трёх лет проектирования</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     01 · ИМПАКТ
+     ═══════════════════════════════════════════ -->
+<section id="s-impact" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">01 · Импакт</span>
+    <h2 class="ct-h2 p-reveal">Коротко о&nbsp;результате</h2>
+
+    <div class="cs-results">
+      <div class="cs-result p-reveal">
+        <span class="cs-result__num">~250&nbsp;000</span>
+        <span class="cs-result__label">Обращений в&nbsp;месяц</span>
+        <span class="cs-result__sub">Масштаб тематики</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-1">
+        <span class="cs-result__num p-counter" data-target="-35" data-suffix="%">0%</span>
+        <span class="cs-result__label">AHT по&nbsp;тематике</span>
+        <span class="cs-result__sub">~8&nbsp;мин → ~5&nbsp;мин</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-2">
+        <span class="cs-result__num p-counter" data-target="70" data-suffix="%">0%</span>
+        <span class="cs-result__label">FCR по&nbsp;ключевым тематикам</span>
+        <span class="cs-result__sub">Было 23%</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-3">
+        <span class="cs-result__num">3&nbsp;системы</span>
+        <span class="cs-result__label">Выведены из&nbsp;эксплуатации</span>
+        <span class="cs-result__sub">CRM, АС&nbsp;АиВ, АС&nbsp;Бэкофис</span>
+      </div>
+    </div>
+
+    <div class="cs-callout p-reveal" style="margin-top: var(--space-10);">
+      <span class="cs-callout__icon">⬅️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text"><strong>Shift&nbsp;Left:</strong> часть процессов перенесена со&nbsp;2-й на&nbsp;1-ю линию&nbsp;&mdash; дешевле для&nbsp;бизнеса, быстрее для&nbsp;клиента. Детальные метрики по&nbsp;каждому этапу&nbsp;&mdash; ниже.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 · КОНТЕКСТ
+     ═══════════════════════════════════════════ -->
+<section id="s-context" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">02 · Контекст</span>
+    <h2 class="ct-h2 p-reveal">Как устроены аресты и&nbsp;взыскания</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">«У&nbsp;меня списывают с&nbsp;карты каждый месяц&nbsp;&mdash; сколько я&nbsp;ещё должен?»&nbsp;&mdash; с&nbsp;такими вопросами клиенты приходят в&nbsp;контакт-центр. В&nbsp;2022&nbsp;году функционала арестов и&nbsp;взысканий в&nbsp;едином рабочем месте не&nbsp;было. Информация была разбросана по&nbsp;трём системам&nbsp;&mdash; CRM, АС&nbsp;АиВ и&nbsp;АС&nbsp;Бэкофис, у&nbsp;операторов первой линии доступ был в&nbsp;CRM.</p>
+      <p class="ct-p">Задача&nbsp;&mdash; построить функционал для&nbsp;работы с&nbsp;арестами и&nbsp;взысканиями в&nbsp;рабочем месте SmartCare. Начали с&nbsp;миграции CRM в&nbsp;2022. До&nbsp;АС&nbsp;АиВ и&nbsp;Бэкофиса дошли в&nbsp;конце 2024&nbsp;&mdash; начале 2025.</p>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major">Предметная область</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Более 95% документов поступают через ФССП. Базовый порядок:</p>
+    </div>
+
+    <div class="ct-pipeline p-reveal" style="margin-top: var(--space-6);">
+      <div class="ct-pipeline__step">
+        <span class="ct-pipeline__num">1</span>
+        <div class="ct-pipeline__body">
+          <span class="ct-pipeline__label">Наложение ареста</span>
+          <span class="ct-pipeline__sub">Средства заблокированы</span>
+        </div>
+      </div>
+      <div class="ct-pipeline__line"></div>
+      <div class="ct-pipeline__step">
+        <span class="ct-pipeline__num">2</span>
+        <div class="ct-pipeline__body">
+          <span class="ct-pipeline__label">Снятие +&nbsp;взыскание</span>
+          <span class="ct-pipeline__sub">Средства списываются</span>
+        </div>
+      </div>
+      <div class="ct-pipeline__line"></div>
+      <div class="ct-pipeline__step">
+        <span class="ct-pipeline__num">3</span>
+        <div class="ct-pipeline__body">
+          <span class="ct-pipeline__label">Исполнен</span>
+          <span class="ct-pipeline__sub">Долг закрыт</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ct-prose" style="margin-top: var(--space-8);">
+      <p class="ct-p">Арест замораживает средства на&nbsp;счёте, взыскание&nbsp;&mdash; списывает в&nbsp;пользу взыскателя. Снятие ареста и&nbsp;наложение взыскания, как правило, приходят одним гибридным документом. Когда вся сумма списана&nbsp;&mdash; взыскание меняет статус на&nbsp;«исполнен», отдельного документа на&nbsp;это не&nbsp;приходит.</p>
+      <p class="ct-p">Арест могут отменить без взыскания&nbsp;&mdash; например, по&nbsp;решению суда: средства просто разморозятся. Если документ принесён клиентом напрямую&nbsp;&mdash; это сразу взыскание, без ареста.</p>
+    </div>
+
+    <div class="cs-callout p-reveal" style="margin-top: var(--space-8);">
+      <span class="cs-callout__icon">⚖️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Банк обязан исполнить каждый документ от&nbsp;ФССП, даже очевидный дубль. Отозвать лишние может только пристав&nbsp;&mdash; оператор направляет клиента в&nbsp;ФССП.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     03 · ЭТАП 1 — МИГРАЦИЯ
+     ═══════════════════════════════════════════ -->
+<section id="s-stage1" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">03 · Этап&nbsp;1 · 2022</span>
+    <h2 class="ct-h2 p-reveal">Первый вход&nbsp;&mdash; через продукт</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p"><strong>Задача:</strong> построить функционал арестов и&nbsp;взысканий в&nbsp;SmartCare, начав с&nbsp;миграции CRM.</p>
+      <p class="ct-p">Проанализировали CRM и&nbsp;API. Сервис отдавал данные только по&nbsp;продукту&nbsp;&mdash; на&nbsp;вход нужно было подать конкретную карту или вклад. Вход через документ или через клиента был технически невозможен.</p>
+      <p class="ct-p">Решение&nbsp;&mdash; добавить вкладку «Аресты» внутрь каждого продукта. Спроектировал список документов в&nbsp;хронологическом порядке с&nbsp;фильтром «действующие&nbsp;/ исполненные».</p>
+      <p class="ct-p">На&nbsp;карточке документа в&nbsp;списке&nbsp;&mdash; номер, название, статус с&nbsp;цветовой индикацией. Внутри&nbsp;&mdash; данные разбиты на&nbsp;смысловые группы, собранные совместно с&nbsp;бизнесом: общая информация и&nbsp;информация по&nbsp;документу. Эта структура стала базой для&nbsp;следующих этапов. В&nbsp;CRM ничего из&nbsp;этого не&nbsp;было.</p>
+    </div>
+
+    <div class="ct-prose p-reveal" style="margin-top: var(--space-10);">
+      <p class="ct-p">Вход через продукт&nbsp;&mdash; осознанный компромисс: оператор видит информацию по&nbsp;одному продукту, а&nbsp;аресты могут затрагивать несколько карт и&nbsp;вкладов одновременно. Но&nbsp;вход через документ требовал нового сервиса. Архитектуру заложили так, чтобы переход к&nbsp;модели долга не&nbsp;потребовал ломать работающее. После появления входа через документ вход через продукт не&nbsp;отключили&nbsp;&mdash; для&nbsp;вопросов по&nbsp;конкретному списанию с&nbsp;конкретной карты он&nbsp;до&nbsp;сих пор проще.</p>
+    </div>
+
+    <!-- Screenshot: вход через продукт -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/old.png" alt="Вход через продукт, вкладка «Аресты» — первая версия в SmartCare" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Вход через продукт, вкладка «Аресты»</p>
+
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests/document</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/Old2.png" alt="Карточка документа взыскания — вход через продукт" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Карточка документа взыскания&nbsp;&mdash; вход через продукт</p>
+
+    <h3 class="ct-h3">Рост FCR после миграции</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Данные были доступны и&nbsp;в&nbsp;CRM&nbsp;&mdash; рост FCR обеспечен не&nbsp;появлением информации, а&nbsp;её&nbsp;структурой и&nbsp;навигацией в&nbsp;новом интерфейсе.</p>
+    </div>
+
+    <div class="cs-compare p-reveal">
+      <div class="cs-compare__card">
+        <span class="cs-compare__badge">Было</span>
+        <span class="cs-compare__metric">23,5%</span>
+        <p class="cs-compare__desc">FCR «Арест. Прочее»</p>
+        <p class="cs-compare__desc" style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-dark); font-size: var(--text-sm); color: var(--text-on-dark-40);">65,9% · «Информация по&nbsp;аресту»</p>
+      </div>
+      <div class="cs-compare__card cs-compare__card--after">
+        <span class="cs-compare__badge">Стало</span>
+        <span class="cs-compare__metric">60,7%</span>
+        <p class="cs-compare__desc">+37&nbsp;п.п. после миграции</p>
+        <p class="cs-compare__desc" style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-dark); font-size: var(--text-sm);">68,8% · +2,9&nbsp;п.п.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major">Опрос операторов · 300+&nbsp;респондентов</h3>
+    <div class="ct-survey p-reveal" style="margin-top: var(--space-6);">
+      <div class="ct-survey__card">
+        <span class="ct-survey__score">4,6<span class="ct-survey__of">&thinsp;/&thinsp;5</span></span>
+        <span class="ct-survey__label">Понятность информации</span>
+      </div>
+      <div class="ct-survey__card">
+        <span class="ct-survey__score">4,7<span class="ct-survey__of">&thinsp;/&thinsp;5</span></span>
+        <span class="ct-survey__label">Удобство раздела</span>
+      </div>
+      <div class="ct-survey__card ct-survey__card--accent">
+        <span class="ct-survey__score">+4<span class="ct-survey__of">%</span></span>
+        <span class="ct-survey__label">Лояльность к&nbsp;новому интерфейсу</span>
+      </div>
+      <span class="ct-survey__caption">Сравнение SmartCare и&nbsp;CRM · внутренний опрос</span>
+    </div>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-8);">Операторам не&nbsp;хватало: взыскатель, причина долга, прожиточный минимум, история списаний. Эти потребности определили roadmap этапов&nbsp;2 и&nbsp;3.</p>
+
+    <h3 class="ct-h3 ct-h3--major">Гемба&nbsp;&mdash; наблюдение на&nbsp;рабочих местах</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Операторы справлялись с&nbsp;простыми вопросами, но&nbsp;на&nbsp;сложных теряли контекст&nbsp;&mdash; документы были, а&nbsp;картина долга не&nbsp;складывалась.</p>
+    </div>
+
+    <figure class="p-reveal" style="margin-top: var(--space-8);">
+      <img src="../../images/Cases/arrests/фото-гемба.png" alt="Гемба — рабочее место оператора контакт-центра" loading="lazy" style="width: 100%; border-radius: var(--radius-lg);">
+      <p class="ct-figcaption">Рабочее место оператора контакт-центра&nbsp;&mdash; гемба, наблюдение за&nbsp;обработкой обращений</p>
+    </figure>
+
+    <div class="cs-insight p-reveal" style="margin-top: var(--space-8);">
+      <div class="cs-insight__label">Инсайт</div>
+      <p class="cs-insight__text">Не&nbsp;хватало не&nbsp;данных, а&nbsp;структуры. Документы были&nbsp;&mdash; контекст долга отсутствовал.</p>
+    </div>
+
+    <figure class="cs-quote p-reveal">
+      <blockquote class="cs-quote__text">Звонит клиент, говорит&nbsp;&mdash; списали деньги. У&nbsp;него три карты. Я&nbsp;по&nbsp;очереди открываю каждую, ищу документ. Нашла&nbsp;&mdash; а&nbsp;там два ИП, и&nbsp;оба активные. Пока разбираюсь, клиент уже нервничает.</blockquote>
+      <figcaption class="cs-quote__cite">Оператор 1-й линии · гемба</figcaption>
+    </figure>
+
+    <p class="ct-p p-reveal" style="margin-top: var(--space-8);">Этап&nbsp;1 закрыл базовую потребность&nbsp;&mdash; данные стали доступны в&nbsp;одном интерфейсе. Но&nbsp;у&nbsp;операторов не&nbsp;было целостной картины долга: только документы на&nbsp;каждом продукте по&nbsp;отдельности.</p>
+  </div>
+</section>
+
+<div class="cs-statement-break p-reveal">
+  <p class="cs-statement">От&nbsp;документов&nbsp;&mdash; к&nbsp;ментальной модели долга</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     04 · ЭТАП 2 — МОДЕЛЬ ДОЛГА
+     ═══════════════════════════════════════════ -->
+<section id="s-stage2" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">04 · Этап&nbsp;2 · 2023&nbsp;&mdash; осень&nbsp;2024</span>
+    <h2 class="ct-h2 p-reveal">Все долги клиента&nbsp;&mdash; в&nbsp;одном разделе</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Параллельно с&nbsp;проектированием формировали требования к&nbsp;владельцам сервисов: собирали матрицу атрибутов, приходили с&nbsp;прототипами и&nbsp;показывали, что нужно оператору и&nbsp;без чего консультация невозможна. Переговоры были долгими, но&nbsp;мы получили нужные поля.</p>
+      <p class="ct-p">Я&nbsp;спроектировал отдельный раздел «Аресты и&nbsp;взыскания»&nbsp;&mdash; новая точка входа на&nbsp;главной. Расположение определил через исследование: ставил перед операторами задачу найти раздел и&nbsp;фиксировал, куда они идут. Иконку подбирали через тестирование с&nbsp;операторами из&nbsp;библиотеки СберБанкОнлайн&nbsp;&mdash; выбирали наиболее узнаваемую. На&nbsp;этом этапе раздел только для&nbsp;клиента-должника&nbsp;&mdash; сервиса для&nbsp;клиента-взыскателя ещё не&nbsp;существовало.</p>
+    </div>
+
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-10);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru — главная</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/ЦЗК.png" alt="Главная SmartCare — точка входа «Аресты и взыскания»" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Точка входа «Аресты и&nbsp;взыскания» на&nbsp;главной SmartCare</p>
+
+    <h3 class="ct-h3 ct-h3--major">Конфликт ментальных моделей</h3>
+    <div class="ct-mm p-reveal" style="margin-top: var(--space-10); margin-bottom: var(--space-20);">
+      <div class="ct-mm__quotes">
+        <span class="ct-mm__q ct-mm__q--on" data-i="0">Списывают каждый месяц&nbsp;&mdash; сколько ещё?</span>
+        <span class="ct-mm__q" data-i="1">Почему списали больше, чем должен?</span>
+        <span class="ct-mm__q" data-i="2">С&nbsp;карты сняли&nbsp;&mdash; за&nbsp;что?</span>
+      </div>
+      <div class="ct-mm__stage">
+        <div class="ct-mm__side">
+          <span class="ct-mm__who">Клиент мыслит</span>
+          <span class="ct-mm__kw">Долг</span>
+          <span class="ct-mm__desc">Свои деньги, свои долги, свои списания</span>
+        </div>
+        <span class="ct-mm__ne">&ne;</span>
+        <div class="ct-mm__side">
+          <span class="ct-mm__who">Оператор видит</span>
+          <span class="ct-mm__kw">Документ</span>
+          <span class="ct-mm__desc">Номера ИП, типы, статусы, суммы</span>
+        </div>
+      </div>
+      <div class="ct-mm__echo">
+        <div class="ct-mm__card">
+          <span class="ct-mm__tag ct-mm__tag--accent">Клиент говорит</span>
+          <span class="ct-mm__txt" id="mm-echo-l">У&nbsp;меня алименты, каждый месяц снимают&nbsp;&mdash; когда закончится?</span>
+        </div>
+        <div class="ct-mm__card">
+          <span class="ct-mm__tag">Оператор ищет</span>
+          <span class="ct-mm__txt" id="mm-echo-r">ИП&nbsp;77/15/44821, тип&nbsp;4, статус&nbsp;25, накопительное взыскание, ежемесячное удержание</span>
+        </div>
+      </div>
+      <div class="ct-mm__constraint">
+        <span class="ct-mm__constraint-badge">Ограничение</span>
+        <span class="ct-mm__constraint-text">API отдавал данные по&nbsp;<strong>продукту</strong>, а&nbsp;не&nbsp;по&nbsp;долгу и&nbsp;не&nbsp;по&nbsp;документу. Это расхождение стало главным архитектурным вызовом.</span>
+      </div>
+    </div>
+    <script>
+    (function(){
+      var d=[
+        ['У\u00a0меня алименты, каждый месяц снимают\u00a0\u2014 когда закончится?','ИП\u00a077/15/44821, тип\u00a04, статус\u00a025, накопительное взыскание, ежемесячное удержание'],
+        ['Списали 12\u00a0тысяч, а\u00a0штраф был 5\u00a0\u2014 где остальное?','Три документа по\u00a0двум ИП, два\u00a0\u2014 дубли от\u00a0пристава. Нужна отмена через ФССП'],
+        ['С\u00a0зарплатной карты что-то списали, не\u00a0понимаю за\u00a0что','Продукт *4582, таб \u00abАресты\u00bb, документ от\u00a012.03.25, тип\u00a02, статус\u00a025']
+      ];
+      document.querySelectorAll('.ct-mm__q').forEach(function(q){
+        q.addEventListener('click',function(){
+          var i=parseInt(this.getAttribute('data-i'));
+          document.querySelectorAll('.ct-mm__q').forEach(function(x){x.classList.remove('ct-mm__q--on')});
+          this.classList.add('ct-mm__q--on');
+          var el=document.getElementById('mm-echo-l'),er=document.getElementById('mm-echo-r');
+          el.style.opacity='0';er.style.opacity='0';
+          setTimeout(function(){el.textContent=d[i][0];er.textContent=d[i][1];el.style.opacity='1';er.style.opacity='1'},200);
+        });
+      });
+    })();
+    </script>
+
+    <h3 class="ct-h3 ct-h3--major">Архитектурные решения</h3>
+
+    <div class="ct-prose">
+      <p class="ct-p"><strong>Группировка по&nbsp;исполнительному производству.</strong> Документы по&nbsp;одному долгу ложились в&nbsp;плоский список&nbsp;&mdash; операторы связывали их&nbsp;вручную. Я&nbsp;ввёл группировку по&nbsp;номеру ИП: все документы одного долга собраны вместе. Рассматривались разные варианты навигации и&nbsp;тестировались&nbsp;&mdash; победила версия с&nbsp;проваливанием внутрь ИП на&nbsp;отдельный экран и&nbsp;разделением на&nbsp;табы «Действующие / Завершённые».</p>
+    </div>
+
+    <!-- Screenshot: список действующих -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/Call-1.png" alt="Список действующих документов, группировка по ИП" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Список действующих документов, группировка по&nbsp;ИП</p>
+
+    <h3 class="ct-h3">Связь ареста и&nbsp;взыскания внутри ИП</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Группировка по&nbsp;ИП решала навигацию на&nbsp;верхнем уровне, но&nbsp;внутри одного ИП может быть несколько арестов и&nbsp;несколько взысканий. Чтобы гарантированно связать конкретный арест с&nbsp;конкретным взысканием, нужен был дополнительный признак&nbsp;&mdash; сервис его не&nbsp;отдавал.</p>
+      <p class="ct-p">Через серию встреч вышли на&nbsp;владельца фабрики данных&nbsp;&mdash; оказалось, что признак уже существует и&nbsp;передаётся сервису, просто не&nbsp;включён в&nbsp;наш контракт. После этого его добавили&nbsp;&mdash; и&nbsp;связь заработала. Без неё оператор видел&nbsp;бы пачку документов внутри ИП, но&nbsp;не&nbsp;мог&nbsp;бы однозначно понять, какое взыскание относится к&nbsp;какому аресту&nbsp;&mdash; а&nbsp;для&nbsp;консультации это критично.</p>
+    </div>
+
+    <div class="cs-insight p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-insight__label">Принцип</div>
+      <p class="cs-insight__text">Архитектурные решения проектировались от&nbsp;сценария оператора&nbsp;&mdash; даже когда API диктовал другую логику.</p>
+    </div>
+
+    <h3 class="ct-h3">Маппинг статусов</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Сервис отдавал 14&nbsp;сырых технических статусов. Я&nbsp;свёл их&nbsp;к&nbsp;10&nbsp;понятным состояниям: часть убрал (технические&nbsp;&mdash; Новый, Блокирован, Розыск, Проверка), часть объединил (например, «Отозван» и&nbsp;«Отменён» &rarr; «Отменён»). Разбил на&nbsp;два таба&nbsp;&mdash; «Действующие» и&nbsp;«Завершённые». Результат согласован с&nbsp;бизнесом.</p>
+    </div>
+
+    <details class="ct-accordion p-reveal" style="margin-top: var(--space-6);">
+      <summary class="ct-accordion__trigger"><span class="ct-accordion__title">14 &rarr; 10: полная таблица маппинга</span><span class="ct-accordion__icon">+</span></summary>
+      <div class="ct-accordion__body" style="padding: 0;">
+        <div class="ct-mapping">
+          <div class="ct-mapping__header">
+            <span class="ct-mapping__badge ct-mapping__badge--removed">Убраны · 4&nbsp;статуса</span>
+            <span class="ct-mapping__header-note">Технические, оператору не&nbsp;нужны</span>
+          </div>
+          <div class="ct-mapping__removed">
+            <span>Новый</span><span>Блокирован</span><span>Розыск</span><span>Проверка</span>
+          </div>
+          <div class="ct-mapping__header" style="margin-top: var(--space-5);">
+            <span class="ct-mapping__badge ct-mapping__badge--active">Действующие · 5&nbsp;состояний</span>
+            <span class="ct-mapping__header-note">Документ ещё в&nbsp;работе</span>
+          </div>
+          <div class="ct-table-wrap" style="border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+            <table class="ct-table ct-table--mapping">
+              <thead><tr><th>Логика</th><th>Статус на&nbsp;UI</th></tr></thead>
+              <tbody>
+                <tr><td>Дефолт&nbsp;&mdash; статус не&nbsp;показываем, и&nbsp;так понятно</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--active"></span>Арест</span></td></tr>
+                <tr><td>Дефолт&nbsp;&mdash; аналогично, средства списываются</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--active"></span>Взыскание</span></td></tr>
+                <tr><td><strong>Нестандарт:</strong> заблокированы, но&nbsp;взыскание не&nbsp;наложено</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--pause"></span>Арест исполнен</span></td></tr>
+                <tr><td><strong>Нестандарт:</strong> приостановлено (суд, мораторий, СВО)</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--pause"></span>Взыскание на&nbsp;паузе</span></td></tr>
+                <tr><td><strong>Нестандарт:</strong> аналогично, приостановлен</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--pause"></span>Арест на&nbsp;паузе</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ct-mapping__header" style="margin-top: var(--space-5);">
+            <span class="ct-mapping__badge ct-mapping__badge--done">Завершённые · 5&nbsp;состояний</span>
+            <span class="ct-mapping__header-note">Финальный статус</span>
+          </div>
+          <div class="ct-table-wrap" style="border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+            <table class="ct-table ct-table--mapping">
+              <thead><tr><th>Логика</th><th>Статус на&nbsp;UI</th></tr></thead>
+              <tbody>
+                <tr><td>Долг закрыт полностью</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--done"></span>Взыскание исполнено</span></td></tr>
+                <tr><td>Объединение: «Отозван» + «Отменён» &rarr; один</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--cancel"></span>Арест отменён</span></td></tr>
+                <tr><td>Банк отказал в&nbsp;исполнении</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--cancel"></span>Взыскание отказано</span></td></tr>
+                <tr><td>Аналогично</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--cancel"></span>Арест отказан</span></td></tr>
+                <tr><td>Объединение: «Отозван» + «Отменён» &rarr; один</td><td><span class="ct-mapping__status"><span class="ct-mapping__dot ct-mapping__dot--cancel"></span>Взыскание отменено</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </details>
+    <h3 class="ct-h3">Документ отмены&nbsp;&rarr; статус</h3>
+    <div class="ct-prose">
+      <p class="ct-p">На&nbsp;интервью выяснил: из&nbsp;документа отмены операторам первой линии нужна только дата отмены и&nbsp;понимание этапа жизненного пути долга.</p>
+      <p class="ct-p">Документы отмен не&nbsp;отображаются в&nbsp;списках. В&nbsp;гибридных документах внутри взыскания отображается плашка&nbsp;&mdash; арест в&nbsp;статусе «отменён» с&nbsp;датой отмены. Вместо отдельного документа&nbsp;&mdash; статус. Это убрало значительную часть документов из&nbsp;списков первой линии.</p>
+    </div>
+
+    <!-- Screenshot: плашка ареста внутри взыскания -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests/document</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/121-1 1.png" alt="Плашка ареста внутри документа взыскания" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Плашка ареста внутри документа взыскания</p>
+
+
+    <h3 class="ct-h3 ct-h3--major">Типы карточек и&nbsp;иконки</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Для&nbsp;визуальной навигации&nbsp;&mdash; своя иконка для&nbsp;каждого типа: арест, взыскание, пачка документов ФССП, позже&nbsp;&mdash; отмена. Статусом отмечали только нестандартные состояния&nbsp;&mdash; то, на&nbsp;что оператору стоит обратить внимание.</p>
+    </div>
+
+    <!-- Карточки типов -->
+    <div class="ct-showcase p-reveal" style="margin-top: var(--space-8);">
+      <figure class="ct-showcase__item">
+        <figcaption class="ct-showcase__label">Арест <span>средства заблокированы</span></figcaption>
+        <img src="../../images/Cases/arrests/v_BaselistItem-4.png" alt="Арест" loading="lazy">
+      </figure>
+      <figure class="ct-showcase__item">
+        <figcaption class="ct-showcase__label">Взыскание <span>средства списываются</span></figcaption>
+        <img src="../../images/Cases/arrests/v_BaselistItem-3.png" alt="Взыскание" loading="lazy">
+      </figure>
+      <figure class="ct-showcase__item">
+        <figcaption class="ct-showcase__label">Несколько документов <span>по&nbsp;одному ИП</span></figcaption>
+        <img src="../../images/Cases/arrests/v_BaselistItem-2.png" alt="Несколько документов" loading="lazy">
+      </figure>
+      <figure class="ct-showcase__item">
+        <figcaption class="ct-showcase__label">Арест исполнен <span>взыскание ещё не&nbsp;наложено</span></figcaption>
+        <img src="../../images/Cases/arrests/v_BaselistItem-1.png" alt="Арест исполнен" loading="lazy">
+      </figure>
+      <figure class="ct-showcase__item">
+        <figcaption class="ct-showcase__label">Взыскание на&nbsp;паузе <span>суд, мораторий, СВО</span></figcaption>
+        <img src="../../images/Cases/arrests/v_BaselistItem.png" alt="Взыскание на паузе" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="cs-callout p-reveal" style="margin-top: var(--space-10);">
+      <span class="cs-callout__icon">⚙️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Сервисы отдавали сырые данные. Значительную часть логики реализовали на&nbsp;своём бэкенде и&nbsp;фронтенде: группировка по&nbsp;ИП, порядок вызова сервисов, маппинг статусов, правила отображения. Фичи добавлялись итеративно&nbsp;&mdash; по&nbsp;мере появления сервисов.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major">Внутри исполнительного производства</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Документы внутри группы тоже разделены на&nbsp;действующие и&nbsp;завершённые. Системное уведомление: по&nbsp;одному ИП одновременно может действовать или арест, или взыскание. Если больше&nbsp;&mdash; это дубли от&nbsp;приставов, рекомендация обратиться в&nbsp;ФССП.</p>
+    </div>
+
+    <!-- Screenshot: внутри ИП -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests/ip/details</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/Call.png" alt="Документы ИП — действующие и завершённые, уведомление о дублях" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Документы ИП: действующие вверху, завершённые ниже, системное уведомление о&nbsp;дублях</p>
+
+
+
+    <h3 class="ct-h3">Карточка исполнительного документа</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Поля разбиты на&nbsp;смысловые группы по&nbsp;приоритету: самая востребованная информация&nbsp;&mdash; выше, специфичная&nbsp;&mdash; ниже. Карточка дорабатывалась от&nbsp;релиза к&nbsp;релизу: от&nbsp;базовой версии с&nbsp;тремя блоками до&nbsp;полной&nbsp;&mdash; с&nbsp;отправкой СМС, привязкой продуктов, плашкой ареста внутри взыскания. Атрибуты и&nbsp;названия полей уточнялись по&nbsp;мере использования в&nbsp;КЦ.</p>
+    </div>
+
+    <!-- Screenshot: карточка полная версия -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--tall cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">Карточка ИД — финальная версия</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/121-1 2.png" alt="Карточка исполнительного документа — полная версия" loading="lazy">
+        <div class="cs-browser__hint"><span>Нажмите для полного просмотра</span></div>
+      </div>
+    </div>
+    <p class="ct-figcaption">Карточка ИД&nbsp;&mdash; полная версия с&nbsp;дообогащением</p>
+
+    <h3 class="ct-h3">Юзабилити-тестирование и&nbsp;гемба</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Юзабилити-тесты&nbsp;&mdash; 100% прохождение задач. Операторы решали кейсы-имитации реальных звонков: «У&nbsp;меня списали 2&nbsp;000&nbsp;₽ за&nbsp;штраф, который 1&nbsp;000&nbsp;&mdash; почему?» (дубль документа), поиск конкретного ИП среди нескольких, проверка статуса документа. Все сценарии пройдены без подсказок.</p>
+      <p class="ct-p">Гемба после запуска: операторы положительно отзывались о&nbsp;входе через документ, отмечали удобную группировку и&nbsp;статусы.</p>
+    </div>
+
+    <figure class="cs-quote p-reveal">
+      <blockquote class="cs-quote__text">Раньше я&nbsp;открывала каждую карту отдельно и&nbsp;искала нужный документ. Сейчас захожу в&nbsp;раздел, вижу все долги сразу&nbsp;&mdash; нахожу за&nbsp;секунды.</blockquote>
+      <figcaption class="cs-quote__cite">Оператор 1-й линии · гемба после запуска</figcaption>
+    </figure>
+
+    <div class="cs-results cs-results--3col p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-result">
+        <span class="cs-result__num">&minus;35%</span>
+        <span class="cs-result__label">AHT по&nbsp;тематике</span>
+        <span class="cs-result__sub">Особенно при множественных документах</span>
+      </div>
+      <div class="cs-result">
+        <span class="cs-result__num">+6,7&nbsp;п.п.</span>
+        <span class="cs-result__label">FCR «Прожиточный минимум»</span>
+        <span class="cs-result__sub">51,75% &rarr; 58,46%</span>
+      </div>
+      <div class="cs-result">
+        <span class="cs-result__num">100%</span>
+        <span class="cs-result__label">Юзабилити-тесты</span>
+        <span class="cs-result__sub">Все задачи пройдены</span>
+      </div>
+    </div>
+
+    <h3 class="ct-h3">Сопутствующие решения</h3>
+    <div class="ct-prose">
+      <p class="ct-p"><strong>Проверка прожиточного минимума (Q2&nbsp;2023).</strong> Одна из&nbsp;самых запрашиваемых возможностей. Внедрена между первым и&nbsp;вторым этапами&nbsp;&mdash; ещё в&nbsp;рамках входа через продукт, когда модель долга только проектировалась. FCR по&nbsp;тематике вырос с&nbsp;51,75% до&nbsp;58,46%. Полноценный раздел&nbsp;&mdash; на&nbsp;этапе&nbsp;3.</p>
+      <p class="ct-p"><strong>Блок «Для&nbsp;арестов» в&nbsp;операциях по&nbsp;вкладам.</strong> Оператор видит разбивку средств по&nbsp;категориям начислений прямо внутри операции, не&nbsp;переходя в&nbsp;раздел арестов.</p>
+    </div>
+
+    <!-- Screenshot: блок «Для арестов» -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--tall cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/deposits/operation</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/+ 3 операции в операцию .png" alt="Блок «Для арестов» внутри операции" loading="lazy">
+        <div class="cs-browser__hint"><span>Нажмите для полного просмотра</span></div>
+      </div>
+    </div>
+    <p class="ct-figcaption">Блок «Для&nbsp;арестов» внутри операции по&nbsp;вкладу</p>
+    <p class="ct-p p-reveal" style="margin-top: var(--space-10);">Функционал первой линии закрыт. Архитектура раздела оказалась масштабируемой: когда на&nbsp;следующем этапе начали встраивать процессы второй линии, обогащать данными из&nbsp;АС&nbsp;АиВ и&nbsp;Бэкофиса&nbsp;&mdash; всё ложилось в&nbsp;существующую структуру без переделок.</p>
+  </div>
+</section>
+
+<div class="cs-statement-break p-reveal">
+  <p class="cs-statement">Вторая линия переезжает в&nbsp;единое рабочее место</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     05 · ЭТАП 3 — ВТОРАЯ ЛИНИЯ
+     ═══════════════════════════════════════════ -->
+<section id="s-stage3" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">05 · Этап&nbsp;3. Осень&nbsp;2024–2025</span>
+    <h2 class="ct-h2 p-reveal">Одна архитектура&nbsp;&mdash; обе линии поддержки, три миграции, Shift&nbsp;Left</h2>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p"><strong>Задача:</strong> пересадить вторую линию на&nbsp;платформу SmartCare. Три параллельных трека: миграция рабочего места ЦЗК, миграция АС&nbsp;АиВ и&nbsp;миграция АС&nbsp;Бэкофис. Каждая фича ниже&nbsp;&mdash; часть одного из&nbsp;этих треков или сквозного Shift&nbsp;Left.</p>
+      <p class="ct-p">Параллельно на&nbsp;уровне всего продукта шёл трек <strong>Shift&nbsp;Left</strong>&nbsp;&mdash; перенос процессов со&nbsp;второй линии на&nbsp;первую. При проектировании каждой фичи решали: давать её&nbsp;только второй линии или открыть первой тоже. Часть функционала, ранее доступного только экспертам, стала доступна первой линии: история списаний, моратории, полный раздел прожиточного минимума, документы отмен, солидарные должники, клиент-взыскатель. Часть обращений теперь решается без эскалации.</p>
+      <p class="ct-p">Пользовались существующими сервисами, точечно дорабатывая их. Подключился ещё один аналитик. Каждая фича&nbsp;&mdash; работа на&nbsp;1–3&nbsp;спринта.</p>
+    </div>
+
+    <!-- Screenshot: обзор раздела с новыми табами -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/действующие-3этап.png" alt="Раздел после этапа 3 — все табы" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Раздел после этапа&nbsp;3: клиент-должник, клиент-взыскатель, розыск документов, история, моратории, ПМ</p>
+
+    <h3 class="ct-h3">Гемба ЦЗК&nbsp;&mdash; февраль&nbsp;2025</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Проведена в&nbsp;начале этапа, до&nbsp;большинства фич. Приехали к&nbsp;операторам ЦЗК, когда только начинали адаптировать интерфейсы. Именно здесь стало ясно, что нужны документы отмен, протоколы и&nbsp;другие детали, скрытые от&nbsp;первой линии.</p>
+    </div>
+
+    <figure class="cs-quote p-reveal">
+      <blockquote class="cs-quote__text">Нам нужен номер документа отмены, чтобы оформить экспертизу. Без него мы&nbsp;не&nbsp;можем эскалировать.</blockquote>
+      <figcaption class="cs-quote__cite">Оператор ЦЗК · гемба, февраль&nbsp;2025</figcaption>
+    </figure>
+
+    <h3 class="ct-h3">Конфликт моделей и&nbsp;три точки входа для&nbsp;отмен</h3>
+
+    <div class="cs-callout cs-callout--accent p-reveal" style="margin-top: var(--space-4);">
+      <span class="cs-callout__icon">⚠️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">На&nbsp;этапе&nbsp;2 я&nbsp;убрал документы отмен из&nbsp;интерфейса первой линии&nbsp;&mdash; превратил их&nbsp;в&nbsp;статус. Модель была стройной.</p>
+      </div>
+    </div>
+
+    <div class="ct-prose">
+      <p class="ct-p">На&nbsp;гембе ЦЗК выяснилось: для&nbsp;второй линии документы отмен всё-таки нужны. Номера документов используются при оформлении экспертиз&nbsp;&mdash; передаче материалов юристам и&nbsp;узким специалистам. Кроме того, документ отмены может не&nbsp;привязаться к&nbsp;ИП по&nbsp;технической ошибке.</p>
+      <p class="ct-p">Поначалу казалось&nbsp;&mdash; модель ломается. Но&nbsp;удалось разделить отображение по&nbsp;рабочим местам и&nbsp;спроектировать три точки входа: общий список для&nbsp;непривязанных документов, внутри группы ИП&nbsp;&mdash; для&nbsp;документов, не&nbsp;привязавшихся по&nbsp;технической причине, и&nbsp;таб «Отмены» внутри карточки&nbsp;&mdash; для&nbsp;конкретного документа.</p>
+      <p class="ct-p">Модель долга для&nbsp;первой линии не&nbsp;затронута.</p>
+    </div>
+
+    <h3 class="ct-h3">Глубокий кейс: структура списаний и&nbsp;начислений</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Когда клиент говорит «вы списали деньги, которые не&nbsp;имели права списывать»&nbsp;&mdash; оператор проверяет здесь. Средства при поступлении на&nbsp;счёт попадают в&nbsp;одну из&nbsp;категорий (защищённые социальные, частично защищённые, периодические, прожиточный минимум). При списании&nbsp;&mdash; тоже из&nbsp;определённой категории с&nbsp;приоритетом.</p>
+      <p class="ct-p">По&nbsp;итогу погружения в&nbsp;процесс стало ясно, что нужна таблица для&nbsp;отслеживания движения средств по&nbsp;датам. Раньше у&nbsp;операторов тоже была таблица в&nbsp;старом интерфейсе, но&nbsp;без ключевых возможностей. <strong>Компонента таблицы в&nbsp;дизайн-системе не&nbsp;было.</strong></p>
+      <p class="ct-p">Задача&nbsp;&mdash; сравнение чисел и&nbsp;поиск изменений: когда и&nbsp;как менялись остатки в&nbsp;каждой категории. Я&nbsp;собрал компонент с&nbsp;нуля.</p>
+    </div>
+
+    <div class="ct-feature-grid p-reveal" style="margin-top: var(--space-8);">
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Равноширинный шрифт</span>
+        <span class="ct-feature-card__desc">Совпадение разрядов при сравнении чисел по&nbsp;вертикали</span>
+      </div>
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Горизонтальный скролл</span>
+        <span class="ct-feature-card__desc">Фиксация первой ячейки&nbsp;&mdash; названия категорий всегда видны</span>
+      </div>
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Выделение строки</span>
+        <span class="ct-feature-card__desc">Прилипание при вертикальном скролле для&nbsp;удобства сравнения</span>
+      </div>
+      <div class="ct-feature-card">
+        <span class="ct-feature-card__title">Двухэтажные заголовки</span>
+        <span class="ct-feature-card__desc">Компактная подача сложной структуры данных</span>
+      </div>
+    </div>
+
+    <div class="ct-prose" style="margin-top: var(--space-8);">
+      <p class="ct-p">Задокументировал все решения. Позже совместно с&nbsp;библиотекарем подсветил всё для&nbsp;сборки компонента в&nbsp;дизайн-систему. Компонент переиспользуется за&nbsp;пределами проекта.</p>
+    </div>
+
+    <!-- Screenshot: таблица -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests/charges</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/ТТ2.png" alt="Таблица структуры начислений" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Таблица структуры списаний и&nbsp;начислений</p>
+
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/arrests/charges — фильтр</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/ТТ2-1.png" alt="Таблица структуры начислений — другое состояние" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Таблица&nbsp;&mdash; другое состояние данных</p>
+
+    <h3 class="ct-h3">Другие фичи этапа&nbsp;3</h3>
+
+    <div class="ct-accordions ct-accordions--wide">
+      <details class="ct-accordion" open>
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">История списаний</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Одна из&nbsp;самых запрашиваемых фич&nbsp;&mdash; с&nbsp;первого этапа. Переиспользована история операций по&nbsp;вкладам с&nbsp;адаптацией&nbsp;&mdash; это снижает когнитивную нагрузку для&nbsp;операторов, уже знакомых с&nbsp;паттерном. Переключение: все / аресты / взыскания. Поиск, группировка по&nbsp;месяцам, фильтры.</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">История списаний</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/22.png" alt="История списаний с фильтром" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Документы на&nbsp;прожиточный минимум</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Базовая проверка работала с&nbsp;этапа&nbsp;2. Полноценный раздел появился, когда был готов сервис: хронология заявлений и&nbsp;постановлений, сортировка по&nbsp;статусам, действующий сверху.</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">Документы на ПМ — постановления</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/ПМ.png" alt="Документы на прожиточный минимум — постановления" loading="lazy"></div>
+          </div>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">Документы на ПМ — заявления клиента</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/ПМ-2.png" alt="Документы на прожиточный минимум — заявления" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Справочник прожиточного минимума по&nbsp;регионам</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Поиск по&nbsp;региону, постановление правительства, значения для&nbsp;трудоспособных, пенсионеров, детей. Общее по&nbsp;России&nbsp;&mdash; всегда видно.</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">Справочник ПМ</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/ид.png" alt="Справочник прожиточного минимума по регионам" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Солидарные должники</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>По&nbsp;одному ИП может быть несколько созаёмщиков. Таб карточки документа.</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">Солидарные должники</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/Солидарные.png" alt="Солидарные должники — таб карточки ИД" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">История изменений</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Все правки по&nbsp;документу с&nbsp;авторами и&nbsp;датами в&nbsp;формате «было&nbsp;/ стало».</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">История изменений — было / стало</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/ид-прот изменен-1.png" alt="История изменений — было / стало" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="ct-accordion">
+        <summary class="ct-accordion__trigger"><span class="ct-accordion__title">Протоколы исполнений</span><span class="ct-accordion__icon">+</span></summary>
+        <div class="ct-accordion__body">
+          <p>Лог действий системы по&nbsp;документу. Отдельный сервис.</p>
+          <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable" style="margin-top: var(--space-4);">
+            <div class="cs-browser__bar"><div class="cs-browser__dots"><span></span></div><span class="cs-browser__url">Протоколы исполнений</span></div>
+            <div class="cs-browser__screen"><img src="../../images/Cases/arrests/44-1.png" alt="Протоколы исполнений — статусы выполнения" loading="lazy"></div>
+          </div>
+        </div>
+      </details>
+
+    </div>
+
+    <div class="ct-prose" style="margin-top: var(--space-8);">
+      <p class="ct-p"><strong>Клиент-взыскатель.</strong> По&nbsp;масштабу&nbsp;&mdash; как весь функционал должника, но&nbsp;с&nbsp;нуля: другой сервис, другая бизнес-логика. UI&nbsp;максимально похож на&nbsp;раздел должника, но&nbsp;адаптирован под другие атрибуты. Отдельная точка входа по&nbsp;уровню аутентификации для&nbsp;не-клиентов банка. <strong>Розыск документов</strong>&nbsp;&mdash; сценарий поиска и&nbsp;ручной привязки непривязанных документов по&nbsp;косвенным признакам.</p>
+    </div>
+
+    <h3 class="ct-h3">Развитие карточки для&nbsp;второй линии</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Новые атрибуты, названия уточнялись по&nbsp;мере использования. Добавлены табы: Отмены, Солидарные должники, Протоколы исполнений (лог действий системы) и&nbsp;История изменений (все правки с&nbsp;авторами в&nbsp;формате «было&nbsp;/ стало»)&nbsp;&mdash; разные сервисы, разные задачи.</p>
+    </div>
+
+    <!-- Screenshot: карточка 2-й линии — загрузка -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--tall cs-browser--zoomable p-reveal">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">Карточка ИД — вторая линия</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/121.png" alt="Карточка исполнительного документа — экран загрузки" loading="lazy">
+        <div class="cs-browser__hint"><span>Нажмите для полного просмотра</span></div>
+      </div>
+    </div>
+    <p class="ct-figcaption">Карточка ИД&nbsp;&mdash; экран загрузки документа</p>
+
+    <!-- Screenshot: карточка 2-й линии — полная -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--tall cs-browser--zoomable p-reveal" style="margin-top: var(--space-12);">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">Карточка ИД — вторая линия</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/arrests/121-1.png" alt="Карточка исполнительного документа — вторая линия, все табы" loading="lazy">
+        <div class="cs-browser__hint"><span>Нажмите для полного просмотра</span></div>
+      </div>
+    </div>
+    <p class="ct-figcaption">Карточка ИД для&nbsp;второй линии&nbsp;&mdash; все табы и&nbsp;атрибуты</p>
+
+    <h3 class="ct-h3">Гемба после внедрения</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Операторам ЦЗК было непросто пересаживаться с&nbsp;привычного рабочего места, но&nbsp;они справлялись и&nbsp;находили всё необходимое. Сквозная тема на&nbsp;всех этапах&nbsp;&mdash; согласования с&nbsp;ИБ: маскирование персональных данных с&nbsp;размаскированием и&nbsp;записью в&nbsp;лог.</p>
+    </div>
+
+    <h3 class="ct-h3 ct-h3--major">Эволюция информационной архитектуры</h3>
+    <div class="ct-prose">
+      <p class="ct-p">Архитектура раздела развивалась три года. Переключайтесь между этапами:</p>
+    </div>
+
+    <div class="ct-evo p-reveal" style="margin-top: var(--space-8);">
+      <div class="ct-evo__switcher">
+        <button class="ct-evo__btn ct-evo__btn--on" data-stage="1">Этап 1 · 2022</button>
+        <button class="ct-evo__btn" data-stage="2">Этап 2 · 2023–2024</button>
+        <button class="ct-evo__btn" data-stage="3">Этап 3 · 2024–2025</button>
+      </div>
+
+      <div class="ct-evo__grid">
+        <div class="ct-evo__col">
+          <div class="ct-ia__head"><span class="ct-ia__dot"></span><span class="ct-ia__label">Через продукт</span></div>
+          <div class="ct-ia__node"><span class="ct-ia__title">Продукт клиента</span><span class="ct-ia__sub">Карта, вклад, счёт</span></div>
+          <div class="ct-ia__conn"><span class="ct-ia__line"></span><span class="ct-ia__arrow"></span></div>
+          <div class="ct-ia__node"><span class="ct-ia__title">Вкладка «Аресты»</span><span class="ct-ia__sub">Документы этого продукта</span></div>
+          <div class="ct-ia__conn"><span class="ct-ia__line"></span><span class="ct-ia__arrow"></span></div>
+          <div class="ct-ia__node"><span class="ct-ia__title">Список документов</span><span class="ct-ia__sub">Хронологический порядок</span></div>
+          <div class="ct-ia__conn"><span class="ct-ia__line"></span><span class="ct-ia__arrow"></span></div>
+          <div class="ct-ia__node ct-ia__node--dim"><span class="ct-ia__title">Карточка документа</span><span class="ct-ia__sub">Только базовые данные</span></div>
+          <div class="ct-ia__foot">
+            <div class="ct-ia__bar"><div class="ct-ia__fill ct-ia__fill--gray"></div></div>
+            <span class="ct-ia__depth">4 уровня</span>
+            <div class="ct-ia__meta"><span class="ct-ia__badge">Сервис A</span></div>
+          </div>
+        </div>
+
+        <div class="ct-evo__col ct-evo__col--right" id="evo-right">
+          <div class="ct-evo__empty" id="evo-empty">
+            <span class="ct-evo__empty-text">Ещё не&nbsp;спроектировано</span>
+          </div>
+
+          <div class="ct-evo__content" id="evo-content" style="display:none;">
+            <div class="ct-ia__head"><span class="ct-ia__dot ct-ia__dot--accent"></span><span class="ct-ia__label ct-ia__label--accent">Через раздел</span></div>
+            <div class="ct-ia__node ct-ia__node--accent"><span class="ct-ia__title">Аресты и&nbsp;взыскания</span><span class="ct-ia__sub ct-ia__sub--accent">Раздел на&nbsp;главной</span></div>
+
+            <div class="ct-ia__pills">
+              <span class="ct-ia__pill ct-ia__pill--on">Клиент должник</span>
+              <span class="ct-ia__pill ct-evo__s3" style="display:none;">Клиент взыскатель</span>
+              <span class="ct-ia__pill ct-evo__s3" style="display:none;">Розыск документов</span>
+            </div>
+
+            <div class="ct-ia__conn"><span class="ct-ia__line ct-ia__line--accent"></span><span class="ct-ia__arrow ct-ia__arrow--accent"></span></div>
+
+            <div class="ct-evo__tabs-block">
+              <div class="ct-ia__tabs-group" data-group="evo-top">
+                <div class="ct-ia__tabs-row">
+                  <span class="ct-ia__tab ct-ia__tab--on" data-text="Документы с&nbsp;активным статусом, сгруппированные по&nbsp;ИП.">Действующие</span>
+                  <span class="ct-ia__tab" data-text="Документы с&nbsp;финальным статусом.">Завершённые</span>
+                  <span class="ct-ia__tab ct-evo__s3" style="display:none;" data-text="Хронология списаний по&nbsp;месяцам.">История списаний</span>
+                </div>
+                <div class="ct-ia__tabs-row ct-ia__tabs-row--2 ct-evo__s3" style="display:none;">
+                  <span class="ct-ia__tab" data-text="Приостановленное исполнение.">Моратории</span>
+                  <span class="ct-ia__tab" data-text="Справочник ПМ по&nbsp;регионам.">Заявления на&nbsp;ПМ</span>
+                </div>
+                <div class="ct-ia__tabs-body">Документы с&nbsp;активным статусом, сгруппированные по&nbsp;ИП.</div>
+              </div>
+            </div>
+
+            <div class="ct-ia__conn"><span class="ct-ia__line ct-ia__line--accent"></span><span class="ct-ia__arrow ct-ia__arrow--accent"></span></div>
+            <div class="ct-ia__node ct-ia__node--accent"><span class="ct-ia__title">Группы по&nbsp;ИП</span><span class="ct-ia__sub ct-ia__sub--accent">Все документы одного долга</span></div>
+            <div class="ct-ia__conn"><span class="ct-ia__line ct-ia__line--accent"></span><span class="ct-ia__arrow ct-ia__arrow--accent"></span></div>
+            <div class="ct-ia__node ct-ia__node--accent"><span class="ct-ia__title">Документы внутри группы</span><span class="ct-ia__sub ct-ia__sub--accent">Связи, статусы, отмены</span></div>
+            <div class="ct-ia__conn"><span class="ct-ia__line ct-ia__line--accent"></span><span class="ct-ia__arrow ct-ia__arrow--accent"></span></div>
+            <div class="ct-ia__node ct-ia__node--accent"><span class="ct-ia__title">Карточка документа</span><span class="ct-ia__sub ct-ia__sub--accent">Полные данные + продукты</span></div>
+
+            <div class="ct-evo__tabs-block ct-evo__s3" style="display:none;margin-top:8px;">
+              <div class="ct-ia__tabs-group" data-group="evo-doc">
+                <div class="ct-ia__tabs-row">
+                  <span class="ct-ia__tab ct-ia__tab--on" data-text="Основная информация, СМС, плашка ареста, продукты.">Документ</span>
+                  <span class="ct-ia__tab" data-text="Статус «отменён» с&nbsp;датой.">Отмены</span>
+                  <span class="ct-ia__tab" data-text="Перечень созаёмщиков.">Должники</span>
+                </div>
+                <div class="ct-ia__tabs-row ct-ia__tabs-row--2 ct-evo__s3" style="display:none;">
+                  <span class="ct-ia__tab" data-text="Лог действий системы. Отдельный сервис.">Протоколы исполнений</span>
+                  <span class="ct-ia__tab" data-text="Все изменения «было / стало».">История изменений</span>
+                </div>
+                <div class="ct-ia__tabs-body">Основная информация, СМС, плашка ареста, продукты.</div>
+              </div>
+            </div>
+
+            <div class="ct-ia__foot">
+              <div class="ct-ia__bar"><div class="ct-ia__fill ct-ia__fill--accent"></div></div>
+              <span class="ct-ia__depth ct-ia__depth--accent" id="evo-depth">5 уровней + табы</span>
+              <div class="ct-ia__meta"><span class="ct-ia__badge ct-ia__badge--accent">Сервис B</span><span class="ct-ia__note">Группировка по&nbsp;долгу</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-evo__summary" id="evo-summary">
+        <span class="ct-evo__summary-text" id="evo-summary-text">Одна точка входа через продукт. Плоский список документов.</span>
+      </div>
+    </div>
+
+    <script>
+    (function(){
+      var summaries = {
+        '1': 'Одна точка входа через продукт. Плоский список документов.',
+        '2': 'Две точки входа, два сервиса. Группировка по\u00a0ИП, карточка с\u00a0табами.',
+        '3': 'Полная архитектура. 5\u00a0разделов, 3\u00a0роли, 5\u00a0табов карточки. Масштабируемая структура.'
+      };
+      var depths = { '2': '5 уровней', '3': '7 уровней + 2 группы табов' };
+
+      document.querySelectorAll('.ct-evo__btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var s = this.getAttribute('data-stage');
+          document.querySelectorAll('.ct-evo__btn').forEach(function(b){ b.classList.remove('ct-evo__btn--on'); });
+          this.classList.add('ct-evo__btn--on');
+
+          var empty = document.getElementById('evo-empty');
+          var content = document.getElementById('evo-content');
+          var summary = document.getElementById('evo-summary-text');
+          var depth = document.getElementById('evo-depth');
+
+          if (s === '1') {
+            empty.style.display = '';
+            content.style.display = 'none';
+          } else {
+            empty.style.display = 'none';
+            content.style.display = '';
+            depth.textContent = depths[s] || '';
+          }
+
+          document.querySelectorAll('.ct-evo__s3').forEach(function(el){
+            el.style.display = s === '3' ? '' : 'none';
+          });
+
+          summary.textContent = summaries[s];
+        });
+      });
+
+      document.querySelectorAll('.ct-evo .ct-ia__tab').forEach(function(tab){
+        tab.addEventListener('click', function(){
+          var group = this.closest('.ct-ia__tabs-group');
+          group.querySelectorAll('.ct-ia__tab').forEach(function(t){ t.classList.remove('ct-ia__tab--on'); });
+          this.classList.add('ct-ia__tab--on');
+          var body = group.querySelector('.ct-ia__tabs-body');
+          body.style.opacity = '0';
+          var text = this.getAttribute('data-text');
+          setTimeout(function(){ body.innerHTML = text; body.style.opacity = '1'; }, 150);
+        });
+      });
+    })();
+    </script>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 · ВКЛАД
+     ═══════════════════════════════════════════ -->
+<section id="s-contribution" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">06 · Мой вклад</span>
+    <h2 class="ct-h2 p-reveal">Единственный дизайнер на&nbsp;протяжении трёх лет</h2>
+
+    <div class="ct-decisions p-reveal" style="margin-top: var(--space-10);">
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🔍</span>
+        <div class="ct-decision__body">
+          <span class="ct-decision__title">Исследования &rarr; roadmap</span>
+          <span class="ct-decision__desc">Гембы, опросы (300+), юзабилити-тесты, интервью. История списаний запрашивалась с&nbsp;первого этапа&nbsp;&mdash; появилась на&nbsp;третьем, потому что я&nbsp;доказал приоритет через данные исследований</span>
+        </div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🧩</span>
+        <div class="ct-decision__body">
+          <span class="ct-decision__title">Информационная архитектура &rarr; масштабируемая структура</span>
+          <span class="ct-decision__desc">Защитил группировку по&nbsp;ИП на&nbsp;демо с&nbsp;бизнесом&nbsp;&mdash; альтернатива (плоский список с&nbsp;фильтрами) была проще, но&nbsp;ломала сценарий оператора. Архитектура выдержала три миграции без переделок</span>
+        </div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🧱</span>
+        <div class="ct-decision__body">
+          <span class="ct-decision__title">UI и&nbsp;компоненты &rarr; дизайн-система</span>
+          <span class="ct-decision__desc">Компонент таблицы собран с&nbsp;нуля, передан в&nbsp;библиотеку, переиспользуется за&nbsp;пределами проекта</span>
+        </div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🤝</span>
+        <div class="ct-decision__body">
+          <span class="ct-decision__title">Кросс-функциональное лидерство &rarr; нужные данные</span>
+          <span class="ct-decision__desc">Через серию встреч вышел на&nbsp;владельца фабрики данных и&nbsp;получил признак связи ареста и&nbsp;взыскания&nbsp;&mdash; без него половина интерфейса не&nbsp;работала&nbsp;бы. Согласования с&nbsp;ИБ, требования к&nbsp;сервисам</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ct-prose p-reveal" style="margin-top: var(--space-10);">
+      <p class="ct-p"><strong>Команда:</strong> аналитик (основной) · аналитик (с&nbsp;этапа&nbsp;3, по&nbsp;фичам) · исследователь (с&nbsp;этапа&nbsp;2) · фронтенд-разработчик · бэкенд · продакт. Дизайн-решения&nbsp;&mdash; от&nbsp;информационной архитектуры до&nbsp;компонентов&nbsp;&mdash; полностью мои.</p>
+    </div>
+
+    <figure class="cs-quote cs-quote--author p-reveal" style="margin-top: var(--space-10);">
+      <blockquote class="cs-quote__text">Если&nbsp;бы начинал сейчас&nbsp;&mdash; с&nbsp;первого этапа закладывал&nbsp;бы архитектуру под две линии. Второй линии не&nbsp;было в&nbsp;повестке, решение пришло сверху. Раздел арестов масштабировался хорошо, но&nbsp;для&nbsp;части сценариев ЦЗК интерфейс выиграл&nbsp;бы от&nbsp;решений, заложенных с&nbsp;самого начала.</blockquote>
+      <figcaption class="cs-quote__cite"><span class="cs-quote__avatar">АР</span>Антон Рудник · рефлексия</figcaption>
+    </figure>
+
+    <div class="cs-statement-break p-reveal" style="margin-top: var(--space-16);">
+      <p class="cs-statement">Архитектура второго этапа выдержала три миграции без перестройки</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CASE NAV -->
+<section class="cs cs--base" style="padding: var(--space-20) var(--page-pad);">
+  <div class="ct-container" style="padding: 0;">
+    <div class="ct-nav">
+      <a href="/case/ai-tax" class="ct-nav__link"><span class="ct-nav__dir">&larr; Предыдущий</span><p class="ct-nav__title">AI&#8209;агент для&nbsp;налоговых консультаций</p></a>
+      <a href="/case/redesign-stavka" class="ct-nav__link ct-nav__link--next"><span class="ct-nav__dir">Следующий &rarr;</span><p class="ct-nav__title">Ставка и&nbsp;надбавки по&nbsp;вкладам</p></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<div class="p-contain"><hr style="border:none;border-top:1px solid var(--border-dark);margin:0;"></div>
+<footer class="p-footer" style="min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+  <div class="p-contain">
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;— пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener"><img src="../../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">Написать</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow><svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Скачать резюме</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;&mdash; я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">&copy; 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+        <a href="/cdn-cgi/l/email-protection#dca6f1bda8b19ca5bdb2b8b9a4f2a8af" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="cs-lightbox" id="cs-lightbox" aria-hidden="true">
+  <button class="cs-lightbox__close" id="cs-lightbox-close" aria-label="Закрыть">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script src="../../interactions.js" defer></script>
+<script src="../../sound.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* TOC SCROLLSPY */
+  var tocIds=['s-impact','s-context','s-stage1','s-stage2','s-stage3','s-contribution'];
+  var tocLinks=document.querySelectorAll('.ct-toc a');
+  var tocWrap=document.getElementById('case-toc');
+  var progressBar=document.getElementById('ct-progress');
+  var scrollTopBtn=document.getElementById('scroll-top');
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(l){l.classList.remove('ct-toc--active');});var a=document.querySelector('.ct-toc a[href="#'+entry.target.id+'"]');if(a){a.classList.add('ct-toc--active');a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}}});},{rootMargin:'-120px 0px -60% 0px',threshold:0});
+  tocIds.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+
+  /* SCROLL */
+  window.addEventListener('scroll',function(){var y=window.scrollY||0;var h=document.documentElement.scrollHeight-window.innerHeight;var p=h>0?(y/h)*100:0;if(progressBar)progressBar.style.width=p+'%';if(tocWrap){tocWrap.style.maxHeight=y>400?'64px':'0';tocWrap.style.opacity=y>400?'1':'0';}if(scrollTopBtn){scrollTopBtn.style.opacity=y>600?'0.9':'0';scrollTopBtn.style.transform=y>600?'scale(1)':'scale(0.8)';scrollTopBtn.style.pointerEvents=y>600?'auto':'none';}},{passive:true});
+  if(scrollTopBtn)scrollTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  /* TOC SMOOTH SCROLL */
+  tocLinks.forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();var id=l.getAttribute('href').substring(1);var t=document.getElementById(id);if(t){t.scrollIntoView({behavior:'smooth',block:'start'});history.pushState(null,null,'#'+id);}});});
+
+  /* LIGHTBOX */
+  var lb=document.getElementById('cs-lightbox');
+  var lbImg=lb?lb.querySelector('img'):null;
+  var lbDrag={active:false,x:0,y:0,sx:0,sy:0};
+
+  function lbClose(){
+    if(!lb)return;
+    lb.classList.remove('cs-lightbox--open','cs-lightbox--zoomed','cs-lightbox--dragging');
+    lb.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.cs-browser--zoomable').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.cs-browser__bar'))return;
+      var src=el.querySelector('img');
+      if(src&&lb&&lbImg){
+        var fullSrc=src.getAttribute('data-full')||src.src;
+        lbImg.src=fullSrc;lbImg.alt=src.alt;
+        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      }
+    });
+  });
+
+  var lbCloseBtn=document.getElementById('cs-lightbox-close');
+  if(lbCloseBtn)lbCloseBtn.addEventListener('click',function(e){e.stopPropagation();lbClose();});
+
+  if(lb){
+    lb.addEventListener('click',function(e){
+      if(e.target===lbCloseBtn)return;
+      if(lbDrag.moved)return;
+      var zoomed=lb.classList.contains('cs-lightbox--zoomed');
+      if(!zoomed){
+        lb.classList.add('cs-lightbox--zoomed');
+        var rect=lb.getBoundingClientRect();
+        var ratioX=e.clientX/rect.width;
+        var ratioY=e.clientY/rect.height;
+        requestAnimationFrame(function(){
+          lb.scrollLeft=(lb.scrollWidth-rect.width)*ratioX;
+          lb.scrollTop=(lb.scrollHeight-rect.height)*ratioY;
+        });
+      } else {
+        lb.classList.remove('cs-lightbox--zoomed');
+        lb.scrollLeft=0;lb.scrollTop=0;
+      }
+    });
+
+    lb.addEventListener('mousedown',function(e){
+      if(!lb.classList.contains('cs-lightbox--zoomed'))return;
+      lbDrag.active=true;lbDrag.moved=false;
+      lbDrag.x=e.clientX;lbDrag.y=e.clientY;
+      lbDrag.sx=lb.scrollLeft;lbDrag.sy=lb.scrollTop;
+      lb.classList.add('cs-lightbox--dragging');
+      e.preventDefault();
+    });
+    lb.addEventListener('mousemove',function(e){
+      if(!lbDrag.active)return;
+      var dx=e.clientX-lbDrag.x,dy=e.clientY-lbDrag.y;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)lbDrag.moved=true;
+      lb.scrollLeft=lbDrag.sx-dx;
+      lb.scrollTop=lbDrag.sy-dy;
+    });
+    lb.addEventListener('mouseup',function(){
+      lbDrag.active=false;
+      lb.classList.remove('cs-lightbox--dragging');
+    });
+  }
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb&&lb.classList.contains('cs-lightbox--open'))lbClose();});
+
+  /* SHOWCASE LIGHTBOX */
+  document.querySelectorAll('.ct-showcase__item img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      var lb=document.getElementById('cs-lightbox');
+      var lbImg=lb?lb.querySelector('img'):null;
+      if(lb&&lbImg){
+        lbImg.src=img.src;lbImg.alt=img.alt;
+        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      }
+    });
+  });
+});
+</script>
+<script src="../../protect.js" defer></script>
+</body>
+</html>

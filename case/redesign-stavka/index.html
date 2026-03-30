@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Редизайн раздела ставки и надбавок — Антон Рудник</title>
+  <meta name="description" content="Как редизайн раздела ставки и надбавок позволил решать сложные вопросы в рамках одного звонка вместо 1–3 дней на второй линии.">
+  <!-- Favicon -->
+  <link rel="icon" href="../../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../favlog/favicon-180.png">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/tokens.css">
+  <link rel="stylesheet" href="../../styles/reset.css">
+  <link rel="stylesheet" href="../../styles/layout.css">
+  <link rel="stylesheet" href="../../styles/typography.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/animations.css">
+  <link rel="stylesheet" href="../../styles/case.css">
+  <link rel="stylesheet" href="../../styles/protect.css">
+
+  <style>
+    /* Page-specific: body background */
+    body { background: var(--bg-dark); color: var(--text-on-dark); overflow-x: clip; }
+
+    /* Let long metric text fit without wrapping */
+    .cs-results { grid-template-columns: auto 1fr; }
+
+    /* Contribution list */
+    .ct-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+    .ct-list li { color: var(--text-warm); font-size: var(--text-lg); line-height: var(--leading-relaxed); padding-left: var(--space-5); position: relative; }
+    .ct-list li::before { content: "—"; position: absolute; left: 0; color: var(--text-on-dark-60); }
+
+    /* Decision cards — horizontal layout */
+    .ct-decisions { grid-template-columns: 1fr; }
+    .ct-decision { flex-direction: row; align-items: flex-start; padding: var(--space-6) var(--space-8); gap: var(--space-5); }
+    .ct-decision__icon { font-size: var(--text-2xl); }
+    .ct-decision__body { display: flex; flex-direction: column; gap: var(--space-2); }
+    @media (max-width: 640px) {
+      .ct-decision { padding: var(--space-5) var(--space-6); }
+    }
+
+    /* Lightbox */
+    .cs-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; padding: var(--space-6); cursor: zoom-in; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; overflow: hidden; }
+    .cs-lightbox--open { opacity: 1; pointer-events: auto; }
+    .cs-lightbox--zoomed { cursor: zoom-out; overflow: auto; align-items: flex-start; justify-content: flex-start; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging { cursor: grabbing; }
+    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.3s ease, max-height 0.3s ease; }
+    .cs-lightbox--zoomed img { max-width: none; max-height: none; cursor: zoom-out; }
+    .cs-lightbox--zoomed.cs-lightbox--dragging img { cursor: grabbing; }
+    .cs-lightbox__close { position: fixed; top: var(--space-5); right: var(--space-5); z-index: 10000; width: 44px; height: 44px; border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
+    .cs-lightbox__close:hover { opacity: 1; }
+    .cs-browser--zoomable { cursor: zoom-in; }
+
+    /* Carousel in browser frame */
+    .cs-carousel { position: relative; }
+    .cs-browser__screen .cs-carousel__slide { display: none; }
+    .cs-browser__screen .cs-carousel__slide.is-active { display: block; }
+    .cs-carousel-tabs { display: flex; gap: var(--space-2); margin-left: auto; }
+    .cs-carousel-tab { padding: var(--space-1) var(--space-4); font-size: var(--text-xs); font-family: var(--font-sans); font-weight: var(--weight-medium); color: var(--text-on-dark-60); background: transparent; border: 1px solid var(--border-dark); border-radius: var(--radius-md); cursor: pointer; transition: all var(--dur-fast) var(--ease-out); white-space: nowrap; }
+    .cs-carousel-tab:hover { color: var(--text-on-dark); border-color: var(--text-on-dark-40); }
+    .cs-carousel-tab.is-active { color: var(--text-on-dark); background: var(--bg-dark-surface); border-color: var(--text-on-dark-40); }
+
+    /* Spacing helpers */
+    .cs--gap-6 { margin-top: var(--space-6); }
+    .cs--gap-8 { margin-top: var(--space-8); }
+    .cs--gap-10 { margin-top: var(--space-10); }
+    .cs--gap-16 { margin-top: var(--space-16); }
+
+    /* Mobile: reduce browser mockup border-radius */
+    @media (max-width: 640px) {
+      .cs-browser { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<!-- TOC -->
+<div class="ct-toc" id="case-toc">
+  <div class="ct-toc__inner">
+    <a href="#s-result"><span class="ct-toc__num">01</span><span class="ct-toc__label">Результат</span></a>
+    <a href="#s-context"><span class="ct-toc__num">02</span><span class="ct-toc__label">Контекст</span></a>
+    <a href="#s-research"><span class="ct-toc__num">03</span><span class="ct-toc__label">Исследование</span></a>
+    <a href="#s-design"><span class="ct-toc__num">04</span><span class="ct-toc__label">Проектирование</span></a>
+    <a href="#s-testing"><span class="ct-toc__num">05</span><span class="ct-toc__label">Тестирование</span></a>
+    <a href="#s-results"><span class="ct-toc__num">06</span><span class="ct-toc__label">Результаты</span></a>
+    <a href="#s-contribution"><span class="ct-toc__num">07</span><span class="ct-toc__label">Вклад</span></a>
+  </div>
+  <div class="ct-toc__progress"><div class="ct-toc__bar" id="ct-progress"></div></div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="ct-scroll-wrap">
+  <button class="ct-scroll-top" id="scroll-top" aria-label="Наверх">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious" style="padding-top: calc(var(--header-h) + var(--space-16));">
+  <div class="ct-wide" style="max-width: 900px;">
+    <h1 class="ct-h1 p-reveal">Редизайн раздела ставки и&nbsp;надбавок по&nbsp;вкладам</h1>
+    <p class="ct-lead p-reveal p-reveal--delay-1" style="margin-top: var(--space-5); max-width: 620px;">15&nbsp;000&nbsp;обращений в&nbsp;месяц. Сложные вопросы уходили на&nbsp;вторую линию и&nbsp;решались до&nbsp;трёх дней. После редизайна&nbsp;&mdash; решаются в&nbsp;рамках одного звонка</p>
+
+    <div class="cs-hero-meta p-reveal p-reveal--delay-2">
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Период</span><span class="cs-hero-meta__dd">Q3&nbsp;2025</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Канал</span><span class="cs-hero-meta__dd">Чат и&nbsp;голос · Интерфейс оператора</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Роль</span><span class="cs-hero-meta__dd">Product Designer (end&#8209;to&#8209;end)</span></div>
+      <div class="cs-hero-meta__item"><span class="cs-hero-meta__dt">Команда</span><span class="cs-hero-meta__dd">Аналитик · фронтендер · бэкендер · продакт · редакторы</span></div>
+    </div>
+  </div>
+
+  <!-- Hero screenshot -->
+  <div class="p-reveal" style="margin-top: var(--space-12); width: 100%;">
+    <div class="cs-browser cs-browser--flush cs-browser--zoomable" style="border-radius: 0; box-shadow: none;">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/stavka</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Frame 2131328627-2.png" alt="Раздел «Ставка и надбавки» — финальный вид после редизайна" loading="eager">
+      </div>
+    </div>
+    <p class="ct-figcaption" style="max-width: 900px; margin: var(--space-3) auto 0; padding: 0 var(--page-pad);">Раздел «Ставка и&nbsp;надбавки» после редизайна</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     01 · РЕЗУЛЬТАТ
+     ═══════════════════════════════════════════ -->
+<section id="s-result" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">01 · Результат</span>
+    <h2 class="ct-h2 p-reveal">Коротко о&nbsp;результате</h2>
+
+    <div class="cs-results">
+      <div class="cs-result p-reveal">
+        <span class="cs-result__num">1–3&nbsp;дня &rarr; 1&nbsp;звонок</span>
+        <span class="cs-result__label">Сложные вопросы по&nbsp;надбавкам</span>
+        <span class="cs-result__sub">Больше не&nbsp;уходят на&nbsp;вторую линию</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-1">
+        <span class="cs-result__num">&minus;20%</span>
+        <span class="cs-result__label">Среднее время обслуживания</span>
+        <span class="cs-result__sub">~15&nbsp;мин &rarr; ~12&nbsp;мин</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-2">
+        <span class="cs-result__num">15&nbsp;000</span>
+        <span class="cs-result__label">Обращений в&nbsp;месяц</span>
+        <span class="cs-result__sub">Масштаб тематики</span>
+      </div>
+      <div class="cs-result p-reveal p-reveal--delay-3">
+        <span class="cs-result__num">10+</span>
+        <span class="cs-result__label">Типов надбавок</span>
+        <span class="cs-result__sub">Новые ложатся без редизайна раздела</span>
+      </div>
+    </div>
+
+    <div class="cs-callout p-reveal cs--gap-10">
+      <span class="cs-callout__icon">💡</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Раздел перестал быть узким местом в&nbsp;консультации: оператор может объяснить причины текущей ставки, посмотреть историю надбавки и&nbsp;разобрать конкретные операции&nbsp;&mdash; всё на&nbsp;одном экране, без переключений.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 · КОНТЕКСТ
+     ═══════════════════════════════════════════ -->
+<section id="s-context" class="cs cs--base cs--compact">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">02 · Контекст</span>
+    <h2 class="ct-h2 p-reveal">Откуда появилась задача</h2>
+
+    <h3 class="ct-h3 cs--gap-6">Бизнес&#8209;логика, которая переросла интерфейс</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Во&nbsp;вкладах ставка складывается из&nbsp;базовой ставки и&nbsp;надбавок. Изначально логика была линейной: выполнил условие&nbsp;&mdash; получил надбавку на&nbsp;период его действия. Старый раздел делил надбавки на&nbsp;три таба&nbsp;&mdash; «Действующие», «Потенциальные» и&nbsp;«Архивные», и&nbsp;для простых надбавок этого хватало.</p>
+      <p class="ct-p">Со&nbsp;временем бизнес&#8209;логика усложнилась: появились надбавки с&nbsp;отложенным действием (привязаны к&nbsp;периодам), взаимоисключающие наборы и&nbsp;различные правила применения в&nbsp;зависимости от&nbsp;вклада. Одна и&nbsp;та&nbsp;же надбавка теперь могла затрагивать сразу три периода&nbsp;&mdash; прошлый, текущий и&nbsp;следующий.</p>
+      <p class="ct-p">Смотреть это через три таба было неудобно: оператор не&nbsp;мог объяснить причины изменения ставки, работу надбавок и&nbsp;что клиенту нужно сделать, чтобы ставка выросла. Сложные вопросы оформлялись как отложенные обращения и&nbsp;уходили на&nbsp;вторую линию&nbsp;&mdash; на&nbsp;1–3&nbsp;дня.</p>
+    </div>
+
+    <div class="cs-callout p-reveal cs--gap-8">
+      <span class="cs-callout__icon">🎯</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text"><strong>Задача:</strong> редизайн раздела ставки и&nbsp;надбавок&nbsp;&mdash; чтобы оператор мог в&nbsp;рамках одного звонка объяснить, из&nbsp;чего складывается текущая ставка, почему она изменилась и&nbsp;что клиенту нужно сделать, чтобы она выросла.</p>
+      </div>
+    </div>
+
+    <h3 class="ct-h3 cs--gap-16">Как я&nbsp;инициировал редизайн</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Когда появились первые «сложные» надбавки с&nbsp;тремя периодами, стало ясно, что в&nbsp;старый раздел они не&nbsp;ложатся концептуально. Сначала мы&nbsp;сделали временное решение&nbsp;&mdash; показали сложные надбавки прямо в&nbsp;карточке вклада, чтобы не&nbsp;блокировать операторов. Но&nbsp;параллельно я&nbsp;инициировал полный редизайн раздела, потому что временная заплатка не&nbsp;масштабировалась.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     03 · ИССЛЕДОВАНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-research" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">03 · Исследование</span>
+    <h2 class="ct-h2 p-reveal">Что показали звонки и&nbsp;интервью</h2>
+
+    <p class="ct-p p-reveal cs--gap-6">Проанализировал ~<strong>30&nbsp;записей звонков</strong> и&nbsp;провёл <strong>3&nbsp;глубинных интервью</strong> с&nbsp;операторами. Дополнительно изучил данные кликстрима в&nbsp;ClickSense.</p>
+
+    <p class="ct-p p-reveal">Клиентов не&nbsp;интересует перечень надбавок сам по&nbsp;себе. Их&nbsp;вопросы почти всегда сводятся к&nbsp;одному из&nbsp;сценариев:</p>
+
+    <!-- Голоса клиентов -->
+    <div class="cs-voices p-reveal cs--gap-6">
+      <div class="cs-voice">«Почему текущая ставка именно такая?»</div>
+      <div class="cs-voice">«Почему ставка изменилась по&nbsp;сравнению с&nbsp;прошлым месяцем?»</div>
+      <div class="cs-voice">«Что нужно сделать, чтобы ставка выросла?»</div>
+      <div class="cs-voice">«Почему надбавка не&nbsp;применилась, хотя условия выполнены?»</div>
+    </div>
+
+    <div class="cs-insight p-reveal cs--gap-16">
+      <div class="cs-insight__label">Инсайт</div>
+      <p class="cs-insight__text">Для надбавок с&nbsp;отложенным действием клиенты почти всегда спрашивают про&nbsp;предыдущий, текущий и&nbsp;следующий периоды. В&nbsp;сложных случаях&nbsp;&mdash; про&nbsp;конкретные операции и&nbsp;причины, по&nbsp;которым они не&nbsp;были учтены.</p>
+    </div>
+
+    <h3 class="ct-h3">Консистентность с&nbsp;мобильным приложением</h3>
+    <p class="ct-p p-reveal">Отдельно было важно изучить, как обновлённая логика надбавок реализована в&nbsp;мобильном приложении банка. Описание надбавок должно оставаться единым для&nbsp;клиентов и&nbsp;операторов, чтобы не&nbsp;требовать дополнительного «перевода» в&nbsp;ходе консультации.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     04 · ПРОЕКТИРОВАНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-design" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">04 · Проектирование</span>
+    <h2 class="ct-h2 p-reveal">От&nbsp;табов к&nbsp;единому экрану</h2>
+
+    <!-- Первая попытка -->
+    <h3 class="ct-h3 cs--gap-6">Первая попытка: надбавки в&nbsp;карточке вклада</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Сначала я&nbsp;попробовал разместить действующие надбавки прямо в&nbsp;карточке вклада, чтобы оператор видел ставку и&nbsp;надбавки в&nbsp;одном месте без перехода в&nbsp;отдельный раздел.</p>
+      <p class="ct-p">На&nbsp;практике это перегружало экран и&nbsp;не&nbsp;давало общей картины: не&nbsp;было места для&nbsp;детализации по&nbsp;периодам, для&nbsp;доступных надбавок и&nbsp;для условий их&nbsp;применения.</p>
+    </div>
+
+    <div class="cs-callout cs-callout--accent p-reveal cs--gap-8">
+      <span class="cs-callout__icon">⚠️</span>
+      <div class="cs-callout__body">
+        <p class="cs-callout__text">Карточка вклада&nbsp;&mdash; не&nbsp;то&nbsp;место, где можно уместить всю глубину информации о&nbsp;надбавках. Нужен отдельный экран, но&nbsp;с&nbsp;другой архитектурой.</p>
+      </div>
+    </div>
+
+    <!-- STATEMENT -->
+    <div class="cs-statement-break p-reveal cs--gap-16" style="padding-block: var(--space-16);">
+      <p class="cs-statement">Один экран&nbsp;&mdash; полная картина</p>
+    </div>
+
+    <!-- Финальное решение -->
+    <h3 class="ct-h3">Финальное решение: ставка и&nbsp;надбавки на&nbsp;одном экране</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Оператор видит текущую ставку как сумму базовой ставки и&nbsp;действующих надбавок, а&nbsp;рядом&nbsp;&mdash; надбавки, которые могут увеличить ставку, и&nbsp;условия их&nbsp;применения.</p>
+      <p class="ct-p">Это устраняет лишние переходы и&nbsp;позволяет в&nbsp;рамках консультации легко менять уровень детализации&nbsp;&mdash; от&nbsp;ставки в&nbsp;целом до&nbsp;разбора конкретной надбавки.</p>
+    </div>
+
+    <!-- Скриншот: основной экран -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-10">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare.sberbank.ru/deposits/rate</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Frame 2131328627.png" alt="Раздел ставки и надбавок — текущая ставка 14%, действующие надбавки и как увеличить ставку" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Основной экран&nbsp;&mdash; текущая ставка, действующие надбавки и&nbsp;что можно увеличить</p>
+
+    <!-- Карусель состояний -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-10" id="states-carousel">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <div class="cs-carousel-tabs">
+          <button class="cs-carousel-tab is-active" data-slide="0">Максимальная ставка</button>
+          <button class="cs-carousel-tab" data-slide="1">Без надбавок</button>
+        </div>
+      </div>
+      <div class="cs-browser__screen">
+        <div class="cs-carousel">
+          <img class="cs-carousel__slide is-active" src="../../images/Cases/redesign-stavka/Frame 2131328627-1.png" alt="Максимальная ставка — все надбавки действуют" loading="lazy">
+          <img class="cs-carousel__slide" src="../../images/Cases/redesign-stavka/Stavka 2131328629.png" alt="Без надбавок — базовая ставка 10%, действующих надбавок нет" loading="lazy">
+        </div>
+      </div>
+    </div>
+    <p class="ct-figcaption">Два крайних состояния: максимальная ставка (все надбавки действуют) и&nbsp;базовая ставка без надбавок</p>
+
+
+    <!-- Надбавки с отложенным действием -->
+    <h3 class="ct-h3 cs--gap-16">Надбавки с&nbsp;отложенным действием</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Для надбавок, привязанных к&nbsp;периоду, отображаются предыдущий, текущий и&nbsp;следующий периоды. Оператор может объяснить, почему надбавка не&nbsp;действовала раньше, действует сейчас или будет применена в&nbsp;будущем.</p>
+    </div>
+
+    <!-- Три периода — скриншоты компонентов -->
+    <div class="p-stack p-stack--sm p-reveal cs--gap-8">
+      <img src="../../images/Cases/redesign-stavka/Надбавки-3.png" alt="Будущая надбавка с 5 июля по 4 августа — не будет действовать, до 2% осталось 8 996 ₽" loading="lazy" style="width:100%; border-radius: var(--radius-md);">
+      <img src="../../images/Cases/redesign-stavka/Надбавки-2.png" alt="Текущая надбавка с 5 июня по 4 июля — не действует, до 2% осталось 1 000 ₽" loading="lazy" style="width:100%; border-radius: var(--radius-md);">
+      <img src="../../images/Cases/redesign-stavka/Надбавки-1.png" alt="Прошлая надбавка с 5 мая по 4 июня — не действовала, до 2% осталось 6 960 ₽" loading="lazy" style="width:100%; border-radius: var(--radius-md);">
+    </div>
+    <p class="ct-figcaption">Три периода одной надбавки&nbsp;&mdash; будущий, текущий и&nbsp;прошлый</p>
+
+    <p class="ct-p p-reveal cs--gap-8">При необходимости доступна детализация трат&nbsp;&mdash; с&nbsp;указанием операций, не&nbsp;участвующих в&nbsp;расчёте, и&nbsp;возвратов. Это закрывает самый частый сложный сценарий: клиент уверен, что потратил достаточно, а&nbsp;оператор может показать, какие именно операции не&nbsp;учитываются.</p>
+
+    <!-- Скриншот: детализация надбавки с периодами -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-8">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / надбавка «Покупки у партнёров»</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Frame 2131328628.png" alt="Детализация надбавки «Покупки у партнёров» — три периода с предупреждением о неучитываемых покупках" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Детализация надбавки&nbsp;&mdash; три периода, предупреждение о&nbsp;неучитываемых покупках</p>
+
+    <!-- Скриншот: детализация трат -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-10">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / траты у партнёров в мае</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Frame 2131328641.png" alt="Детализация трат — список операций с указанием возвратов" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Детализация до&nbsp;уровня конкретных операций&nbsp;&mdash; оператор видит возвраты и&nbsp;неучтённые покупки</p>
+
+
+    <!-- Взаимоисключающие надбавки -->
+    <h3 class="ct-h3 cs--gap-16">Взаимоисключающие надбавки</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Взаимоисключающие надбавки сгруппированы и&nbsp;снабжены пояснением механики применения. Оператор сразу видит, почему одновременно может действовать только одна надбавка, и&nbsp;объясняет это клиенту без дополнительных источников информации.</p>
+    </div>
+
+    <!-- Скриншот: взаимоисключающие -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-8">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / взаимоисключающие надбавки</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Stavka 2131328628.png" alt="Взаимоисключающие надбавки — Зарплата, Пенсия или Траты по картам, одновременно только одна" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">Группировка взаимоисключающих надбавок с&nbsp;пояснением механики</p>
+
+
+    <!-- Масштабируемость -->
+    <h3 class="ct-h3 cs--gap-16">Масштабируемость</h3>
+    <div class="ct-prose p-reveal">
+      <p class="ct-p">Архитектура раздела спроектирована так, что любая новая надбавка базово отображается без доработок&nbsp;&mdash; с&nbsp;названием, статусом и&nbsp;процентом. Для&nbsp;надбавок с&nbsp;особой логикой (периоды, детализация операций) нужна отдельная доработка, но&nbsp;она расширяет существующую структуру, а&nbsp;не&nbsp;ломает её.</p>
+      <p class="ct-p">После запуска уже добавлялись новые надбавки для&nbsp;других категорий клиентов&nbsp;&mdash; они легли в&nbsp;раздел без изменений интерфейса.</p>
+    </div>
+
+    <!-- Скриншот: история надбавок -->
+    <div class="cs-browser cs-browser--wide cs-browser--flush cs-browser--zoomable p-reveal cs--gap-8">
+      <div class="cs-browser__bar">
+        <div class="cs-browser__dots"><span></span></div>
+        <span class="cs-browser__url">smartcare / история надбавок</span>
+      </div>
+      <div class="cs-browser__screen">
+        <img src="../../images/Cases/redesign-stavka/Stavka 2131328631.png" alt="История надбавок — таблица по периодам с процентами" loading="lazy">
+      </div>
+    </div>
+    <p class="ct-figcaption">История надбавок&nbsp;&mdash; ретроспектива по&nbsp;периодам для&nbsp;разбора спорных ситуаций</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     05 · ТЕСТИРОВАНИЕ
+     ═══════════════════════════════════════════ -->
+<section id="s-testing" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">05 · Тестирование</span>
+    <h2 class="ct-h2 p-reveal">Юзабилити&#8209;тестирование</h2>
+
+    <p class="ct-p p-reveal cs--gap-6">Провёл юзабилити&#8209;тестирование с&nbsp;<strong>12&nbsp;операторами</strong> контакт&#8209;центра.</p>
+
+    <div class="ct-prose p-reveal">
+      <p class="ct-p"><strong>Формат:</strong> ролевая игра. Я&nbsp;выступал в&nbsp;роли клиента, оператор консультировал в&nbsp;новом интерфейсе.</p>
+      <p class="ct-p"><strong>Сценарий:</strong> клиент спрашивает, почему его ставка 14%, а&nbsp;не&nbsp;18%, уверяет, что выполнил все условия надбавки. Оператор должен найти надбавку, которая не&nbsp;действует, разобраться в&nbsp;причине (оплата по&nbsp;СБП не&nbsp;учитывается в&nbsp;расчёте) и&nbsp;объяснить это клиенту.</p>
+    </div>
+
+    <!-- Dramatic: результат теста -->
+    <div class="cs-dramatic p-reveal cs--gap-10">
+      <span class="cs-dramatic__num">100%</span>
+      <span class="cs-dramatic__text">операторов успешно справились с&nbsp;задачей, используя новый раздел</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 · РЕЗУЛЬТАТЫ
+     ═══════════════════════════════════════════ -->
+<section id="s-results" class="cs cs--base cs--standard">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">06 · Результаты</span>
+    <h2 class="ct-h2 p-reveal">Результаты</h2>
+
+    <p class="ct-p p-reveal cs--gap-6">Вопросы по&nbsp;надбавкам, которые раньше уходили на&nbsp;вторую линию и&nbsp;решались до&nbsp;трёх дней, стали закрываться в&nbsp;рамках одного входящего звонка.</p>
+
+    <div class="cs-compare p-reveal cs--gap-10">
+      <div class="cs-compare__card">
+        <span class="cs-compare__badge">Было</span>
+        <span class="cs-compare__metric">1–3&nbsp;дня</span>
+        <span class="cs-compare__desc">Сложные вопросы оформлялись как отложенные обращения и&nbsp;уходили на&nbsp;вторую линию</span>
+      </div>
+      <div class="cs-compare__card cs-compare__card--after">
+        <span class="cs-compare__badge">Стало</span>
+        <span class="cs-compare__metric">1&nbsp;звонок</span>
+        <span class="cs-compare__desc">Оператор объясняет причины ставки, историю надбавки и&nbsp;разбирает операции на&nbsp;одном экране</span>
+      </div>
+    </div>
+
+    <p class="ct-p p-reveal cs--gap-10">Решение стало консистентным с&nbsp;мобильным приложением банка: описание надбавок и&nbsp;формулировки совпадают, оператору не&nbsp;нужно «переводить» для&nbsp;клиента.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     07 · ВКЛАД
+     ═══════════════════════════════════════════ -->
+<section id="s-contribution" class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <span class="ct-section-num p-reveal">07 · Вклад</span>
+    <h2 class="ct-h2 p-reveal">Мой вклад</h2>
+
+    <p class="ct-p p-reveal cs--gap-6"><strong>Product Designer (end&#8209;to&#8209;end).</strong> Выявил, что новые типы надбавок не&nbsp;ложатся в&nbsp;существующий раздел, инициировал редизайн. Проанализировал ~30&nbsp;записей звонков и&nbsp;провёл 3&nbsp;интервью с&nbsp;операторами. Спроектировал информационную архитектуру, логику отображения всех типов надбавок, состояния и&nbsp;тексты. Провёл демо для&nbsp;команд надбавок, вкладов и&nbsp;СБОЛа. Протестировал с&nbsp;12&nbsp;операторами&nbsp;&mdash; 100% успех.</p>
+
+    <h3 class="ct-h3 cs--gap-10">Ключевые решения</h3>
+    <div class="ct-decisions p-reveal">
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🖥️</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Один экран вместо трёх табов</span><span class="ct-decision__desc">Объединение ставки и&nbsp;надбавок на&nbsp;одном экране&nbsp;&mdash; действующие, доступные и&nbsp;условия применения</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">📅</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Периоды для&nbsp;сложных надбавок</span><span class="ct-decision__desc">Прошлый, текущий и&nbsp;следующий периоды с&nbsp;детализацией до&nbsp;уровня операций</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🔗</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Группировка взаимоисключающих</span><span class="ct-decision__desc">Пояснение механики&nbsp;&mdash; почему одновременно может действовать только одна надбавка</span></div>
+      </div>
+      <div class="ct-decision">
+        <span class="ct-decision__icon">🧩</span>
+        <div class="ct-decision__body"><span class="ct-decision__title">Масштабируемая архитектура</span><span class="ct-decision__desc">Новые типы надбавок ложатся в&nbsp;раздел без редизайна&nbsp;&mdash; подтверждено после запуска</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CTA PROOF
+     ═══════════════════════════════════════════ -->
+<section class="cs cs--base cs--spacious">
+  <div class="ct-container">
+    <div class="ct-cta-proof p-reveal">
+      <div class="ct-cta-proof__icon">📊</div>
+      <p class="ct-cta-proof__text">Раздел работает в&nbsp;проде</p>
+      <p class="ct-cta-proof__sub">15&nbsp;000&nbsp;обращений в&nbsp;месяц. Сложные вопросы решаются в&nbsp;рамках одного звонка вместо 1–3&nbsp;дней на&nbsp;второй линии</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CASE NAV -->
+<section class="cs cs--base" style="padding: var(--space-20) var(--page-pad);">
+  <div class="ct-container" style="padding: 0;">
+    <div class="ct-nav">
+      <a href="/case/ai-agent-rates" class="ct-nav__link"><span class="ct-nav__dir">&larr; Предыдущий</span><p class="ct-nav__title">AI&#8209;агент по&nbsp;процентной ставке</p></a>
+      <a href="/case/deposit-calculator" class="ct-nav__link ct-nav__link--next"><span class="ct-nav__dir">Следующий &rarr;</span><p class="ct-nav__title">Подбор вклада и&nbsp;калькулятор</p></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<div class="p-contain"><hr style="border:none;border-top:1px solid var(--border-dark);margin:0;"></div>
+<footer class="p-footer" style="min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-16); padding-bottom: var(--space-16);">
+  <div class="p-contain">
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;— пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener"><img src="../../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">Написать</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow><svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Скачать резюме</a>
+        <a href="../../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;&mdash; я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">&copy; 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+        <a href="/cdn-cgi/l/email-protection#dda7f0bcafb69da4bcb3b9b8a5f3afa8" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="cs-lightbox" id="cs-lightbox" aria-hidden="true">
+  <button class="cs-lightbox__close" id="cs-lightbox-close" aria-label="Закрыть">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script src="../../interactions.js" defer></script>
+<script src="../../sound.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* TOC SCROLLSPY */
+  var tocIds=['s-result','s-context','s-research','s-design','s-testing','s-results','s-contribution'];
+  var tocLinks=document.querySelectorAll('.ct-toc a');
+  var tocWrap=document.getElementById('case-toc');
+  var progressBar=document.getElementById('ct-progress');
+  var scrollTopBtn=document.getElementById('scroll-top');
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(l){l.classList.remove('ct-toc--active');});var a=document.querySelector('.ct-toc a[href="#'+entry.target.id+'"]');if(a){a.classList.add('ct-toc--active');a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}}});},{rootMargin:'-120px 0px -60% 0px',threshold:0});
+  tocIds.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+
+  /* SCROLL */
+  window.addEventListener('scroll',function(){var y=window.scrollY||0;var h=document.documentElement.scrollHeight-window.innerHeight;var p=h>0?(y/h)*100:0;if(progressBar)progressBar.style.width=p+'%';if(tocWrap){tocWrap.style.maxHeight=y>400?'64px':'0';tocWrap.style.opacity=y>400?'1':'0';}if(scrollTopBtn){scrollTopBtn.style.opacity=y>600?'0.9':'0';scrollTopBtn.style.transform=y>600?'scale(1)':'scale(0.8)';scrollTopBtn.style.pointerEvents=y>600?'auto':'none';}},{passive:true});
+  if(scrollTopBtn)scrollTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  /* TOC SMOOTH SCROLL */
+  tocLinks.forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();var id=l.getAttribute('href').substring(1);var t=document.getElementById(id);if(t){t.scrollIntoView({behavior:'smooth',block:'start'});history.pushState(null,null,'#'+id);}});});
+
+  /* LIGHTBOX */
+  var lb=document.getElementById('cs-lightbox');
+  var lbImg=lb?lb.querySelector('img'):null;
+  var lbDrag={active:false,x:0,y:0,sx:0,sy:0};
+
+  function lbClose(){
+    if(!lb)return;
+    lb.classList.remove('cs-lightbox--open','cs-lightbox--zoomed','cs-lightbox--dragging');
+    lb.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.cs-browser--zoomable').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.cs-browser__bar'))return;
+      var src=el.querySelector('.cs-carousel__slide.is-active')||el.querySelector('img');
+      if(src&&lb&&lbImg){
+        var fullSrc=src.getAttribute('data-full')||src.src;
+        lbImg.src=fullSrc;lbImg.alt=src.alt;
+        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      }
+    });
+  });
+
+  var lbCloseBtn=document.getElementById('cs-lightbox-close');
+  if(lbCloseBtn)lbCloseBtn.addEventListener('click',function(e){e.stopPropagation();lbClose();});
+
+  if(lb){
+    lb.addEventListener('click',function(e){
+      if(e.target===lbCloseBtn)return;
+      if(lbDrag.moved)return;
+      var zoomed=lb.classList.contains('cs-lightbox--zoomed');
+      if(!zoomed){
+        lb.classList.add('cs-lightbox--zoomed');
+        var rect=lb.getBoundingClientRect();
+        var ratioX=e.clientX/rect.width;
+        var ratioY=e.clientY/rect.height;
+        requestAnimationFrame(function(){
+          lb.scrollLeft=(lb.scrollWidth-rect.width)*ratioX;
+          lb.scrollTop=(lb.scrollHeight-rect.height)*ratioY;
+        });
+      } else {
+        lb.classList.remove('cs-lightbox--zoomed');
+        lb.scrollLeft=0;lb.scrollTop=0;
+      }
+    });
+
+    lb.addEventListener('mousedown',function(e){
+      if(!lb.classList.contains('cs-lightbox--zoomed'))return;
+      lbDrag.active=true;lbDrag.moved=false;
+      lbDrag.x=e.clientX;lbDrag.y=e.clientY;
+      lbDrag.sx=lb.scrollLeft;lbDrag.sy=lb.scrollTop;
+      lb.classList.add('cs-lightbox--dragging');
+      e.preventDefault();
+    });
+    lb.addEventListener('mousemove',function(e){
+      if(!lbDrag.active)return;
+      var dx=e.clientX-lbDrag.x,dy=e.clientY-lbDrag.y;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)lbDrag.moved=true;
+      lb.scrollLeft=lbDrag.sx-dx;
+      lb.scrollTop=lbDrag.sy-dy;
+    });
+    lb.addEventListener('mouseup',function(){
+      lbDrag.active=false;
+      lb.classList.remove('cs-lightbox--dragging');
+    });
+  }
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb&&lb.classList.contains('cs-lightbox--open'))lbClose();});
+
+  /* CAROUSEL */
+  document.querySelectorAll('.cs-carousel-tabs').forEach(function(bar){
+    var wrap=bar.closest('.cs-browser')||bar.closest('[id]');
+    var slides=wrap.querySelectorAll('.cs-carousel__slide');
+    var tabs=bar.querySelectorAll('.cs-carousel-tab');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click',function(e){
+        e.stopPropagation();
+        var idx=parseInt(tab.getAttribute('data-slide'),10);
+        slides.forEach(function(s){s.classList.remove('is-active');});
+        tabs.forEach(function(t){t.classList.remove('is-active');});
+        if(slides[idx])slides[idx].classList.add('is-active');
+        tab.classList.add('is-active');
+      });
+    });
+  });
+
+  /* CTA pulse */
+  var ctaProof=document.querySelector('.ct-cta-proof');
+  if(ctaProof){new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('p-reveal--visible',e.isIntersecting);});},{threshold:0.2}).observe(ctaProof);}
+});
+</script>
+<script src="../../protect.js" defer></script>
+</body>
+</html>

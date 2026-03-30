@@ -1,0 +1,156 @@
+/* ============================================================
+   PORTFOLIO DESIGN SYSTEM — TOKENS
+   v2.3.0 | 2026-02-26
+   ============================================================ */
+
+:root {
+
+  /* === ТЁМНАЯ ТЕМА (hero, home, footer, statements) ===
+     Michael: #0A0A0A фон, белый текст с градациями opacity. */
+  --bg-dark:            #0B0B0F;
+  --bg-dark-alpha:      rgba(11, 11, 15, 0.85);
+  --bg-light-alpha:     rgba(244, 244, 246, 0.7);
+  --bg-dark-raised:     #141419;
+  --bg-dark-surface:    #1C1C24;
+  --border-dark:        rgba(255, 255, 255, 0.08);
+
+  --text-on-dark:       rgba(255, 255, 255, 1);
+  --text-on-dark-60:    rgba(255, 255, 255, 0.6);
+  --text-on-dark-40:    rgba(255, 255, 255, 0.4);
+  --text-on-dark-20:    rgba(255, 255, 255, 0.2);
+
+  /* === СВЕТЛАЯ ТЕМА (кейсы, контент) ===
+     Garri: ~#F5F5F5 фон, чёрный текст, серые контейнеры. */
+  --bg-light:           #F4F4F6;
+  --bg-light-raised:    #FFFFFF;
+  --bg-light-container: #EAEAEE;
+  --border-light:       rgba(0, 0, 0, 0.08);
+
+  --text-on-light:      #0B0B0F;
+  --text-on-light-60:   rgba(11, 11, 15, 0.6);
+  --text-on-light-40:   rgba(11, 11, 15, 0.35);
+
+  /* === АКЦЕНТ ===
+     Garri: единственный акцент — жёлто-зелёный dot cursor.
+     Michael: нет яркого акцента вообще.
+     Решение: один тёплый акцент для метрик. Минимально. */
+  --accent:             #E8734A;
+  --accent-subtle:      rgba(232, 115, 74, 0.12);
+  --accent-glow:        rgba(232, 115, 74, 0.25);
+  --highlight:          rgba(232, 115, 74, 0.15);
+
+  /* === ТИПОГРАФИКА ===
+     Базовая система: Inter + Space Mono.
+     Display/statement: Instrument Serif.
+     Hero (Figma 1080:2420): Playfair Display. */
+  --font-display:       'Instrument Serif', Georgia, serif;
+  --font-hero:          'Playfair Display', 'Times New Roman', serif;
+  --font-sans:          'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:          'Space Mono', 'Courier New', monospace;
+
+  /* === ТИПОГРАФИЧЕСКАЯ ШКАЛА ===
+     Garri: body ~16px, headings ~18-20px bold uppercase,
+     statements ~40-48px bold, labels ~12px uppercase tracking.
+     Michael: hero ~48-72px bold uppercase, body ~16-18px medium. */
+  --text-xs:    clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);   /* ~11-12 */
+  --text-sm:    clamp(0.8125rem, 0.77rem + 0.15vw, 0.875rem);   /* ~13-14 */
+  --text-base:  clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);        /* ~15-16 */
+  --text-lg:    clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);     /* ~17-19 */
+  --text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);       /* ~20-26 */
+  --text-2xl:   clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem);          /* ~24-40 */
+  --text-3xl:   clamp(2rem, 1.5rem + 2vw, 3.5rem);              /* ~32-56 */
+  --text-4xl:   clamp(2.5rem, 1.8rem + 3vw, 4.5rem);            /* ~40-72 */
+
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-base:    1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight:  -0.02em;
+  --tracking-normal: -0.01em;
+  --tracking-wide:   0.08em;
+  --tracking-wider:  0.14em;
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* === ОТСТУПЫ ===
+     Garri: щедрый whitespace между секциями.
+     Пропорциональная шкала с большими gap-ами. */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
+  --space-32:  8rem;
+  --space-40:  10rem;
+
+  --section-gap:    clamp(5rem, 4rem + 5vw, 10rem);
+  --block-gap:      clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  --page-pad:       clamp(1.25rem, 1rem + 2vw, 3rem);
+
+  /* === LAYOUT ===
+     Garri: sidebar ~300px, content ~70%.
+     Michael: wide container, asymmetric 50/50.
+     Решение: sidebar 280-320px sticky, content растягивается. */
+  --sidebar-w:      300px;
+  --content-max:    1400px;
+  --narrow-max:     720px;
+  --prose-max:      60ch;
+
+  /* === РАДИУСЫ ===
+     Garri: контейнеры ~12-16px radius. UI внутри — свой radius. */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 100px;
+
+  /* === ТЕНИ (hover-lift) === */
+  --shadow-sm:   0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.08);
+  --shadow-lift: 0 12px 40px rgba(0,0,0,0.12);
+
+  /* === АНИМАЦИИ ===
+     Garri: cross-fade при скролле, мягкие transitions.
+     Michael: минимальные, быстрые hover-ответы. */
+  --dur-fast:    150ms;
+  --dur-base:    300ms;
+  --dur-slow:    500ms;
+  --dur-scroll:  800ms;
+
+  --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* === ANNOTATION DOT === */
+  --dot-ring:    rgba(255, 255, 255, 0.88);
+
+  /* === Z-INDEX === */
+  --z-dots:    100;
+  --z-header:  200;
+  --z-overlay: 300;
+
+  /* === TOUCH === */
+  --touch-min: 44px;
+
+  /* === HEADER === */
+  --header-h: 72px;
+
+  /* === BREAKPOINTS (reference only — CSS vars can't be in @media) ===
+     mobile:  < 640px
+     tablet:  640–959px
+     desktop: ≥ 960px
+  */
+}

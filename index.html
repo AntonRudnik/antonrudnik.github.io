@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Антон Рудник — Senior Product Designer</title>
+  <meta name="description" content="7+ лет проектирую B2E и B2B продукты в FinTech и SaaS. Senior Product Designer, Москва.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="favlog/favicon-180.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/typography.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <link rel="stylesheet" href="styles/cover.css">
+  <link rel="stylesheet" href="styles/protect.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="p-header">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__sound is-muted" aria-label="Звук" aria-pressed="false">
+      <svg class="p-header__sound-on" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M14.5 7a5.2 5.2 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M16.5 4a8.5 8.5 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <svg class="p-header__sound-off" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 8h2.8L11 4.5v13L6.8 14H4a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4 8Z" fill="currentColor"/>
+        <path d="M15 7.5l-4 7M11 7.5l4 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ===== MAIN: SCROLL-SNAP ===== -->
+<main class="p-snap">
+
+  <!-- Dot navigation -->
+  <nav class="p-dots" aria-label="Навигация по&nbsp;секциям">
+    <button class="p-dots__dot p-dots__dot--active" 
+   
+   aria-label="Главная"></button>
+    <button class="p-dots__dot" aria-label="AI-агент налоги"></button>
+    <button class="p-dots__dot" aria-label="Аресты и взыскания"></button>
+    <button class="p-dots__dot" aria-label="Ставка и надбавки"></button>
+    <button class="p-dots__dot" aria-label="AI-агент ставка"></button>
+    <button class="p-dots__dot" aria-label="Персональные предложения"></button>
+    <button class="p-dots__dot" aria-label="Подбор вклада"></button>
+    <button class="p-dots__dot" aria-label="Карьера"></button>
+    <button class="p-dots__dot" aria-label="Контакты"></button>
+  </nav>
+
+  <!-- Mobile menu (за хедером) -->
+  <div class="p-mobile-menu" id="mobile-menu" hidden>
+    <nav class="p-mobile-menu__nav">
+      <a href="/#cases" class="p-mobile-menu__link">Кейсы
+      <a href="/about" class="p-mobile-menu__link">Опыт</a>
+      <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+    </nav>
+  </div>
+
+
+  <!-- ===== HERO ===== -->
+  <section class="p-snap__screen p-screen--dark p-screen--hero">
+    <div class="p-contain p-hero">
+      <div class="p-hero__row">
+        <figure class="p-hero__portrait-wrap p-reveal p-reveal--scale">
+          <img src="images/ARudnik_photo 1.jpg" alt="Антон Рудник" class="p-hero__portrait" fetchpriority="high">
+        </figure>
+        <div class="p-hero__content">
+          <h1 class="p-hero__title p-reveal p-reveal--delay-1">
+            <span class="p-hero__title-main">
+              <span class="p-counter" data-target="7" data-suffix="+">0+</span>&nbsp;лет проектирую B2E и&nbsp;B2B продукты в&nbsp;FinTech и&nbsp;SaaS.&nbsp;<span class="p-hero__badges" role="img" aria-label="Опыт в&nbsp;Яндексе и&nbsp;Сбере">
+                <img src="images/logos/yandex.svg" alt="">
+                <img src="images/logos/sber.svg" alt="" class="p-hero__badges-sber">
+              </span>
+            </span>
+            <span class="p-hero__title-sub">Последние 4&nbsp;года развивал платформу поддержки в&nbsp;Сбере: 6,6&nbsp;млн обращений в&nbsp;месяц, 8&nbsp;700&nbsp;операторов. 70+&nbsp;фичей и&nbsp;2&nbsp;AI&#8209;агента в&nbsp;продакшене<img src="images/logos/sber.svg" alt="" class="p-hero__badge-end" aria-hidden="true"></span>
+          </h1>
+          <p class="p-hero__summary p-reveal p-reveal--delay-2">Лидирую обсуждения на&nbsp;уровне бизнес-процессов и&nbsp;валидирую решения через&nbsp;исследования</p>
+          <div class="p-hero__actions p-reveal p-reveal--delay-3">
+            <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener">
+              <img src="images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">
+              Написать
+            </a>
+            <a href="%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost" data-glow>
+              <svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              Скачать резюме
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 01: AI-агент для налоговых консультаций ===== -->
+  <section id="cases" class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 01 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">4&nbsp;FTE</span>
+          <span class="p-case-screen__context">освобождено ресурсов</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">AI&#8209;агент для&nbsp;налоговых консультаций</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">Агент без&nbsp;интерфейса: только логика, промпты и&nbsp;бизнес-эффект. Как проектировать, когда нечего рисовать.</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">AI-агент</span>
+          <span class="p-tag">Промпт-дизайн</span>
+          <span class="p-tag">Проектирование без UI</span>
+          <span class="p-tag">Автоматизация</span>
+        </div>
+        <a href="/case/ai-tax" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~5&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/ai-tax" class="p-cover-link" aria-label="Открыть кейс: AI-агент для налоговых консультаций">
+          <div id="case-01-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 02: Аресты и взыскания ===== -->
+  <section class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 02 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">250&nbsp;000</span>
+          <span class="p-case-screen__context">обращений / мес</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">Аресты и&nbsp;взыскания</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">Клиент мыслит долгом, оператор&nbsp;&mdash; документом. За&nbsp;три года собрал единую платформу для&nbsp;8&nbsp;700&nbsp;операторов. AHT&nbsp;&minus;35%, FCR по&nbsp;ключевым тематикам до&nbsp;70%.</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">End-to-end</span>
+          <span class="p-tag">Проектирование с&nbsp;нуля</span>
+          <span class="p-tag">Сложный домен</span>
+        </div>
+        <a href="/case/arrests" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~15&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/arrests" class="p-cover-link" aria-label="Открыть кейс: Аресты и взыскания">
+          <div id="case-02-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 03: Ставка и надбавки по вкладам ===== -->
+  <section class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 03 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">дни → минуты</span>
+          <span class="p-case-screen__context">консультации по&nbsp;сложным надбавкам</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">Ставка и&nbsp;надбавки по&nbsp;вкладам</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">Сложные вопросы по&nbsp;надбавкам уходили на&nbsp;2&#8209;ю&nbsp;линию и&nbsp;решались днями. После редизайна раздела&nbsp;&mdash; в&nbsp;рамках одного звонка. Среднее время обслуживания сократилось на&nbsp;20%.</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">Редизайн</span>
+          <span class="p-tag">Информационная архитектура</span>
+          <span class="p-tag">Исследования</span>
+        </div>
+        <a href="/case/redesign-stavka" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~5&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/redesign-stavka" class="p-cover-link" aria-label="Открыть кейс: Ставка и надбавки по вкладам">
+          <div id="case-03-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 04: AI-агент по процентной ставке ===== -->
+  <section class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 04 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">10&nbsp;FTE</span>
+          <span class="p-case-screen__context">высвобождено ресурсов</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">AI&#8209;агент по&nbsp;вкладам. Ставка и&nbsp;капитализация</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">21&nbsp;000&nbsp;обращений/мес, 13–14&nbsp;минут на&nbsp;обслуживание. Прежде чем объяснить клиенту расчёт, оператор вручную сводил данные по&nbsp;вкладу. Спроектировал агента, который берёт аналитику на&nbsp;себя.</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">AI-агент</span>
+          <span class="p-tag">Саммаризация</span>
+          <span class="p-tag">Мультиагентная система</span>
+        </div>
+        <a href="/case/ai-agent-rates" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~5&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/ai-agent-rates" class="p-cover-link" aria-label="Открыть кейс: AI-агент по вкладам — ставка и капитализация">
+          <div id="case-04-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 05: Персональные предложения ===== -->
+  <section class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 05 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">31,5%</span>
+          <span class="p-case-screen__context">конверсия</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">Персональные предложения</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">Запустил канал продаж в&nbsp;контакт-центре с&nbsp;нуля&nbsp;&mdash; два потока, три этапа эволюции, конверсия до&nbsp;31,5%.</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">Продажи</span>
+          <span class="p-tag">Полевое исследование</span>
+          <span class="p-tag">Информационная архитектура</span>
+        </div>
+        <a href="/case/personal-offers" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~9&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/personal-offers" class="p-cover-link" aria-label="Открыть кейс: Персональные предложения">
+          <div id="case-05-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КЕЙС 06: Подбор вклада и калькулятор ===== -->
+  <section class="p-snap__screen p-screen--dark p-case-screen">
+    <div class="p-contain p-case-screen__inner">
+      <div class="p-case-screen__text">
+        <span class="p-label p-reveal p-reveal--delay-1">Кейс 06 · Сбербанк · Платформа поддержки</span>
+        <div class="p-case-screen__metric p-reveal p-reveal--delay-2">
+          <span class="p-case-screen__value">24,6%</span>
+          <span class="p-case-screen__context">конверсия</span>
+        </div>
+        <h2 class="p-heading--md p-reveal p-reveal--delay-3">Подбор вклада и&nbsp;калькулятор</h2>
+        <p class="p-body p-reveal p-reveal--delay-4">Создал канал продаж вкладов с&nbsp;нуля&nbsp;&mdash; MVP-сценарий на&nbsp;57&nbsp;экранах, запуск без&nbsp;единого релиза</p>
+        <div class="p-tags p-reveal p-reveal--delay-5">
+          <span class="p-tag">MVP</span>
+          <span class="p-tag">Продажи</span>
+          <span class="p-tag">Исследование</span>
+        </div>
+        <a href="/case/deposit-calculator" class="p-case-screen__link p-reveal p-reveal--delay-6">Читать · ~8&nbsp;мин →</a>
+      </div>
+      <div class="p-case-screen__visual p-reveal p-reveal--scale">
+        <a href="/case/deposit-calculator" class="p-cover-link" aria-label="Открыть кейс: Подбор вклада и калькулятор">
+          <div id="case-06-cover"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== КАРЬЕРА ===== -->
+  <section id="career" class="p-snap__screen p-screen--dark">
+    <div class="p-contain p-stack--md">
+      <span class="p-label p-reveal">Карьера</span>
+      <h2 class="p-heading--lg p-reveal p-reveal--delay-1">Опыт работы</h2>
+
+      <div class="p-career p-reveal p-reveal--delay-2">
+
+        <!-- Левая колонка: компании -->
+        <div class="p-career__list">
+          <div class="p-employers">
+
+            <!-- Сбербанк -->
+            <div class="p-employer p-employer--clickable is-active" data-employer="sber">
+              <img src="images/logos/sber.svg" alt="Сбербанк" class="p-employer__icon" loading="lazy">
+              <div class="p-employer__info">
+                <strong class="p-heading--md">Сбербанк</strong>
+                <div class="p-employer__meta">
+                  <span>2022–2026</span>
+                </div>
+                <span class="p-employer__context">SmartCare · Платформа поддержки клиентов</span>
+                <span class="p-employer__role">Старший → Ведущий специалист по&nbsp;дизайну</span>
+              </div>
+            </div>
+
+            <!-- Проектная занятость -->
+            <div class="p-employer p-employer--clickable" data-employer="freelance">
+              <img src="images/logos/freelance.svg" alt="Проектная занятость" class="p-employer__icon" loading="lazy">
+              <div class="p-employer__info">
+                <strong class="p-heading--md">Проектная занятость</strong>
+                <div class="p-employer__meta">
+                  <span>2019–2022</span>
+                </div>
+                <span class="p-employer__context">ОФД · Аптечное приложение · Стриминг</span>
+                <span class="p-employer__role">Продуктовый дизайнер</span>
+              </div>
+            </div>
+
+            <!-- Яндекс -->
+            <div class="p-employer p-employer--clickable" data-employer="yandex">
+              <img src="images/logos/yandex.svg" alt="Яндекс" class="p-employer__icon" loading="lazy">
+              <div class="p-employer__info">
+                <strong class="p-heading--md">Яндекс</strong>
+                <div class="p-employer__meta">
+                  <span>2019</span>
+                </div>
+                <span class="p-employer__context">Почта · Сервис рассылок</span>
+                <span class="p-employer__role">Продуктовый дизайнер</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CTA -->
+          <div class="p-employer--cta">
+            <a href="/about" class="p-hero__btn p-hero__btn--ghost" data-glow>Подробнее об&nbsp;опыте</a>
+          </div>
+        </div>
+
+        <!-- Правая колонка: детали -->
+        <div class="p-career__detail">
+
+          <div class="p-career__panel is-active" data-panel="sber">
+            <div class="p-career__block">
+              <span class="p-career__block-label">2023–2026 · Ведущий специалист по&nbsp;дизайну</span>
+              <span class="p-career__block-scope">1-я и&nbsp;2-я линия · AI-агенты</span>
+              <ul class="p-career__bullets">
+                <li>Добавилась 2-я линия (ЦЗК) по&nbsp;тем&nbsp;же направлениям + AI-агенты</li>
+                <li>Запустил 2&nbsp;AI-агента&nbsp;&mdash; по&nbsp;вкладам и&nbsp;налогам, ~26&nbsp;000&nbsp;обращений/мес</li>
+                <li>Раздел «Ставка и&nbsp;надбавки»&nbsp;&mdash; 15&nbsp;000&nbsp;обращений/мес</li>
+              </ul>
+            </div>
+
+            <div class="p-career__divider"></div>
+
+            <div class="p-career__block">
+              <span class="p-career__block-label">2022–2023 · Старший специалист по&nbsp;дизайну</span>
+              <span class="p-career__block-scope">1-я линия · ГПМ · Продажи</span>
+              <ul class="p-career__bullets">
+                <li>Раздел арестов и&nbsp;взысканий&nbsp;&mdash; ~250&nbsp;000&nbsp;обращений/мес</li>
+                <li>Горячие продажи во&nbsp;входящих звонках и&nbsp;чатах&nbsp;&mdash; конверсия 31,5%</li>
+                <li>Сценарий подбора вклада&nbsp;&mdash; конверсия 24,6%</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-career__panel" data-panel="freelance">
+            <div class="p-career__block">
+              <span class="p-career__block-label">2019–2022 · Продуктовый дизайнер</span>
+              <span class="p-career__block-scope">ОФД · iOS/Android · Стриминг</span>
+              <ul class="p-career__bullets">
+                <li>Платформа ОФД&nbsp;&mdash; первый в&nbsp;истории сервиса сценарий выпуска ЭЦП. Многошаговый гибридный флоу: цифровая часть + compliance для&nbsp;оффлайн-шагов</li>
+                <li>MedTech-приложение&nbsp;&mdash; UI/UX с&nbsp;нуля, логика подбора препаратов по&nbsp;симптоматике на&nbsp;основе глубинных интервью с&nbsp;врачами</li>
+                <li>Стриминговая платформа&nbsp;&mdash; информационная архитектура и&nbsp;ключевые флоу от&nbsp;онбординга до&nbsp;панели управления трансляциями</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-career__panel" data-panel="yandex">
+            <div class="p-career__block">
+              <span class="p-career__block-label">2019 · Продуктовый дизайнер</span>
+              <span class="p-career__block-scope">Почта · Сервис рассылок</span>
+              <ul class="p-career__bullets">
+                <li>Сервис рассылок&nbsp;&mdash; 75&nbsp;млн&nbsp;писем/мес, 2&nbsp;000+ рассылок</li>
+                <li>Развитие дизайн-системы, переход со&nbsp;Sketch на&nbsp;Figma</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== FOOTER ===== -->
+  <section class="p-snap__screen p-screen--dark p-screen--footer">
+    <footer class="p-footer">
+      <div class="p-contain">
+
+        <!-- CTA -->
+        <div class="p-footer__cta">
+          <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+          <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;— пишите.</p>
+          <div class="p-footer__actions">
+            <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener">
+              <img src="images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">
+              Написать
+            </a>
+            <a href="%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow>
+              <svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              Скачать резюме
+            </a>
+            <a href="%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+          </div>
+        </div>
+
+        <!-- Vibes credit -->
+        <div class="p-footer__credit">
+          <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;— я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+          <div class="p-footer__tools">
+            <a href="https://cursor.com" target="_blank" rel="noopener"><img src="images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+            <a href="https://claude.ai" target="_blank" rel="noopener"><img src="images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+            <span class="p-mono--sm">HTML · CSS · JS</span>
+          </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="p-footer__bottom">
+          <span class="p-body--sm">© 2026 Антон Рудник</span>
+          <div class="p-footer__links">
+            <a href="tel:+79057890075" class="p-link p-body--sm">+7 905 789-00-75</a>
+            <a href="mailto:z-ark@yandex.ru" class="p-link p-body--sm">Почта</a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  </section>
+
+</main>
+
+<script src="sound.js" defer></script>
+<script src="cover.js" defer></script>
+<script src="interactions.js" defer></script>
+<script src="protect.js" defer></script>
+</body>
+</html>

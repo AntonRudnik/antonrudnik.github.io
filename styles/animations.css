@@ -1,0 +1,131 @@
+/* ============================================================
+   PORTFOLIO DESIGN SYSTEM — ANIMATIONS
+   v2.3.0 | 2026-02-26
+   ============================================================ */
+
+
+/* ==========================================================
+   SCROLL REVEAL
+   ========================================================== */
+
+.p-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--dur-scroll) var(--ease-out), transform var(--dur-scroll) var(--ease-out);
+}
+
+.p-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.p-reveal--delay-1 { transition-delay: 80ms; }
+.p-reveal--delay-2 { transition-delay: 160ms; }
+.p-reveal--delay-3 { transition-delay: 240ms; }
+.p-reveal--delay-4 { transition-delay: 320ms; }
+.p-reveal--delay-5 { transition-delay: 400ms; }
+.p-reveal--delay-6 { transition-delay: 480ms; }
+
+/* Scale variant for visuals */
+.p-reveal--scale {
+  transform: translateY(20px) scale(0.97);
+}
+.p-reveal--scale.is-visible {
+  transform: translateY(0) scale(1);
+}
+
+/* Line reveal for display headings */
+.p-reveal-line {
+  display: block;
+  overflow: hidden;
+}
+.p-reveal-line > span {
+  display: block;
+  transform: translateY(105%);
+  transition: transform var(--dur-scroll) cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.is-visible .p-reveal-line > span { transform: translateY(0); }
+.p-reveal-line--d1 > span { transition-delay: 100ms; }
+.p-reveal-line--d2 > span { transition-delay: 200ms; }
+
+
+/* ==========================================================
+   CROSS-FADE (Garri: текст в sidebar меняется при скролле)
+   
+   JS управляет: добавляет .is-active на текущий блок,
+   убирает с предыдущего.
+   
+   Блоки лежат друг на друге в CSS Grid (grid stacking hack).
+   Только активный видим.
+   
+   HTML:
+   <div class="p-crossfade-stack">
+     <div class="p-crossfade is-active" data-section="s1">...</div>
+     <div class="p-crossfade" data-section="s2">...</div>
+   </div>
+   ========================================================== */
+
+.p-crossfade-stack {
+  display: grid;
+}
+
+.p-crossfade-stack > .p-crossfade {
+  grid-area: 1 / 1;
+}
+
+.p-crossfade {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.p-crossfade.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+
+/* ==========================================================
+   HOVER STATES
+   Определены inline в components.css на каждом компоненте.
+   Здесь — только общие принципы.
+   Michael: всё через opacity, минимально.
+   ========================================================== */
+
+
+/* ==========================================================
+   SCROLL PROGRESS
+   
+   HTML: <div class="p-progress" id="scroll-progress"></div>
+   ========================================================== */
+
+.p-progress {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  height: 1px;
+  width: 0%;
+  background: var(--text-on-dark-40);
+  z-index: calc(var(--z-header) + 1);
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .p-reveal, .p-reveal--scale { opacity: 1; transform: none; }
+  .p-reveal-line > span { transform: none; }
+  .p-crossfade { opacity: 0; transform: none; }
+  .p-crossfade.is-active { opacity: 1; }
+  .p-annotated__dot::after { animation: none; opacity: 0; }
+  .p-screen--hero::after { display: none !important; }
+}

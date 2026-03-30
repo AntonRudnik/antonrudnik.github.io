@@ -1,0 +1,226 @@
+/* ============================================================
+   PORTFOLIO DESIGN SYSTEM — TYPOGRAPHY
+   v2.0.0 | 2026-02-26
+   
+   Из рефов:
+   — Michael: иерархия через opacity (100/60/40), не через цвета.
+     Bold uppercase для заголовков, medium для body.
+   — Garri: один шрифт, labels uppercase с tracking, body regular ~16px.
+     Метаданные — табличная подача, label : value.
+   
+   Решение:
+   — Instrument Serif: display для statement/pull-quote.
+   — Playfair Display: отдельный hero-заголовок (`.p-hero__title` в components.css).
+   — Inter: всё остальное. Hierarchy через size + weight + opacity.
+   — Space Mono: метрики.
+   ============================================================ */
+
+/* --- Подключение ---
+   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+*/
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-base);
+  letter-spacing: var(--tracking-normal);
+  color: var(--text-on-light);
+  background: var(--bg-light);
+}
+
+
+/* ==========================================================
+   DISPLAY (Instrument Serif)
+   
+   Garri statement: ~40-48px bold.
+   Hero в этой версии вынесен в отдельный класс `.p-hero__title` (Playfair).
+   Решение: serif для эмоционального веса. Max 1-2 на экран.
+   ========================================================== */
+
+.p-display,
+.p-display--xl,
+.p-display--lg,
+.p-display--md {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular); /* serif не нуждается в bold */
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.p-display--xl { font-size: var(--text-4xl); }
+.p-display--lg { font-size: var(--text-3xl); }
+.p-display--md { font-size: var(--text-2xl); }
+
+
+/* ==========================================================
+   HEADINGS (Inter, bold/semibold)
+   
+   Garri: bold uppercase ~18-20px для названий проектов.
+   Smaller bold для sub-heads. Hero heading управляется отдельно в components.css.
+   ========================================================== */
+
+.p-heading--xl {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.p-heading--lg {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+}
+
+.p-heading--md {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+.p-heading--sm {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+
+/* ==========================================================
+   LABEL
+   
+   Garri: uppercase, tracking 0.08-0.14em, ~12px, secondary color.
+   Used for: CHALLENGE, SOLUTION, COMPETITIVE ENVIRONMENT, WORK, ABOUT.
+   ========================================================== */
+
+.p-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  line-height: var(--leading-snug);
+}
+
+/* На тёмном: 40% opacity. На светлом: 40% opacity. */
+.p-screen--dark .p-label,
+.p-section--dark .p-label { color: var(--text-on-dark-40); }
+
+.p-screen--light .p-label,
+.p-section--light .p-label,
+.p-section--container .p-label { color: var(--text-on-light-40); }
+
+
+/* ==========================================================
+   BODY TEXT
+   ========================================================== */
+
+.p-body--lg {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.p-body {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+}
+
+.p-body--sm {
+  font-size: var(--text-sm);
+  line-height: var(--leading-base);
+}
+
+/* Вторичный текст: 60% opacity (Michael pattern) */
+.p-screen--dark .p-body,
+.p-screen--dark .p-body--lg,
+.p-screen--dark .p-body--sm,
+.p-section--dark .p-body,
+.p-section--dark .p-body--lg,
+.p-section--dark .p-body--sm { color: var(--text-on-dark-60); }
+
+.p-screen--light .p-body--sm,
+.p-section--light .p-body--sm { color: var(--text-on-light-60); }
+
+
+/* ==========================================================
+   MONO (Space Mono)
+   Для метрик и числовых данных.
+   ========================================================== */
+
+.p-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.p-mono--xl {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.p-mono--lg {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  font-variant-numeric: tabular-nums;
+}
+
+.p-mono--md {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  font-variant-numeric: tabular-nums;
+}
+
+.p-mono--sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ==========================================================
+   PROSE (rich text block)
+   Garri: body ~16px, line-height ~1.6, max-width ~60ch.
+   ========================================================== */
+
+.p-prose {
+  max-width: var(--prose-max);
+}
+
+.p-prose > * + * { margin-top: var(--space-5); }
+.p-prose h2 + *, .p-prose h3 + * { margin-top: var(--space-3); }
+
+.p-prose h2 { font-size: var(--text-xl); font-weight: var(--weight-semibold); margin-top: var(--space-12); }
+.p-prose h3 { font-size: var(--text-lg); font-weight: var(--weight-semibold); margin-top: var(--space-10); }
+.p-prose strong { font-weight: var(--weight-semibold); }
+
+.p-prose ul { list-style: disc; padding-left: var(--space-6); }
+.p-prose ol { list-style: decimal; padding-left: var(--space-6); }
+.p-prose li + li { margin-top: var(--space-2); }
+
+.p-prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+
+/* ==========================================================
+   INLINE LINK
+   ========================================================== */
+
+.p-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  opacity: 0.6;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.p-link:hover { opacity: 1; }

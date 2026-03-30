@@ -1,0 +1,3773 @@
+/* ============================================================
+   PORTFOLIO DESIGN SYSTEM — COMPONENTS
+   v2.3.0 | 2026-02-26
+   
+   Каждый компонент привязан к конкретному паттерну из рефов.
+   HTML-сниппеты в комментариях.
+   ============================================================ */
+
+
+/* ==========================================================
+   HEADER
+   Michael: имя слева, nav по центру, CTA-pill справа.
+   Фиксированный, backdrop-blur.
+   
+   HTML:
+   <header class="p-header">
+     <div class="p-contain p-header__inner">
+       <a href="/" class="p-header__name">Антон Иванов</a>
+       <nav class="p-header__nav">
+         <a href="/" class="p-header__link p-header__link--active">Работы</a>
+         <a href="/about" class="p-header__link">Обо&nbsp;мне</a>
+       </nav>
+       <a href="/contact" class="p-header__cta">Написать</a>
+       <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+     </div>
+   </header>
+   ========================================================== */
+
+.p-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-header);
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--bg-dark-alpha);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.p-header__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.p-header__name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+}
+
+.p-header__nav {
+  display: none;
+  gap: var(--space-8);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 960px) {
+  .p-header__nav { display: flex; }
+}
+
+.p-header__link {
+  position: relative;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-dark);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.p-header__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.p-header__link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.p-header__cta {
+  display: none;
+  position: relative;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-dark-60);
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-pill);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+@media (min-width: 960px) {
+  .p-header__cta { display: block; }
+}
+
+.p-header__cta:hover {
+  color: var(--text-on-dark);
+  border-color: var(--text-on-dark-40);
+}
+
+/* Sound toggle */
+.p-header__sound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  color: var(--text-on-dark-40);
+  transition: color var(--dur-normal) var(--ease-out),
+              filter var(--dur-normal) var(--ease-out);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+@media (max-width: 959px) {
+  .p-header__sound { margin-right: var(--space-2); }
+}
+
+@media (min-width: 960px) {
+  .p-header__sound { margin-left: var(--space-4); }
+}
+
+.p-header__sound:hover {
+  color: var(--text-on-dark);
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+
+.p-header__sound-on,
+.p-header__sound-off {
+  transition: transform var(--dur-normal) var(--ease-out),
+              opacity var(--dur-normal) var(--ease-out);
+}
+
+.p-header__sound-off { display: none; }
+.p-header__sound.is-muted .p-header__sound-on  { display: none; }
+.p-header__sound.is-muted .p-header__sound-off  { display: block; }
+.p-header__sound.is-muted { color: var(--text-on-dark-40); }
+.p-header__sound.is-muted:hover { filter: none; color: var(--text-on-dark-60); }
+
+.p-header__burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  width: var(--touch-min);
+  height: var(--touch-min);
+}
+
+@media (min-width: 960px) {
+  .p-header__burger { display: none; }
+}
+
+.p-header__burger span {
+  display: block;
+  height: 2px;
+  width: var(--space-6);
+  background: var(--text-on-dark);
+  transition: transform var(--dur-base) var(--ease-in-out);
+}
+
+.p-header__burger.is-open span:first-child {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.p-header__burger.is-open span:last-child {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+
+/* ==========================================================
+   MOBILE MENU (overlay)
+   
+   HTML:
+   <div class="p-mobile-menu" id="mobile-menu" hidden>
+     <nav class="p-mobile-menu__nav">
+       <a href="/" class="p-mobile-menu__link">Работы</a>
+       <a href="/about" class="p-mobile-menu__link">Обо&nbsp;мне</a>
+       <a href="/contact" class="p-mobile-menu__link">Написать</a>
+     </nav>
+   </div>
+   ========================================================== */
+
+.p-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-header) - 1);
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-mobile-menu[hidden] {
+  display: none;
+}
+
+.p-mobile-menu__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  text-align: center;
+}
+
+.p-mobile-menu__link {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-on-dark-60);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.p-mobile-menu__link:hover { color: var(--text-on-dark); }
+
+@media (min-width: 960px) {
+  .p-mobile-menu { display: none !important; }
+}
+
+
+/* ==========================================================
+   HOME: HERO
+
+   Figma node 1080:2420 (1920 desktop):
+   фото 276x369 слева, крупный заголовок справа, подзаголовок и 2 CTA.
+   Координаты подогнаны под x=~348 и y=200 на 1920px.
+
+   HTML:
+   <section class="p-snap__screen p-screen--dark p-screen--hero">
+     <div class="p-contain p-hero">
+       <div class="p-hero__row">
+         <figure class="p-hero__portrait-wrap"><img class="p-hero__portrait"></figure>
+         <div class="p-hero__content">
+           <h1 class="p-hero__title p-reveal">
+             <span class="p-hero__title-main">...</span>
+             <span class="p-hero__title-sub">...</span>
+           </h1>
+           <p class="p-hero__summary">...</p>
+           <div class="p-hero__actions">
+             <a class="p-hero__btn p-hero__btn--primary">
+               <img class="p-hero__btn-icon p-hero__btn-icon--tg">Написать
+             </a>
+             <a class="p-hero__btn p-hero__btn--ghost">Скачать резюме</a>
+           </div>
+         </div>
+       </div>
+     </div>
+   </section>
+   ========================================================== */
+
+.p-hero {
+  width: 100%;
+  padding-top: 0;
+}
+
+.p-hero__row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.p-hero__portrait-wrap {
+  width: clamp(200px, 55vw, 280px);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.p-hero__portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.p-hero__portrait-wrap:hover .p-hero__portrait {
+  transform: scale(1.03);
+}
+
+.p-hero__content {
+  width: 100%;
+  max-width: 899px;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-5), 2vw + 0.5rem, var(--space-10));
+}
+
+.p-hero__title {
+  margin: 0;
+  font-family: var(--font-hero);
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 3.25rem);
+  font-weight: var(--weight-semibold);
+  line-height: 1.23;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-on-dark);
+}
+
+.p-hero__title-main,
+.p-hero__title-sub {
+  display: inline;
+}
+
+.p-hero__badges {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+  margin-bottom: 0.12em;
+}
+
+.p-hero__badges img {
+  width: clamp(28px, 24px + 1.04vw, 44px);
+  height: clamp(28px, 24px + 1.04vw, 44px);
+  display: block;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.p-hero__badges img:hover {
+  transform: translateY(-2px);
+}
+
+/* Sber badge duplicate at end of sub-title (visible only on mobile) */
+.p-hero__badge-end {
+  display: none;
+  width: clamp(28px, 24px + 1.04vw, 44px);
+  height: clamp(28px, 24px + 1.04vw, 44px);
+  vertical-align: middle;
+  margin-left: var(--space-2);
+  margin-bottom: 0.12em;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.p-hero__badge-end:hover {
+  transform: translateY(-2px);
+}
+
+.p-hero__summary {
+  margin: 0;
+  width: min(752px, 100%);
+  font-size: clamp(var(--text-base), 0.88rem + 0.52vw, 1.5rem);
+  font-weight: var(--weight-regular);
+  line-height: 1.33;
+  letter-spacing: 0.01em;
+  color: var(--text-on-dark-60);
+}
+
+/* Prevent layout shift during counter animation */
+.p-counter {
+  display: inline-block;
+  text-align: left;
+}
+
+/* --- Hero-specific reveal: easeOutExpo for premium feel --- */
+.p-screen--hero .p-reveal {
+  transition-timing-function: var(--ease-out-expo);
+  transition-duration: 800ms;
+}
+
+.p-screen--hero .p-reveal--delay-1 { transition-delay: 100ms; }
+.p-screen--hero .p-reveal--delay-2 { transition-delay: 280ms; }
+.p-screen--hero .p-reveal--delay-3 { transition-delay: 420ms; }
+
+.p-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.p-hero__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: all var(--dur-base) var(--ease-out);
+}
+
+.p-hero__btn:active {
+  transform: scale(0.97);
+}
+
+.p-hero__btn:focus-visible {
+  outline: 2px solid var(--text-on-dark);
+  outline-offset: 3px;
+}
+
+.p-hero__btn-icon {
+  width: var(--space-5);
+  height: var(--space-5);
+  flex: 0 0 auto;
+}
+
+.p-hero__btn-icon--tg {
+  border-radius: var(--space-1);
+}
+
+.p-hero__btn--primary .p-hero__btn-icon--tg {
+  filter: brightness(0);
+}
+
+.p-hero__btn--primary {
+  background: var(--text-on-dark);
+  color: var(--bg-dark);
+}
+
+.p-hero__btn--primary:hover {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.12);
+}
+
+.p-hero__btn--ghost {
+  color: var(--text-on-dark);
+  border: 1px solid var(--text-on-dark-20);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.p-hero__btn--ghost:hover {
+  color: var(--text-on-dark);
+  border-color: var(--text-on-dark-40);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* --- Mobile (< 640px): centered with overflow-safe auto margins --- */
+@media (max-width: 639px) {
+  .p-screen--hero {
+    align-items: flex-start;
+    padding-bottom: max(var(--space-8), 7vh);
+  }
+
+  .p-hero {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-top: 0;
+  }
+
+  .p-hero__row {
+    gap: var(--space-4);
+  }
+
+  .p-hero__portrait-wrap {
+    width: clamp(180px, 54vw, 280px);
+  }
+
+  .p-hero__title {
+    font-size: 1.375rem;       /* 22px */
+    line-height: 1.364;        /* 30px */
+  }
+
+  .p-hero__title-sub {
+    display: block;
+    margin-top: var(--space-2);
+  }
+
+  /* Swap Sber badge: hide from inline, show at end of sub.
+     Selector needs .p-hero__badges prefix to beat
+     .p-hero__badges img { display: block } (0,1,1). */
+  .p-hero__badges .p-hero__badges-sber {
+    display: none;
+  }
+
+  .p-hero__badge-end {
+    display: inline-block;
+  }
+
+  .p-hero__summary {
+    display: none;
+  }
+
+  .p-hero__content {
+    gap: var(--space-3);
+  }
+
+  .p-hero__actions {
+    padding-top: 2.75rem;      /* 44px (20+24) */
+    gap: var(--space-3);
+  }
+
+  .p-hero__btn {
+    width: 100%;
+    min-height: var(--touch-min);
+  }
+}
+
+/* Larger phones (≥ 400px): scale up hero to fill vertical space */
+@media (min-width: 400px) and (max-width: 639px) {
+  .p-hero__portrait-wrap {
+    width: clamp(230px, 58vw, 310px);
+  }
+
+  .p-hero__title {
+    font-size: clamp(1.5rem, 0.9rem + 2.8vw, 1.875rem);
+  }
+
+  .p-hero__content {
+    gap: var(--space-4);
+  }
+
+  .p-hero__actions {
+    padding-top: var(--space-6);
+  }
+
+  .p-hero__btn {
+    min-height: 48px;
+    font-size: var(--text-lg);
+  }
+}
+
+/* --- Tablet (640–959px): vertical stack, larger photo + font --- */
+@media (min-width: 640px) and (max-width: 959px) {
+  .p-hero__portrait-wrap {
+    width: clamp(240px, 38vw, 340px);
+  }
+
+  .p-hero__title {
+    font-size: clamp(2rem, 1rem + 4vw, 2.625rem);
+  }
+}
+
+/* --- Desktop (≥ 960px): horizontal photo + content --- */
+@media (min-width: 960px) {
+  .p-hero__row {
+    flex-direction: row;
+    gap: var(--space-10);
+    padding-left: clamp(0px, calc(4.17vw - 40px), var(--space-10));
+  }
+
+  .p-hero__portrait-wrap {
+    width: clamp(200px, 14.4vw, 276px);
+  }
+}
+
+/* --- Short screens: prevent overflow on compact phones (≤ 820px tall) --- */
+@media (max-width: 639px) and (max-height: 820px) {
+  .p-screen--hero {
+    padding-bottom: var(--space-4);
+  }
+
+  .p-hero {
+    padding-top: var(--space-3);
+  }
+
+  .p-hero__portrait-wrap {
+    width: clamp(140px, 40vw, 200px);
+  }
+
+  .p-hero__title {
+    font-size: clamp(1.25rem, 0.9rem + 1.5vw, 1.75rem);
+  }
+
+  .p-hero__content {
+    gap: var(--space-4);
+  }
+}
+
+/* --- Landscape phones: switch to row layout --- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .p-hero__row {
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+
+  .p-hero__portrait-wrap {
+    width: clamp(100px, 25vh, 180px);
+  }
+
+  .p-hero__title {
+    font-size: clamp(1rem, 0.7rem + 1.5vw, 1.5rem);
+  }
+
+  .p-hero__summary {
+    display: none;
+  }
+
+  .p-hero__content {
+    gap: var(--space-3);
+  }
+
+  .p-hero__btn {
+    width: auto;
+  }
+}
+
+/* --- Scroll hint (desktop only) — thin fade-line --- */
+.p-screen--hero::after {
+  content: '';
+  position: absolute;
+  bottom: var(--space-10);
+  left: 50%;
+  width: 1.5px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--text-on-dark));
+  transform: translateX(-50%);
+  animation: p-hero-scroll 3.6s var(--ease-out) infinite;
+  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .p-screen--hero::after {
+    display: block;
+  }
+}
+
+@keyframes p-hero-scroll {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* --- 2K+ screens (> 1920px): scale up hero, shift down --- */
+@media (min-width: 1921px) {
+  .p-hero {
+    max-width: 1600px;
+    padding-top: clamp(var(--space-8), 4vw, 160px);
+  }
+
+  .p-hero__portrait-wrap {
+    width: clamp(276px, 16vw, 360px);
+  }
+
+  .p-hero__title {
+    font-size: clamp(3.25rem, 2.5rem + 0.8vw, 3.75rem);
+  }
+
+  .p-hero__content {
+    max-width: 1100px;
+  }
+
+  .p-hero__summary {
+    font-size: clamp(1.25rem, 0.8rem + 0.5vw, 1.5rem);
+  }
+
+  .p-hero__badges {
+    gap: var(--space-3);
+    margin-left: var(--space-3);
+  }
+
+  .p-hero__badges img {
+    width: clamp(40px, 2.2vw, 52px);
+    height: clamp(40px, 2.2vw, 52px);
+  }
+
+  .p-hero__badge-end {
+    width: clamp(40px, 2.2vw, 52px);
+    height: clamp(40px, 2.2vw, 52px);
+    margin-left: var(--space-3);
+  }
+}
+
+
+/* --- Portrait glow --- */
+.p-hero__portrait-wrap {
+  box-shadow:
+    0 0 32px rgba(232, 115, 74, 0.08),
+    0 0 80px rgba(232, 115, 74, 0.04);
+  transition: box-shadow var(--dur-slow) var(--ease-out);
+}
+
+.p-hero__portrait-wrap:hover {
+  box-shadow:
+    0 0 24px rgba(232, 115, 74, 0.18),
+    0 0 64px rgba(232, 115, 74, 0.10),
+    0 0 120px rgba(232, 115, 74, 0.05);
+}
+
+
+
+/* ==========================================================
+   HOME: CASE SCREEN (полноэкранная секция кейса)
+   
+   Микс: Michael split hero + пользовательский запрос «каждому кейсу свой экран».
+   Левая часть: текст (label, название, описание, мета).
+   Правая: визуал продукта в контейнере.
+   
+   HTML:
+   <section class="p-snap__screen p-screen--dark p-case-screen">
+     <div class="p-contain p-case-screen__inner">
+       <div class="p-case-screen__text">
+         <span class="p-label">Кейс 01 · AI</span>
+         <div class="p-case-screen__metric">
+           <span class="p-case-screen__value">4 ПШЕ</span>
+           <span class="p-case-screen__context">освобождено ресурсов</span>
+         </div>
+         <h2 class="p-heading--md">AI-агент для налоговых консультаций</h2>
+         <p class="p-body">Агент без интерфейса: логика, промпты и бизнес-эффект.</p>
+         <a href="/case/ai-agent-tax" class="p-case-screen__link">Читать кейс →</a>
+       </div>
+       <div class="p-case-screen__visual">
+         <div class="p-frame p-frame--dark">
+           <img src="img/case.jpg" alt="..." loading="lazy">
+         </div>
+       </div>
+     </div>
+   </section>
+   ========================================================== */
+
+/* --- Base (mobile-first) --- */
+.p-case-screen__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  width: 100%;
+  align-items: center;
+}
+
+.p-case-screen__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --- Case screen metric block --- */
+.p-case-screen__metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.p-case-screen__value {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.p-case-screen__context {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-on-dark-40);
+}
+
+/* Accent line after metric block — gradient fade */
+.p-case-screen__metric::after {
+  content: '';
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, var(--text-on-dark-40), transparent 50%);
+  margin-top: var(--space-3);
+}
+
+.p-case-screen__link {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-dark-40);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.p-case-screen__link:hover { color: var(--text-on-dark); }
+
+/* --- Visual: browser-window proportions (16:9) --- */
+.p-case-screen__visual {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.p-case-screen__visual .p-frame {
+  aspect-ratio: 16 / 9;
+}
+
+.p-case-screen__visual .p-frame img {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+/* --- Hover: zoom image + highlight link --- */
+@media (hover: hover) {
+  .p-case-screen__inner:hover .p-case-screen__visual .p-frame img {
+    transform: scale(1.03);
+  }
+  .p-case-screen__inner:hover .p-case-screen__link {
+    color: var(--text-on-dark);
+  }
+}
+
+/* --- Placeholder for frames without content --- */
+.p-case-screen__visual .p-frame:empty {
+  background: linear-gradient(135deg, var(--bg-dark-raised) 0%, var(--bg-dark-surface) 100%);
+}
+
+/* --- Mobile (< 640px) --- */
+@media (max-width: 639px) {
+  .p-case-screen__inner {
+    gap: var(--space-4); /* было space-6 — уменьшено чтобы 1:1 обложка влезала */
+  }
+  .p-case-screen__visual {
+    order: -1;
+    margin-inline: calc(-1 * var(--page-pad)); /* full-bleed: от края до края */
+    border-radius: 0;
+  }
+  .p-case-screen__text {
+    gap: var(--space-3);
+  }
+  .p-case-screen__context {
+    font-size: var(--text-sm);
+  }
+  .p-case-screen__text .p-heading--md {
+    font-size: var(--text-2xl);
+  }
+  .p-case-screen__text .p-body {
+    font-size: var(--text-base);
+  }
+  .p-case-screen__text .p-tags {
+    display: none;
+  }
+  .p-case-screen__link {
+    font-size: var(--text-base);
+  }
+  /* Taller image on mobile — 16:9 is too flat for portrait viewport */
+  .p-case-screen__visual .p-frame {
+    aspect-ratio: 4 / 3;
+  }
+  /* On mobile, show all case text immediately — no stagger, no reveal */
+  .p-case-screen__text .p-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- Desktop (≥ 960px): 1/3 text + 2/3 image --- */
+@media (min-width: 960px) {
+  .p-case-screen__inner {
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-12);
+    /* Clearance for fixed dots nav (right: space-6 + touch-min width) */
+    padding-right: calc(var(--space-6) + var(--touch-min));
+  }
+  .p-case-screen__text {
+    gap: var(--space-5);
+  }
+  .p-case-screen__value {
+    font-size: var(--text-4xl);
+  }
+  .p-case-screen__context {
+    font-size: var(--text-sm);
+  }
+  /* Visual pause between metric block and heading */
+  .p-case-screen__text .p-heading--md {
+    margin-top: var(--space-2);
+  }
+  .p-case-screen__visual {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* --- Short viewport + wide (≤ 700px height, ≥ 800px width) --- */
+@media (max-height: 700px) and (min-width: 800px) {
+  .p-case-screen__inner {
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-8);
+    padding-right: calc(var(--space-6) + var(--touch-min));
+  }
+  .p-case-screen__text {
+    gap: var(--space-3);
+  }
+  .p-case-screen__value {
+    font-size: var(--text-2xl);
+  }
+  /* Reset heading margin-top from desktop — space is tight */
+  .p-case-screen__text .p-heading--md {
+    margin-top: 0;
+  }
+  .p-case-screen__visual {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* --- Short viewport + narrow (≤ 700px height, < 800px) --- */
+@media (max-height: 700px) and (max-width: 799px) {
+  .p-case-screen__inner {
+    gap: var(--space-4);
+  }
+  .p-case-screen__text {
+    gap: var(--space-3);
+  }
+  .p-case-screen__value {
+    font-size: var(--text-2xl);
+  }
+  .p-case-screen__visual {
+    max-height: 25vh;
+  }
+}
+
+/* --- Large desktop (≥ 1920px) --- */
+@media (min-width: 1920px) {
+  .p-case-screen__inner {
+    max-width: 2200px;
+    grid-template-columns: 1fr 3fr; /* шире визуал: 75% вместо 66% */
+    gap: var(--space-16);
+  }
+  .p-case-screen__text {
+    gap: var(--space-8);
+  }
+  .p-case-screen__value {
+    font-size: clamp(3.5rem, 2.5rem + 1.5vw, 5rem);
+  }
+  .p-case-screen__text .p-heading--md {
+    font-size: var(--text-2xl);
+  }
+  .p-case-screen__text .p-body {
+    font-size: var(--text-lg);
+  }
+}
+
+
+/* --- NDA screen variant ---
+   Michael: locked indicator.
+   
+   HTML:
+   <section class="p-snap__screen p-screen--dark p-case-screen p-case-screen--locked">
+     <div class="p-contain p-case-screen__inner">
+       <div class="p-case-screen__text">
+         <span class="p-label">Компания · 2023</span>
+         <h2 class="p-heading--xl">Под NDA</h2>
+         <p class="p-body--lg">Детали по запросу.</p>
+       </div>
+       <div class="p-case-screen__visual">
+         <div class="p-case-screen__lock">🔒</div>
+       </div>
+     </div>
+   </section>
+*/
+
+.p-case-screen--locked .p-case-screen__text { opacity: 0.5; }
+
+.p-case-screen__lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--text-4xl);
+  opacity: 0.15;
+}
+
+
+/* ==========================================================
+   VISUAL FRAME
+   Garri: double-frame — серый контейнер с padding + скруглением,
+   внутри белый UI с собственным radius. Создаёт глубину без теней.
+   
+   HTML:
+   <div class="p-frame">
+     <img src="screen.jpg" alt="..." loading="lazy">
+   </div>
+   ========================================================== */
+
+.p-frame {
+  background: var(--bg-light-container);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  overflow: hidden;
+}
+
+.p-frame img {
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+/* Flush: без padding (для hero-визуалов) */
+.p-frame--flush {
+  padding: 0;
+}
+
+/* На тёмном фоне */
+.p-frame--dark {
+  background: var(--bg-dark-surface);
+}
+
+/* Полноширинный */
+.p-frame--full {
+  border-radius: 0;
+  margin-inline: calc(-1 * var(--page-pad));
+}
+
+@media (min-width: 960px) {
+  .p-frame--full { margin-inline: 0; border-radius: var(--radius-lg); }
+}
+
+
+/* ==========================================================
+   FIGURE (frame + caption)
+   
+   HTML:
+   <figure class="p-figure">
+     <div class="p-frame"><img src="..." alt="..." loading="lazy"></div>
+     <figcaption class="p-caption">Подпись.</figcaption>
+   </figure>
+   ========================================================== */
+
+.p-figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-caption {
+  font-size: var(--text-sm);
+  color: var(--text-on-light-40);
+  max-width: var(--prose-max);
+}
+
+.p-section--dark .p-caption,
+.p-screen--dark .p-caption {
+  color: var(--text-on-dark-40);
+}
+
+
+/* ==========================================================
+   META TABLE
+   Garri: Year / Role / Scope / Awards — label : value pairs.
+   Мгновенная ориентация в контексте проекта.
+   
+   HTML:
+   <dl class="p-meta">
+     <div class="p-meta__row"><dt>Период</dt><dd>2020–2024</dd></div>
+     <div class="p-meta__row"><dt>Роль</dt><dd>Senior Product Designer</dd></div>
+     <div class="p-meta__row"><dt>Команда</dt><dd>8&nbsp;человек</dd></div>
+   </dl>
+   ========================================================== */
+
+.p-meta__row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-4);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--border-light);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 640px) {
+  .p-meta__row { grid-template-columns: 140px 1fr; }
+}
+
+.p-meta__row dt {
+  color: var(--text-on-light-40);
+  font-weight: var(--weight-medium);
+}
+
+.p-meta__row dd {}
+
+/* На тёмном */
+.p-section--dark .p-meta__row,
+.p-screen--dark .p-meta__row {
+  border-color: var(--border-dark);
+}
+
+.p-section--dark .p-meta__row dt,
+.p-screen--dark .p-meta__row dt {
+  color: var(--text-on-dark-40);
+}
+
+.p-section--dark .p-meta__row dd,
+.p-screen--dark .p-meta__row dd {
+  color: var(--text-on-dark-60);
+}
+
+
+/* ==========================================================
+   METRICS
+   Michael mobile: ↗ число в акцентном цвете + контекст.
+   
+   HTML:
+   <div class="p-metric">
+     <span class="p-metric__value p-mono--xl">−37%</span>
+     <span class="p-metric__desc p-body--sm">Время обработки обращения</span>
+   </div>
+   ========================================================== */
+
+.p-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.p-metric__value { color: var(--accent); }
+.p-metric__desc { max-width: 20ch; }
+
+.p-metrics-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .p-metrics-row { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+}
+
+
+/* ==========================================================
+   CALLOUT
+   
+   HTML:
+   <div class="p-callout">
+     <span class="p-label">Инсайт</span>
+     <p class="p-body">Текст.</p>
+   </div>
+   ========================================================== */
+
+.p-callout {
+  padding: var(--space-6);
+  background: var(--bg-light-container);
+  border-left: 2px solid var(--text-on-light-40);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-callout--accent {
+  border-left-color: var(--accent);
+}
+
+.p-section--dark .p-callout {
+  background: var(--bg-dark-raised);
+  border-left-color: var(--text-on-dark-20);
+}
+
+
+/* ==========================================================
+   PULLQUOTE (Instrument Serif)
+   
+   HTML:
+   <blockquote class="p-pullquote">
+     <p>«Хороший интерфейс поддержки — это тот, который оператор перестаёт замечать.»</p>
+   </blockquote>
+   ========================================================== */
+
+.p-pullquote {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-snug);
+  max-width: 36ch;
+  padding-left: var(--space-6);
+  border-left: 2px solid var(--accent);
+}
+
+
+/* ==========================================================
+   CAR (Challenge → Action → Result)
+   Michael mobile: ритмичная формула для подсекций.
+   
+   HTML:
+   <div class="p-car">
+     <div class="p-car__step">
+       <span class="p-label">Задача</span>
+       <p class="p-body--lg">Описание.</p>
+     </div>
+     <hr class="p-car__line">
+     <div class="p-car__step">
+       <span class="p-label">Действие</span>
+       <p class="p-body">Описание.</p>
+     </div>
+     <hr class="p-car__line">
+     <div class="p-car__step">
+       <span class="p-label" style="color:var(--accent)">Результат</span>
+       <p class="p-body"><span class="p-mono" style="color:var(--accent);font-weight:700">−37%</span> времени обработки.</p>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-car {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.p-car__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-car__line {
+  border: none;
+  height: 1px;
+  background: var(--border-light);
+}
+
+.p-section--dark .p-car__line { background: var(--border-dark); }
+
+
+/* ==========================================================
+   COMPARE (before → after)
+   
+   HTML:
+   <div class="p-compare">
+     <div class="p-compare__side">
+       <span class="p-label">До</span>
+       <div class="p-frame"><img src="before.jpg" alt="До"></div>
+       <p class="p-caption">Описание.</p>
+     </div>
+     <div class="p-compare__side p-compare__side--after">
+       <span class="p-label" style="color:var(--accent)">После</span>
+       <div class="p-frame"><img src="after.jpg" alt="После"></div>
+       <p class="p-caption">Описание.</p>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-compare {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .p-compare { grid-template-columns: 1fr 1fr; }
+}
+
+.p-compare__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+
+/* ==========================================================
+   TABLE
+   
+   HTML:
+   <div class="p-table-wrap">
+     <table class="p-table">
+       <thead><tr><th>Метрика</th><th>До</th><th>После</th></tr></thead>
+       <tbody><tr><td>Время</td><td>12 мин</td><td class="p-mono" style="color:var(--accent)">7,5 мин</td></tr></tbody>
+     </table>
+   </div>
+   ========================================================== */
+
+.p-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.p-table {
+  width: 100%;
+  font-size: var(--text-sm);
+}
+
+.p-table th, .p-table td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.p-table th {
+  font-weight: var(--weight-semibold);
+  color: var(--text-on-light-40);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  background: var(--bg-light-container);
+}
+
+
+/* ==========================================================
+   TOC (Table of Contents in sidebar)
+   Garri: боковая навигация внутри кейса.
+   
+   HTML:
+   <nav class="p-toc">
+     <span class="p-label">Содержание</span>
+     <ol class="p-toc__list">
+       <li><a href="#s1" class="p-toc__link p-toc__link--active">Контекст</a></li>
+       <li><a href="#s2" class="p-toc__link">Задача</a></li>
+       <li><a href="#s3" class="p-toc__link">Решение</a></li>
+     </ol>
+   </nav>
+   ========================================================== */
+
+.p-toc {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .p-toc { display: flex; flex-direction: column; gap: var(--space-4); }
+}
+
+.p-toc__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.p-toc__link {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-on-light-40);
+  padding: var(--space-1) var(--space-3);
+  border-left: 2px solid transparent;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.p-toc__link:hover { color: var(--text-on-light-60); }
+
+.p-toc__link--active {
+  color: var(--text-on-light);
+  border-left-color: var(--text-on-light);
+}
+
+
+/* ==========================================================
+   CAREER: EMPLOYER CARDS
+
+   Простые flex-карточки без аккордеонов.
+   p-employer--sub — подроль в той же компании.
+   p-employer--cta — ссылка «Подробнее об опыте».
+
+   HTML:
+   <div class="p-employers">
+     <div class="p-employer">
+       <img src="logo.svg" alt="" class="p-employer__icon">
+       <div class="p-employer__info">
+         <strong class="p-heading--md">Компания</strong>
+         <div class="p-employer__meta"><span>2022–2026</span></div>
+         <span class="p-employer__context">Контекст</span>
+         <span class="p-employer__role">Роль</span>
+       </div>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-employers {
+  margin-top: var(--space-5);
+  max-width: 680px;
+}
+
+.p-employer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+}
+
+
+.p-employer__icon {
+  width: var(--space-8);
+  height: var(--space-8);
+  flex-shrink: 0;
+}
+
+.p-employer__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.p-employer__info .p-heading--md {
+  font-size: var(--text-lg);
+}
+
+.p-employer__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-on-dark-60);
+}
+
+.p-employer__context {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-on-dark-60);
+}
+
+.p-employer__role {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-on-dark);
+}
+
+/* --- Sub-role: same company continuation --- */
+.p-employer:has(+ .p-employer--sub) {
+  padding-bottom: var(--space-2);
+}
+
+.p-employer--sub {
+  padding-top: 0;
+  padding-left: calc(var(--space-8) + var(--space-3));
+}
+
+/* CTA link — ghost button below list */
+.p-employer--cta {
+  margin-top: clamp(var(--space-8), 4vw, var(--space-12));
+}
+
+/* --- Mobile text bump --- */
+@media (min-width: 400px) and (max-width: 639px) {
+  .p-employer__info .p-heading--md { font-size: var(--text-xl); }
+  .p-employer__meta { font-size: var(--text-base); }
+  .p-employer__context { font-size: var(--text-sm); }
+  .p-employer__role { font-size: var(--text-base); }
+}
+
+@media (max-width: 399px) {
+  .p-employer__info .p-heading--md { font-size: var(--text-lg); }
+  .p-employer__meta { font-size: var(--text-sm); }
+  .p-employer__role { font-size: var(--text-sm); }
+}
+
+/* --- Hover: background lift --- */
+@media (hover: hover) {
+  .p-employer {
+    border-radius: var(--radius-md);
+    transition: background var(--dur-base) var(--ease-out);
+  }
+  .p-employer:hover {
+    background: var(--bg-dark-raised);
+  }
+  /* Сбер: общий ховер для двух строк, без закруглений посередине */
+  .p-employer:has(+ .p-employer--sub) {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+  .p-employer--sub {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+  .p-employer:has(+ .p-employer--sub):hover,
+  .p-employer:has(+ .p-employer--sub):hover + .p-employer--sub,
+  .p-employer--sub:hover,
+  .p-employer:has(+ .p-employer--sub:hover) {
+    background: var(--bg-dark-raised);
+  }
+}
+
+/* --- Desktop (≥ 700px) --- */
+@media (min-width: 700px) {
+  .p-employer {
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    margin-inline: calc(-1 * var(--space-5));
+  }
+
+  .p-employer__icon {
+    width: var(--space-10);
+    height: var(--space-10);
+  }
+
+  .p-employer--sub {
+    padding-left: calc(var(--space-5) + var(--space-10) + var(--space-4));
+  }
+
+  .p-employer__info {
+    gap: var(--space-1);
+  }
+
+  .p-employer__info .p-heading--md {
+    font-size: var(--text-xl);
+  }
+
+  .p-employer__meta {
+    font-size: var(--text-base);
+  }
+
+  .p-employer__context {
+    font-size: var(--text-base);
+  }
+
+  .p-employer__role {
+    font-size: var(--text-lg);
+  }
+
+}
+
+/* --- Short screens: desktop ≤ 900px height --- */
+@media (min-width: 700px) and (max-height: 900px) {
+  .p-employers {
+    margin-top: var(--space-2);
+  }
+  .p-employer {
+    padding: var(--space-2) var(--space-5);
+  }
+  .p-employer:has(+ .p-employer--sub) {
+    padding-bottom: var(--space-1);
+  }
+  .p-employer__context {
+    display: none;
+  }
+}
+
+/* --- Short mobile landscape --- */
+@media (max-height: 700px) and (max-width: 699px) {
+  .p-employer {
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+  }
+  .p-employer__icon {
+    width: var(--space-8);
+    height: var(--space-8);
+  }
+  .p-employer__context {
+    display: none;
+  }
+}
+
+
+/* ==========================================================
+   CAREER: two-column layout (list + detail panel)
+   ========================================================== */
+
+.p-career {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-20);
+  align-items: start;
+}
+
+.p-career__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-career__list .p-employers {
+  max-width: none;
+}
+
+/* Clickable employers */
+.p-employer--clickable {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.p-employer--clickable.is-active {
+  background: var(--bg-dark-raised);
+}
+
+/* Detail panel — card */
+.p-career__detail {
+  position: relative;
+  background: var(--bg-dark-raised);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+}
+
+.p-career__panel {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.p-career__panel.is-active {
+  display: flex;
+}
+
+/* Career block (role period within a company) */
+.p-career__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-career__block-label {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-dark);
+}
+
+.p-career__block-scope {
+  font-size: var(--text-base);
+  color: var(--text-on-dark-40);
+  margin-top: calc(-1 * var(--space-2));
+}
+
+/* Divider between role blocks */
+.p-career__divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin-block: var(--space-2);
+}
+
+/* Bullets */
+.p-career__bullets {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-career__bullets li {
+  color: var(--text-on-dark-60);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  padding-left: var(--space-5);
+  position: relative;
+}
+
+.p-career__bullets li::before {
+  content: "·";
+  position: absolute;
+  left: 4px;
+  color: var(--text-on-dark-40);
+  font-weight: var(--weight-bold);
+}
+
+/* Mobile: stack */
+@media (max-width: 700px) {
+  .p-career {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .p-career__detail { display: none; }
+}
+
+
+/* ==========================================================
+   BUTTONS
+   Michael: pill shape, border-only on dark.
+
+   HTML:
+   <a class="p-btn">Primary</a>
+   <a class="p-btn p-btn--outline">Outline</a>
+   ========================================================== */
+
+.p-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  padding: var(--space-3) var(--space-6);
+  min-height: var(--touch-min);
+  border-radius: var(--radius-pill);
+  background: var(--text-on-dark);
+  color: var(--bg-dark);
+  transition: all var(--dur-fast) var(--ease-out);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.p-btn:hover { opacity: 0.85; }
+.p-btn:active { transform: scale(0.97); }
+
+.p-btn--outline {
+  background: transparent;
+  color: var(--text-on-dark-60);
+  border: 1px solid var(--border-dark);
+}
+
+.p-btn--outline:hover {
+  color: var(--text-on-dark);
+  border-color: var(--text-on-dark-40);
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .p-btn--outline {
+    color: var(--text-on-dark);
+    border-color: var(--text-on-dark-40);
+  }
+}
+
+/* ---- Rainbow button ---- */
+@keyframes p-rainbow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.p-btn--rainbow {
+  background: var(--text-on-dark);
+  border: 1.3px solid transparent; /* резервирует место под бордер — без layout shift */
+  color: var(--bg-dark);
+}
+
+.p-btn--rainbow:hover { opacity: 1; }
+
+/* Радужное кольцо — только border-area через mask-composite: subtract */
+.p-btn--rainbow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+    hsl(16, 77%, 60%),
+    hsl(30, 80%, 55%),
+    hsl(8,  65%, 50%),
+    hsl(25, 85%, 65%),
+    hsl(5,  70%, 55%),
+    hsl(16, 77%, 60%)
+  );
+  background-size: 200% 100%;
+  mask-image:
+    linear-gradient(90deg, transparent, white 20%, white 80%, transparent),
+    linear-gradient(to top, white 0px, transparent 5px);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, white 20%, white 80%, transparent),
+    linear-gradient(to top, white 0px, transparent 5px);
+  -webkit-mask-composite: source-in;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+  animation: p-rainbow 3s linear infinite;
+  animation-play-state: paused;
+  pointer-events: none;
+}
+
+.p-btn--rainbow:hover::after {
+  opacity: 0.55;
+  animation-play-state: running;
+}
+
+/* Blur-glow под кнопкой — тоже только на ховере */
+.p-btn--rainbow::before {
+  content: '';
+  position: absolute;
+  bottom: -15%;
+  left: 10%;
+  right: 10%;
+  width: auto;
+  height: 25%;
+  background-image: linear-gradient(90deg,
+    hsl(16, 77%, 60%),
+    hsl(30, 80%, 55%),
+    hsl(8,  65%, 50%),
+    hsl(25, 85%, 65%),
+    hsl(5,  70%, 55%)
+  );
+  background-size: 200% 100%;
+  animation: p-rainbow 3s linear infinite;
+  animation-play-state: paused;
+  filter: blur(0.8rem);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.p-btn--rainbow:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+/* ---- Glowing border effect ---- */
+.p-btn {
+  position: relative;
+}
+
+.p-glow-wrap {
+  --start: 0;
+  --active: 0;
+  --spread: 20;
+  --bw: 1px;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.p-glow-wrap::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--bw));
+  border-radius: inherit;
+  border: var(--bw) solid transparent;
+  background:
+    radial-gradient(circle, rgba(232,115,74,0.9) 10%, transparent 25%),
+    radial-gradient(circle at 50% 50%, rgba(240,160,120,0.6) 0%, transparent 30%),
+    repeating-conic-gradient(
+      from 236.84deg at 50% 50%,
+      #E8734A 0%,
+      #F0A07A calc(25% / 5),
+      #C45B30 calc(50% / 5),
+      #E8734A calc(75% / 5),
+      #E8734A calc(100% / 5)
+    );
+  background-attachment: fixed;
+  opacity: var(--active);
+  transition: opacity 0.3s ease;
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  mask-image:
+    linear-gradient(transparent, transparent),
+    conic-gradient(
+      from calc((var(--start) - var(--spread)) * 1deg),
+      transparent 0deg,
+      white,
+      transparent calc(var(--spread) * 2deg)
+    );
+  -webkit-mask-clip: padding-box, border-box;
+  -webkit-mask-composite: source-in;
+  -webkit-mask-image:
+    linear-gradient(transparent, transparent),
+    conic-gradient(
+      from calc((var(--start) - var(--spread)) * 1deg),
+      transparent 0deg,
+      white,
+      transparent calc(var(--spread) * 2deg)
+    );
+}
+
+/* На светлом фоне */
+.p-btn--on-light {
+  background: var(--text-on-light);
+  color: var(--bg-light);
+}
+
+.p-btn--outline-light {
+  background: transparent;
+  color: var(--text-on-light-60);
+  border: 1px solid var(--border-light);
+}
+
+.p-btn--outline-light:hover {
+  color: var(--text-on-light);
+  border-color: var(--text-on-light-40);
+  opacity: 1;
+}
+
+
+/* ==========================================================
+   FOOTER
+   Garri + Michael: тёмный, крупная CTA-фраза, контакты.
+   
+   HTML:
+   <footer class="p-footer">
+     <div class="p-contain">
+       <div class="p-footer__cta">
+         <p class="p-display--lg">Давайте обсудим ваш продукт</p>
+         <a href="mailto:..." class="p-btn p-btn--outline">Написать</a>
+       </div>
+       <div class="p-footer__bottom">
+         <span class="p-body--sm">© 2026</span>
+         <div class="p-footer__links">
+           <a href="#" class="p-link p-body--sm">Telegram</a>
+           <a href="#" class="p-link p-body--sm">LinkedIn</a>
+         </div>
+       </div>
+     </div>
+   </footer>
+   ========================================================== */
+
+.p-footer {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.p-footer > .p-contain {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.p-screen--footer {
+  align-items: stretch;
+}
+
+.p-screen--footer .p-footer {
+  min-height: 100%;
+}
+
+.p-footer__title {
+  font-family: var(--font-hero);
+}
+
+.p-footer__cta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
+  overflow-wrap: break-word;
+}
+
+.p-footer__cta .p-prose {
+  max-width: 40ch;
+}
+
+.p-br--mobile { display: none; }
+
+.p-footer__resume-link {
+  display: none;
+}
+
+
+@media (min-width: 960px) {
+  .p-footer__actions {
+    margin-top: var(--space-6);
+  }
+}
+
+.p-br--2k { display: none; }
+
+@media (min-width: 1921px) {
+  .p-br--2k { display: block; }
+}
+
+.p-footer__bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-4);
+  color: var(--text-on-dark-40);
+}
+
+@media (max-width: 639px) {
+  .p-footer__links a[href*="t.me"],
+  .p-footer__links a[href="#"] {
+    display: none;
+  }
+}
+
+.p-footer__links {
+  display: flex;
+  gap: var(--space-4) var(--space-6);
+  flex-wrap: wrap;
+}
+
+.p-footer__links .p-link {
+  text-decoration: none;
+  position: relative;
+}
+
+.p-footer__links .p-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  opacity: 1;
+  /* уход: линия сворачивается вправо */
+  transition: transform 0.3s var(--ease-out);
+}
+
+.p-footer__links .p-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+  /* приход: линия разворачивается слева */
+  transition: transform 0.35s var(--ease-out);
+}
+
+.p-footer__links a[href^="tel:"] {
+  white-space: nowrap;
+}
+
+.p-footer__credit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+  border-bottom: 1px solid var(--border-dark);
+  color: var(--text-on-dark-40);
+}
+
+.p-footer__actions {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.p-footer__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: nowrap;
+}
+
+.p-footer__tools img {
+  height: var(--space-5);
+  width: auto;
+}
+
+/* — Footer mobile: 959 → 639 → 480 → 400 — */
+
+@media (max-width: 959px) {
+  .p-footer__bottom {
+    color: var(--text-on-dark-60);
+    padding-top: var(--space-6);
+  }
+
+  .p-footer__bottom > .p-body--sm {
+    font-size: var(--text-base);
+  }
+
+  .p-footer__links .p-link {
+    font-size: var(--text-base);
+    opacity: 1;
+  }
+
+  .p-footer__links .p-link::after {
+    transform: scaleX(1);
+    opacity: 1;
+    background: currentColor;
+  }
+}
+
+@media (max-width: 639px) {
+  .p-footer > .p-contain {
+    padding-inline: clamp(1.75rem, 7.4vw, 1.9375rem);
+  }
+
+  .p-footer__cta {
+    justify-content: flex-start;
+    gap: 0;
+    padding-top: clamp(4rem, 11.7vh, 7rem);    /* 112px @ 956vh */
+    padding-bottom: 0;
+  }
+
+  .p-br--mobile { display: block; }
+
+  .p-footer__title {
+    max-width: none;
+    font-size: clamp(3.5rem, 13.5vw, 3.9rem);  /* ≈60px @ 440px */
+    line-height: 1.133;                           /* 68/60 */
+    letter-spacing: 0;
+  }
+
+  .p-footer__subtitle {
+    margin-top: 2.5rem;        /* 40px */
+    max-width: 22ch;
+    font-size: 1.25rem;        /* 20px */
+    line-height: 1.4;          /* 28/20 */
+  }
+
+  .p-footer__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);        /* 12px — как hero */
+    margin-top: 5rem;          /* 80px */
+  }
+
+
+  .p-footer__tools {
+    gap: 1rem;                 /* 16px */
+  }
+
+  .p-footer__tools img {
+    height: 1.75rem;           /* 28px */
+  }
+
+  .p-footer__tools .p-mono--sm {
+    display: none;
+  }
+
+  .p-footer__credit {
+    align-items: flex-end;
+    padding-top: var(--space-4);
+    padding-bottom: 1.1875rem; /* 19px — vibes→divider */
+  }
+
+  .p-footer__credit .p-body--sm {
+    max-width: 22ch;
+    font-size: 0.6875rem;      /* 11px */
+    line-height: 1.273;        /* 14/11 */
+    letter-spacing: 0.01em;    /* 1% */
+  }
+
+  .p-footer__bottom {
+    gap: var(--space-3);
+    padding-top: 2rem;         /* 32px — divider→text */
+    padding-bottom: 0;
+  }
+
+  .p-footer__bottom > .p-body--sm {
+    font-size: 0.875rem;       /* 14px */
+    line-height: 1.4286;       /* 20/14 */
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .p-footer__links {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;       /* 8px row, 12px col */
+  }
+
+  .p-footer__links .p-link {
+    font-size: 0.875rem;       /* 14px */
+    line-height: 1.4286;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-footer__title {
+    font-size: clamp(3.35rem, 14vw, 3.75rem);
+  }
+}
+
+@media (max-width: 400px) {
+  .p-footer__cta {
+    padding-top: clamp(2rem, 8.1vh, 4.25rem);  /* 68px @ 844vh */
+  }
+
+  .p-footer__title {
+    font-size: clamp(3rem, 13.6vw, 3.3125rem); /* 53px @ 390px */
+  }
+
+  .p-footer__subtitle {
+    margin-top: 1.5rem;        /* 24px */
+  }
+
+  .p-footer__actions {
+    margin-top: 3rem;          /* 48px */
+  }
+
+  .p-footer__credit .p-body--sm {
+    font-size: 0.625rem;       /* 10px */
+    line-height: 1.4;          /* 14/10 */
+  }
+
+  .p-footer__bottom {
+    padding-top: 1.5rem;       /* 24px */
+  }
+
+  .p-footer__bottom > .p-body--sm {
+    font-size: 0.75rem;        /* 12px */
+  }
+
+  .p-footer__links .p-link {
+    font-size: 0.75rem;        /* 12px */
+  }
+}
+
+.p-footer__tools a {
+  display: flex;
+}
+
+
+@media (min-width: 640px) {
+  .p-footer__tools {
+    order: -1;
+  }
+}
+
+/* — 2K scaling — */
+@media (min-width: 1921px) {
+  .p-footer__cta {
+    gap: var(--space-10);
+  }
+
+  .p-footer__cta .p-display--lg {
+    font-size: var(--text-4xl);
+  }
+
+  .p-footer__cta .p-prose {
+    max-width: 52ch;
+  }
+}
+
+
+/* ==========================================================
+   CASE NAV (prev / next)
+   
+   HTML:
+   <nav class="p-case-nav">
+     <a href="/prev" class="p-case-nav__link">
+       <span class="p-label">← Предыдущий</span>
+       <span class="p-heading--sm">SmartCare</span>
+     </a>
+     <a href="/next" class="p-case-nav__link p-case-nav__link--next">
+       <span class="p-label">Следующий →</span>
+       <span class="p-heading--sm">Аресты</span>
+     </a>
+   </nav>
+   ========================================================== */
+
+.p-case-nav {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding-top: var(--section-gap);
+  border-top: 1px solid var(--border-light);
+}
+
+@media (min-width: 640px) {
+  .p-case-nav { grid-template-columns: 1fr 1fr; }
+}
+
+.p-case-nav__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.p-case-nav__link:hover { border-color: var(--text-on-light-40); }
+.p-case-nav__link--next { text-align: right; }
+
+
+/* ==========================================================
+   DEFINITIONS
+   
+   HTML:
+   <dl class="p-defs">
+     <div class="p-defs__item">
+       <dt>Оператор</dt>
+       <dd>Сотрудник контактного центра.</dd>
+     </div>
+   </dl>
+   ========================================================== */
+
+.p-defs__item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  padding-block: var(--space-5);
+  border-bottom: 1px solid var(--border-light);
+}
+
+@media (min-width: 640px) {
+  .p-defs__item { grid-template-columns: 160px 1fr; gap: var(--space-8); }
+}
+
+.p-defs__item dt {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--text-on-light-60);
+}
+
+/* ==========================================================
+   TOGGLE / ACCORDION
+   Из кейса Антона: промпты под сворачиваемыми блоками.
+   Показать глубину, не перегружая. JS toggle.
+   
+   HTML:
+   <details class="p-toggle">
+     <summary class="p-toggle__trigger">
+       <span class="p-toggle__title">Фрагмент промпта маршрутизатора</span>
+       <span class="p-toggle__icon">+</span>
+     </summary>
+     <div class="p-toggle__body">
+       <p class="p-body--sm">Роль: администратор на первой линии...</p>
+     </div>
+   </details>
+
+   Группа:
+   <div class="p-toggle-group">
+     <details class="p-toggle">...</details>
+     <details class="p-toggle">...</details>
+   </div>
+   ========================================================== */
+
+.p-toggle {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.p-toggle[open] {
+  background: var(--bg-light-container);
+}
+
+.p-toggle__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-on-light);
+  list-style: none;
+  min-height: var(--touch-min);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.p-toggle__trigger::-webkit-details-marker { display: none; }
+.p-toggle__trigger::marker { display: none; content: ''; }
+
+.p-toggle__trigger:hover { color: var(--text-on-light-60); }
+
+.p-toggle__icon {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  color: var(--text-on-light-40);
+  transition: transform var(--dur-base) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.p-toggle[open] .p-toggle__icon {
+  transform: rotate(45deg);
+}
+
+.p-toggle__body {
+  padding: 0 var(--space-5) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  color: var(--text-on-light-60);
+}
+
+/* Группа: убираем внешние радиусы между элементами */
+.p-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.p-toggle-group .p-toggle {
+  border-radius: 0;
+  border-bottom-width: 0;
+}
+
+.p-toggle-group .p-toggle:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.p-toggle-group .p-toggle:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border-bottom-width: 1px;
+}
+
+/* На тёмном */
+.p-section--dark .p-toggle {
+  border-color: var(--border-dark);
+}
+
+.p-section--dark .p-toggle[open] {
+  background: var(--bg-dark-raised);
+}
+
+.p-section--dark .p-toggle__trigger {
+  color: var(--text-on-dark);
+}
+
+.p-section--dark .p-toggle__body {
+  color: var(--text-on-dark-60);
+}
+
+
+/* ==========================================================
+   CHAPTER DIVIDER
+   Из кейса Антона: 7+ логических глав с эмодзи-маркерами.
+   Промежуточный уровень между statement и heading —
+   визуальный разделитель нарратива.
+   
+   HTML:
+   <div class="p-chapter">
+     <span class="p-label">Исследование</span>
+     <h2 class="p-heading--lg">Как клиенты задают вопросы</h2>
+     <p class="p-body--sm">Подзаголовок, если нужен.</p>
+   </div>
+
+   С номером:
+   <div class="p-chapter">
+     <span class="p-chapter__num p-mono--sm">03</span>
+     <span class="p-label">Проектирование</span>
+     <h2 class="p-heading--lg">От сложности к&nbsp;эффективности</h2>
+   </div>
+   ========================================================== */
+
+.p-chapter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--section-gap);
+}
+
+.p-chapter__num {
+  color: var(--text-on-light-40);
+}
+
+.p-section--dark .p-chapter__num {
+  color: var(--text-on-dark-40);
+}
+
+
+/* ==========================================================
+   VOICES (голоса пользователей / клиентов)
+   Из кейса Антона: блок с формулировками клиентов.
+   Не pullquote (авторская мысль), не callout (инсайт).
+   Это «голос пользователя» — отдельный паттерн.
+   
+   HTML:
+   <div class="p-voices">
+     <span class="p-label">Типичные формулировки клиентов</span>
+     <ul class="p-voices__list">
+       <li>«Нужно&nbsp;ли платить налог со&nbsp;вклада?»</li>
+       <li>«Какая сумма вклада не&nbsp;облагается налогом?»</li>
+       <li>«Хотел узнать размер дохода по&nbsp;моим вкладам»</li>
+     </ul>
+   </div>
+   ========================================================== */
+
+.p-voices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--bg-light-container);
+  border-radius: var(--radius-md);
+}
+
+.p-voices__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.p-voices__list li {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--text-on-light);
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--text-on-light-40);
+}
+
+.p-section--dark .p-voices {
+  background: var(--bg-dark-raised);
+}
+
+.p-section--dark .p-voices__list li {
+  color: var(--text-on-dark);
+  border-left-color: var(--text-on-dark-20);
+}
+
+
+/* ==========================================================
+   METRIC CARD
+   Из кейса Антона: 4 метрики в 2×2, каждая в контейнере
+   с фоном, числом, описанием. Отличается от p-metric
+   (который inline число + подпись).
+   
+   HTML:
+   <div class="p-grid-2">
+     <div class="p-metric-card">
+       <span class="p-metric-card__value p-mono--xl">4&nbsp;ПШЕ</span>
+       <span class="p-metric-card__label p-label">Освобождено ресурсов</span>
+       <span class="p-metric-card__desc p-body--sm">~4,5&nbsp;млн&nbsp;₽/год экономии</span>
+     </div>
+     <div class="p-metric-card">
+       <span class="p-metric-card__value p-mono--xl">−25%</span>
+       <span class="p-metric-card__label p-label">Время обслуживания</span>
+       <span class="p-metric-card__desc p-body--sm">6–7&nbsp;мин →&nbsp;~5&nbsp;мин</span>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  background: var(--bg-light-container);
+  border-radius: var(--radius-md);
+}
+
+.p-metric-card__value {
+  color: var(--accent);
+}
+
+.p-metric-card__label {
+  margin-top: var(--space-1);
+}
+
+.p-metric-card__desc {
+  color: var(--text-on-light-60);
+}
+
+/* На тёмном */
+.p-section--dark .p-metric-card {
+  background: var(--bg-dark-raised);
+}
+
+.p-section--dark .p-metric-card__desc {
+  color: var(--text-on-dark-60);
+}
+
+
+/* ==========================================================
+   COLUMNS (2-col text/content, не для карточек — для prose)
+   Из кейса Антона: метрики/callout-ы в 2 колонки.
+   Отличается от p-grid-2: элементы растягиваются по высоте.
+   
+   HTML:
+   <div class="p-cols">
+     <div class="p-cols__item">...содержимое...</div>
+     <div class="p-cols__item">...содержимое...</div>
+   </div>
+   ========================================================== */
+
+.p-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .p-cols { grid-template-columns: 1fr 1fr; }
+}
+
+.p-cols__item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stretch children (callout, metric-card) внутри колонок */
+.p-cols__item > .p-callout,
+.p-cols__item > .p-metric-card {
+  flex: 1;
+}
+
+
+/* ==========================================================
+   BACK NAVIGATION (← Назад)
+   Michael mobile: на кейс-странице burger заменяется
+   стрелкой «←» — контекстная навигация «назад к списку».
+   
+   HTML:
+   <header class="p-header p-header--back">
+     <div class="p-contain p-header__inner">
+       <a href="/" class="p-header__back" aria-label="Назад">←</a>
+       <span class="p-header__name">SmartCare</span>
+       <a href="/contact" class="p-header__cta">Написать</a>
+       <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+     </div>
+   </header>
+   ========================================================== */
+
+.p-header__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  font-size: var(--text-lg);
+  color: var(--text-on-dark-60);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.p-header__back:hover {
+  color: var(--text-on-dark);
+}
+
+/* В back-режиме на десктопе — скрываем back, показываем nav */
+@media (min-width: 960px) {
+  .p-header--back .p-header__back { display: none; }
+}
+
+/* На мобильном — скрываем burger, показываем back */
+@media (max-width: 959px) {
+  .p-header--back .p-header__burger { display: none; }
+}
+
+
+/* ==========================================================
+   SHOWCASE ROW (ряд скриншотов на тёмном фоне)
+   Garri: COMPETITIVE ENVIRONMENT — горизонтальный ряд
+   скриншотов конкурентов на тёмном фоне.
+   
+   HTML:
+   <div class="p-showcase">
+     <div class="p-showcase__inner">
+       <div class="p-showcase__item">
+         <img src="competitor-1.jpg" alt="..." loading="lazy">
+         <span class="p-caption">Competitor 1</span>
+       </div>
+       <div class="p-showcase__item">
+         <img src="competitor-2.jpg" alt="..." loading="lazy">
+         <span class="p-caption">Competitor 2</span>
+       </div>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-showcase {
+  background: var(--bg-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) 0;
+  overflow: hidden;
+}
+
+.p-showcase__inner {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-inline: var(--space-6);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+}
+
+.p-showcase__inner::-webkit-scrollbar { display: none; }
+
+.p-showcase__item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 200px;
+}
+
+@media (min-width: 640px) {
+  .p-showcase__item { width: 260px; }
+}
+
+.p-showcase__item img {
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.p-showcase .p-caption {
+  color: var(--text-on-dark-40);
+}
+
+
+/* ==========================================================
+   FRAME — COLORED BACKGROUND
+   Michael mobile: визуалы на цветном фоне (зелёный, синий,
+   жёлтый) вместо серого контейнера. На мобильном —
+   полноширинный цветной блок.
+   
+   Цвет задаётся через inline style на --frame-color.
+   
+   HTML:
+   <div class="p-frame p-frame--colored" style="--frame-color: #2D6A4F">
+     <img src="mockup.jpg" alt="..." loading="lazy">
+   </div>
+   ========================================================== */
+
+.p-frame--colored {
+  background: var(--frame-color, var(--bg-light-container));
+}
+
+/* На мобильном — вылезает на full width */
+@media (max-width: 639px) {
+  .p-frame--colored {
+    border-radius: 0;
+    margin-inline: calc(-1 * var(--page-pad));
+    padding: var(--space-8) var(--page-pad);
+  }
+}
+
+
+/* ==========================================================
+   TABS
+   Для альтернативных представлений.
+   JS переключает .is-active на кнопке и панели.
+   
+   HTML:
+   <div class="p-tabs">
+     <div class="p-tabs__bar" role="tablist">
+       <button class="p-tabs__tab is-active" role="tab">Обзор</button>
+       <button class="p-tabs__tab" role="tab">Детали</button>
+     </div>
+     <div class="p-tabs__panel is-active" role="tabpanel">
+       <p class="p-body">Контент первой вкладки.</p>
+     </div>
+     <div class="p-tabs__panel" role="tabpanel">
+       <p class="p-body">Контент второй вкладки.</p>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-tabs__bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.p-tabs__tab {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-light-40);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  min-height: var(--touch-min);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.p-tabs__tab:hover { color: var(--text-on-light-60); }
+
+.p-tabs__tab.is-active {
+  color: var(--text-on-light);
+  border-bottom-color: var(--text-on-light);
+}
+
+.p-tabs__panel {
+  display: none;
+  padding-top: var(--space-6);
+}
+
+.p-tabs__panel.is-active {
+  display: block;
+}
+
+
+/* ==========================================================
+   UTILITIES
+   ========================================================== */
+
+/* Скрыть на мобильном */
+.p-hide-mobile {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .p-hide-mobile { display: block; }
+}
+
+/* Скрыть на десктопе */
+.p-hide-desktop {}
+
+@media (min-width: 960px) {
+  .p-hide-desktop { display: none !important; }
+}
+
+
+/* ============================================================
+
+
+/* ============================================================
+   PREMIUM UI ДЛЯ КЕЙСОВ  (v2.3)
+
+   Все значения — через токены. Все компоненты — с dark theme.
+   Hover-lift на интерактивных карточках. Stagger-анимации.
+   ============================================================ */
+
+
+/* ==========================================================
+   HOVER-LIFT SYSTEM
+   Единый паттерн для всех карточек с interaction.
+
+   HTML: <div class="p-feature p-lift">...</div>
+   ========================================================== */
+
+.p-lift {
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.p-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.p-lift:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ==========================================================
+   DEVICE MOCKUP — BROWSER
+
+   HTML:
+   <div class="p-device p-device--browser">
+     <div class="p-device__bar">
+       <span class="p-device__dots"></span>
+       <span class="p-device__url">smartcare.sberbank.ru</span>
+     </div>
+     <div class="p-device__screen">
+       <img src="dashboard.jpg" alt="..." loading="lazy">
+     </div>
+   </div>
+   ========================================================== */
+
+.p-device {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-light-container);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.p-device--browser .p-device__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-light-raised);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.p-device__dots {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.p-device__dots::before,
+.p-device__dots::after {
+  content: '';
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: 50%;
+  background: var(--border-light);
+}
+
+.p-device__dots::before {
+  box-shadow: calc(var(--space-3) + var(--space-2)) 0 0 var(--border-light);
+}
+
+.p-device__dots::after {
+  margin-left: calc(var(--space-3) + var(--space-2));
+}
+
+.p-device__url {
+  flex: 1;
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--text-on-light-40);
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-device__screen { line-height: 0; }
+.p-device__screen img { width: 100%; display: block; }
+
+/* Тёмный */
+.p-device--dark {
+  background: var(--bg-dark-surface);
+  border-color: var(--border-dark);
+}
+.p-device--dark .p-device__bar {
+  background: var(--bg-dark-raised);
+  border-color: var(--border-dark);
+}
+.p-device--dark .p-device__dots::before {
+  background: var(--text-on-dark-20);
+  box-shadow: calc(var(--space-3) + var(--space-2)) 0 0 var(--text-on-dark-20);
+}
+.p-device--dark .p-device__dots::after { background: var(--text-on-dark-20); }
+.p-device--dark .p-device__url {
+  background: var(--bg-dark);
+  color: var(--text-on-dark-40);
+}
+
+
+/* ==========================================================
+   DEVICE MOCKUP — PHONE
+
+   HTML:
+   <div class="p-device p-device--phone">
+     <div class="p-device__notch"></div>
+     <div class="p-device__screen">
+       <img src="mobile.jpg" alt="..." loading="lazy">
+     </div>
+   </div>
+   ========================================================== */
+
+.p-device--phone {
+  max-width: 375px;
+  margin-inline: auto;
+  border-radius: var(--radius-xl);
+  padding: var(--space-2);
+  border-width: 2px;
+}
+
+.p-device--phone .p-device__notch {
+  width: 30%;
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--border-light);
+  margin: var(--space-2) auto var(--space-3);
+}
+
+.p-device--phone .p-device__screen {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.p-device--phone.p-device--dark .p-device__notch {
+  background: var(--text-on-dark-20);
+}
+
+
+/* ==========================================================
+   PROCESS STEPS
+
+   HTML:
+   <ol class="p-process">
+     <li class="p-process__step">
+       <span class="p-process__num">01</span>
+       <div class="p-process__content">
+         <h3 class="p-heading--sm">Исследование</h3>
+         <p class="p-body--sm">~120 записей звонков.</p>
+       </div>
+     </li>
+     <li class="p-process__step p-process__step--accent">
+       <span class="p-process__num">03</span>
+       <div class="p-process__content">
+         <h3 class="p-heading--sm">Решение</h3>
+         <p class="p-body--sm">Агент-маршрутизатор.</p>
+       </div>
+     </li>
+   </ol>
+   ========================================================== */
+
+.p-process {
+  --_dot: var(--touch-min);
+  display: flex;
+  flex-direction: column;
+}
+
+.p-process__step {
+  display: grid;
+  grid-template-columns: var(--_dot) 1fr;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+  position: relative;
+}
+
+.p-process__step::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--_dot) / 2);
+  top: var(--_dot);
+  bottom: 0;
+  width: 1px;
+  background: var(--border-light);
+  transform: translateX(-0.5px);
+}
+
+.p-process__step:last-child::before { display: none; }
+.p-process__step:last-child { padding-bottom: 0; }
+
+.p-process__num {
+  width: var(--_dot);
+  height: var(--_dot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-on-light-40);
+  flex-shrink: 0;
+  background: var(--bg-light-raised);
+  position: relative;
+  z-index: 1;
+  transition: all var(--dur-base) var(--ease-out);
+}
+
+.p-process__step:hover .p-process__num {
+  border-color: var(--text-on-light-40);
+  color: var(--text-on-light-60);
+}
+
+.p-process__step--accent .p-process__num {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 0 var(--space-1) var(--accent-subtle);
+}
+
+.p-process__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.p-section--dark .p-process__step::before { background: var(--border-dark); }
+.p-section--dark .p-process__num {
+  border-color: var(--border-dark);
+  color: var(--text-on-dark-40);
+  background: var(--bg-dark-raised);
+}
+.p-section--dark .p-process__step:hover .p-process__num {
+  border-color: var(--text-on-dark-40);
+  color: var(--text-on-dark-60);
+}
+
+
+/* ==========================================================
+   FLOW (pipeline-диаграмма)
+
+   HTML:
+   <div class="p-flow">
+     <div class="p-flow__step">
+       <span class="p-label">Вход</span>
+       <span class="p-body--sm">Вопрос</span>
+     </div>
+     <div class="p-flow__arrow"></div>
+     <div class="p-flow__step p-flow__step--highlight">
+       <span class="p-label">Маршрутизатор</span>
+       <span class="p-body--sm">Намерение</span>
+     </div>
+     <div class="p-flow__arrow"></div>
+     <div class="p-flow__step">
+       <span class="p-label">Выход</span>
+       <span class="p-body--sm">Ответ</span>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-flow {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: var(--space-2);
+}
+.p-flow::-webkit-scrollbar { display: none; }
+
+.p-flow__step {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--bg-light-container);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.p-flow__step:hover { border-color: var(--text-on-light-40); }
+
+.p-flow__step--highlight {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+.p-flow__step--highlight:hover { border-color: transparent; }
+.p-flow__step--highlight .p-label { color: var(--text-on-dark-40); }
+.p-flow__step--highlight .p-body--sm { color: var(--text-on-dark-60); }
+
+/* CSS-стрелка */
+.p-flow__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--space-8);
+}
+.p-flow__arrow::before {
+  content: '';
+  width: var(--space-3);
+  height: var(--space-3);
+  border-right: 2px solid var(--text-on-light-40);
+  border-bottom: 2px solid var(--text-on-light-40);
+  transform: rotate(-45deg);
+  margin-left: calc(-1 * var(--space-1));
+}
+
+@media (max-width: 639px) {
+  .p-flow { flex-direction: column; }
+  .p-flow__step { min-width: 0; }
+  .p-flow__arrow {
+    width: auto;
+    height: var(--space-8);
+    padding: 0;
+  }
+  .p-flow__arrow::before {
+    transform: rotate(45deg);
+    margin-left: 0;
+    margin-top: calc(-1 * var(--space-1));
+  }
+}
+
+.p-section--dark .p-flow__step {
+  background: var(--bg-dark-raised);
+  border-color: var(--border-dark);
+}
+.p-section--dark .p-flow__step:hover { border-color: var(--text-on-dark-40); }
+.p-section--dark .p-flow__arrow::before { border-color: var(--text-on-dark-40); }
+.p-section--dark .p-flow__step--highlight {
+  background: var(--bg-light);
+  color: var(--text-on-light);
+}
+.p-section--dark .p-flow__step--highlight .p-label { color: var(--text-on-light-40); }
+.p-section--dark .p-flow__step--highlight .p-body--sm { color: var(--text-on-light-60); }
+
+
+/* ==========================================================
+   TESTIMONIAL
+
+   HTML:
+   <blockquote class="p-testimonial">
+     <p class="p-testimonial__text">«Агент решил проблему.»</p>
+     <footer class="p-testimonial__author">
+       <div class="p-testimonial__avatar">ИИ</div>
+       <div>
+         <span class="p-testimonial__name">Иван Иванов</span>
+         <span class="p-testimonial__role">Руководитель</span>
+       </div>
+     </footer>
+   </blockquote>
+   ========================================================== */
+
+.p-testimonial {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  background: var(--bg-light-container);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Акцентная линия сверху */
+.p-testimonial::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.p-testimonial__text {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+  max-width: 36ch;
+}
+
+.p-testimonial__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.p-testimonial__avatar {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 50%;
+  background: var(--bg-dark);
+  color: var(--text-on-dark-60);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  flex-shrink: 0;
+}
+
+.p-testimonial__name {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.p-testimonial__role {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-on-light-40);
+}
+
+.p-section--dark .p-testimonial { background: var(--bg-dark-raised); }
+.p-section--dark .p-testimonial__avatar {
+  background: var(--bg-light);
+  color: var(--text-on-light-60);
+}
+.p-section--dark .p-testimonial__role { color: var(--text-on-dark-40); }
+
+
+/* ==========================================================
+   TAGS / BADGES
+
+   HTML:
+   <div class="p-tags">
+     <span class="p-tag">Figma</span>
+     <span class="p-tag p-tag--accent">RAG</span>
+     <span class="p-tag p-tag--outline">В&nbsp;продакшене</span>
+   </div>
+   ========================================================== */
+
+.p-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.p-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  border-radius: var(--radius-sm);
+  background: var(--bg-light-container);
+  color: var(--text-on-light);
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.p-tag:hover { background: var(--bg-light-raised); }
+
+.p-tag--accent {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+.p-tag--accent:hover { background: var(--accent-glow); }
+
+.p-tag--outline {
+  background: transparent;
+  border: 1px solid var(--border-light);
+}
+.p-tag--outline:hover { border-color: var(--text-on-light-40); }
+
+.p-section--dark .p-tag,
+.p-screen--dark .p-tag {
+  background: var(--bg-dark-surface);
+  color: var(--text-on-dark);
+}
+.p-section--dark .p-tag:hover,
+.p-screen--dark .p-tag:hover { background: var(--bg-dark-raised); }
+.p-section--dark .p-tag--outline,
+.p-screen--dark .p-tag--outline {
+  background: transparent;
+  border-color: var(--border-dark);
+}
+.p-section--dark .p-tag--outline:hover,
+.p-screen--dark .p-tag--outline:hover { border-color: var(--text-on-dark-40); }
+
+
+/* ==========================================================
+   BADGE (числовой/текстовый бэйдж)
+
+   HTML:
+   <span class="p-badge">120 звонков</span>
+   <span class="p-badge p-badge--accent">Новое</span>
+   ========================================================== */
+
+.p-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-sm);
+  background: var(--bg-light-container);
+  color: var(--text-on-light-60);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.p-badge--accent { background: var(--accent); color: white; }
+.p-badge--lg { font-size: var(--text-sm); padding: var(--space-2) var(--space-4); }
+.p-section--dark .p-badge { background: var(--bg-dark-raised); color: var(--text-on-dark-60); }
+
+
+/* ==========================================================
+   STAT HERO
+
+   HTML:
+   <div class="p-stat">
+     <span class="p-stat__value">−37%</span>
+     <span class="p-stat__context p-body">Время обработки</span>
+   </div>
+   ========================================================== */
+
+.p-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.p-stat__value {
+  font-family: var(--font-mono);
+  font-size: clamp(3rem, 2rem + 5vw, 7rem);
+  font-weight: var(--weight-bold);
+  line-height: 0.9;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+.p-stat__context { max-width: 30ch; color: var(--text-on-light-60); }
+.p-section--dark .p-stat__context { color: var(--text-on-dark-60); }
+
+
+/* ==========================================================
+   HIGHLIGHT (inline маркер текста)
+
+   HTML:
+   <p class="p-body">Сократили <mark class="p-highlight">с 12 до 7,5 минут</mark>.</p>
+   ========================================================== */
+
+.p-highlight {
+  background: var(--highlight);
+  color: inherit;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-sm);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.p-section--dark .p-highlight { background: var(--accent-glow); }
+
+
+/* ==========================================================
+   DIVIDER
+
+   HTML:
+   <hr class="p-divider">
+   <hr class="p-divider p-divider--dots">
+   <hr class="p-divider p-divider--space">
+   <hr class="p-divider p-divider--gradient">
+   ========================================================== */
+
+.p-divider {
+  border: none;
+  height: 1px;
+  background: var(--border-light);
+  margin-block: var(--block-gap);
+}
+
+.p-divider--dots {
+  background: none;
+  text-align: center;
+  height: auto;
+}
+.p-divider--dots::before {
+  content: '· · ·';
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-on-light-40);
+}
+
+.p-divider--space { background: none; height: var(--section-gap); }
+
+.p-divider--gradient {
+  background: linear-gradient(to right, transparent, var(--border-light) 20%, var(--border-light) 80%, transparent);
+}
+
+.p-section--dark .p-divider { background: var(--border-dark); }
+.p-section--dark .p-divider--dots::before { color: var(--text-on-dark-40); }
+.p-section--dark .p-divider--gradient {
+  background: linear-gradient(to right, transparent, var(--border-dark) 20%, var(--border-dark) 80%, transparent);
+}
+
+
+/* ==========================================================
+   ANNOTATED IMAGE
+
+   HTML:
+   <div class="p-annotated">
+     <div class="p-annotated__image">
+       <img src="screen.jpg" alt="..." loading="lazy">
+       <span class="p-annotated__dot" style="top:20%;left:35%">1</span>
+       <span class="p-annotated__dot" style="top:45%;left:70%">2</span>
+     </div>
+     <ol class="p-annotated__legend">
+       <li>Карточка клиента</li>
+       <li>Панель быстрых действий</li>
+     </ol>
+   </div>
+   ========================================================== */
+
+.p-annotated__image {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-light-container);
+}
+.p-annotated__image img { width: 100%; display: block; }
+
+.p-annotated__dot {
+  --_dot: var(--space-8);
+  position: absolute;
+  width: var(--_dot);
+  height: var(--_dot);
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 var(--space-1) var(--dot-ring);
+  cursor: default;
+  z-index: 1;
+}
+
+.p-annotated__dot::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--space-1));
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0.4;
+  animation: p-pulse 2s var(--ease-in-out) infinite;
+}
+
+@keyframes p-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.35); opacity: 0; }
+}
+
+.p-annotated__legend {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  counter-reset: annotation;
+}
+
+.p-annotated__legend li {
+  --_ld: var(--space-5);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-on-light-60);
+  counter-increment: annotation;
+}
+
+.p-annotated__legend li::before {
+  content: counter(annotation);
+  flex-shrink: 0;
+  width: var(--_ld);
+  height: var(--_ld);
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-section--dark .p-annotated__image { background: var(--bg-dark-surface); }
+.p-section--dark .p-annotated__dot { box-shadow: 0 0 0 var(--space-1) var(--bg-dark); }
+.p-section--dark .p-annotated__legend li { color: var(--text-on-dark-60); }
+
+@media (prefers-reduced-motion: reduce) {
+  .p-annotated__dot::after { animation: none; opacity: 0; }
+}
+
+
+/* ==========================================================
+   NOTE (editorial aside)
+
+   HTML:
+   <aside class="p-note">
+     <span class="p-note__marker">※</span>
+     <p class="p-body--sm">Имена изменены по&nbsp;NDA.</p>
+   </aside>
+   ========================================================== */
+
+.p-note {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-light);
+}
+.p-note__marker {
+  font-size: var(--text-lg);
+  color: var(--text-on-light-40);
+  flex-shrink: 0;
+  line-height: var(--leading-base);
+}
+.p-note .p-body--sm { color: var(--text-on-light-40); font-style: italic; }
+
+.p-section--dark .p-note { border-color: var(--border-dark); }
+.p-section--dark .p-note__marker { color: var(--text-on-dark-40); }
+.p-section--dark .p-note .p-body--sm { color: var(--text-on-dark-40); }
+
+
+/* ==========================================================
+   FEATURE CARD (с иконкой в контейнере)
+
+   HTML:
+   <div class="p-grid-2">
+     <div class="p-feature p-lift">
+       <span class="p-feature__icon">⚡</span>
+       <h3 class="p-heading--sm">Один шаг — один источник</h3>
+       <p class="p-body--sm">Обращается к&nbsp;одному источнику.</p>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-feature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--bg-light-raised);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.p-feature__icon {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  line-height: 1;
+  background: var(--bg-light-container);
+  border-radius: var(--radius-md);
+}
+
+.p-section--dark .p-feature {
+  background: var(--bg-dark-raised);
+  border-color: var(--border-dark);
+}
+.p-section--dark .p-feature__icon { background: var(--bg-dark-surface); }
+
+
+/* ==========================================================
+   IMAGE PAIR
+
+   HTML:
+   <figure class="p-image-pair">
+     <div class="p-image-pair__grid">
+       <div class="p-image-pair__item">
+         <span class="p-label">До</span>
+         <div class="p-frame"><img src="v1.jpg" alt="..." loading="lazy"></div>
+       </div>
+       <div class="p-image-pair__item">
+         <span class="p-label" style="color:var(--accent)">После</span>
+         <div class="p-frame"><img src="v2.jpg" alt="..." loading="lazy"></div>
+       </div>
+     </div>
+     <figcaption class="p-caption">Эволюция интерфейса</figcaption>
+   </figure>
+   ========================================================== */
+
+.p-image-pair__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+@media (min-width: 640px) {
+  .p-image-pair__grid { grid-template-columns: 1fr 1fr; }
+}
+
+.p-image-pair__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.p-image-pair .p-caption { margin-top: var(--space-3); }
+
+
+/* ==========================================================
+   KPI BAR
+
+   HTML:
+   <div class="p-kpi-bar">
+     <div class="p-kpi-bar__item">
+       <span class="p-mono--lg" style="color:var(--accent)">4</span>
+       <span class="p-body--sm">ПШЕ</span>
+     </div>
+   </div>
+   ========================================================== */
+
+.p-kpi-bar {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.p-kpi-bar__item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-6);
+  text-align: center;
+  border-right: 1px solid var(--border-light);
+}
+.p-kpi-bar__item:last-child { border-right: none; }
+
+@media (max-width: 639px) {
+  .p-kpi-bar__item {
+    flex-basis: 50%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+    text-align: left;
+  }
+  .p-kpi-bar__item:nth-child(odd) { border-right: 1px solid var(--border-light); }
+  .p-kpi-bar__item:nth-last-child(-n+2) { border-bottom: none; }
+}
+
+.p-section--dark .p-kpi-bar { border-color: var(--border-dark); }
+.p-section--dark .p-kpi-bar__item { border-color: var(--border-dark); }
+
+
+/* ==========================================================
+   GRID-4
+
+   HTML:
+   <div class="p-grid-4">
+     <div class="p-metric-card">...</div> ×4
+   </div>
+   ========================================================== */
+
+.p-grid-4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+@media (min-width: 640px) {
+  .p-grid-4 { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 960px) {
+  .p-grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+
+/* ==========================================================
+   NUMBER TICKER (CSS-only анимация числа)
+
+   HTML:
+   <div class="p-ticker p-reveal">
+     <span class="p-ticker__value p-mono--xl">−37%</span>
+     <span class="p-ticker__label p-body--sm">Время</span>
+   </div>
+   ========================================================== */
+
+.p-ticker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow: hidden;
+}
+
+.p-ticker__value {
+  color: var(--accent);
+  transform: translateY(100%);
+  transition: transform var(--dur-scroll) var(--ease-spring);
+}
+.p-ticker.is-visible .p-ticker__value { transform: translateY(0); }
+
+
+/* ==========================================================
+   GLASS CARD (glassmorphism)
+
+   HTML:
+   <div class="p-glass">
+     <span class="p-mono--xl" style="color:var(--accent)">−37%</span>
+     <span class="p-body--sm">Время обработки</span>
+   </div>
+   ========================================================== */
+
+.p-glass {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--bg-dark-alpha);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  color: var(--text-on-dark);
+}
+
+.p-glass--light {
+  background: var(--bg-light-alpha);
+  border-color: var(--border-light);
+  color: var(--text-on-light);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+
+/* ==========================================================
+   ACCENT LINE
+
+   HTML:
+   <div class="p-accent-line"></div>
+   <div class="p-accent-line p-accent-line--wide"></div>
+   ========================================================== */
+
+.p-accent-line {
+  width: var(--space-12);
+  height: 2px;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+.p-accent-line--wide { width: var(--space-20); }
+
+
+/* ==========================================================
+   STATUS INDICATOR
+
+   HTML:
+   <span class="p-status">В&nbsp;продакшене</span>
+   <span class="p-status p-status--warn">Пилот</span>
+   ========================================================== */
+
+.p-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-light-60);
+}
+.p-status::before {
+  content: '';
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: #34D399;
+  flex-shrink: 0;
+}
+.p-status--warn::before { background: #FBBF24; }
+.p-status--off::before { background: var(--text-on-light-40); }
+.p-section--dark .p-status { color: var(--text-on-dark-60); }

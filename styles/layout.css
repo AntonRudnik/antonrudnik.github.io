@@ -1,0 +1,382 @@
+/* ============================================================
+   PORTFOLIO DESIGN SYSTEM — LAYOUT
+   v2.0.0 | 2026-02-26
+   
+   Ключевые паттерны из рефов:
+   1. Scroll-snap full-screen sections (главная: каждый кейс = экран)
+   2. Sidebar + content 30/70 (кейсы: Garri)
+   3. Dot navigation (Garri: вертикальные точки справа)
+   ============================================================ */
+
+
+/* ==========================================================
+   SCROLL-SNAP: ПОЛНОЭКРАННЫЕ СЕКЦИИ КЕЙСОВ (ГЛАВНАЯ)
+   
+   Пользователь просил: «каждому кейсу — свой экран, скролл поэкранно».
+   
+   HTML:
+   <main class="p-snap">
+     <section class="p-snap__screen p-screen--dark">...</section>
+     <section class="p-snap__screen p-screen--dark">...</section>
+     <section class="p-snap__screen p-screen--light">...</section>
+   </main>
+   ========================================================== */
+
+.p-snap {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.p-snap::-webkit-scrollbar {
+  display: none;
+}
+
+.p-snap__screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  padding-inline: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Все экраны — safe area под header */
+.p-snap__screen {
+  padding-top: var(--header-h);
+  padding-bottom: var(--space-8);
+}
+
+/* Dots clearance — prevent content from overlapping dot nav.
+   Case screens handle their own clearance via p-case-screen__inner. */
+@media (min-width: 960px) {
+  .p-snap__screen > .p-contain:not(.p-case-screen__inner) {
+    padding-right: calc(var(--space-6) + var(--touch-min) + var(--page-pad));
+  }
+}
+
+.p-screen--dark {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+}
+
+.p-screen--light {
+  background: var(--bg-light);
+  color: var(--text-on-light);
+}
+
+
+/* ==========================================================
+   КОНТЕЙНЕРЫ
+   ========================================================== */
+
+.p-contain {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: max(var(--page-pad), env(safe-area-inset-left, 0px))
+                  max(var(--page-pad), env(safe-area-inset-right, 0px));
+}
+
+.p-contain--narrow {
+  max-width: var(--narrow-max);
+}
+
+
+/* ==========================================================
+   SIDEBAR + CONTENT (КЕЙСЫ)
+   
+   Garri: метаданные/label ~30% слева (sticky),
+   визуалы/текст ~70% справа (скроллится).
+   На мобильных — стэк.
+   
+   HTML:
+   <div class="p-case-layout">
+     <aside class="p-case-layout__side">
+       <div class="p-case-layout__sticky">
+         ...sidebar content (label, meta, toc)...
+       </div>
+     </aside>
+     <div class="p-case-layout__main">
+       ...main content (visuals, text, data)...
+     </div>
+   </div>
+   ========================================================== */
+
+.p-case-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--block-gap);
+}
+
+@media (min-width: 960px) {
+  .p-case-layout {
+    grid-template-columns: var(--sidebar-w) 1fr;
+    gap: clamp(2rem, 1.5rem + 2vw, 4rem);
+  }
+}
+
+.p-case-layout__side {}
+
+.p-case-layout__sticky {
+  position: static;
+}
+
+@media (min-width: 960px) {
+  .p-case-layout__sticky {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-8));
+  }
+}
+
+.p-case-layout__main {
+  min-width: 0; /* prevent grid blowout */
+}
+
+
+/* ==========================================================
+   STATEMENT LAYOUT
+   
+   Garri: CHALLENGE / SOLUTION — uppercase label маленький слева,
+   огромный текст справа (~70% ширины).
+   На десктопе — split. На мобайле — стэк.
+   
+   HTML:
+   <div class="p-statement">
+     <span class="p-label">Задача</span>
+     <p class="p-display">Сократить время обработки...</p>
+   </div>
+   ========================================================== */
+
+.p-statement {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 960px) {
+  .p-statement {
+    grid-template-columns: var(--sidebar-w) 1fr;
+    gap: clamp(2rem, 1.5rem + 2vw, 4rem);
+    align-items: start;
+  }
+}
+
+
+/* ==========================================================
+   СЕКЦИИ (для страниц кейсов — обычный scroll, не snap)
+   ========================================================== */
+
+.p-section {
+  padding-block: var(--section-gap);
+}
+
+.p-section--sm {
+  padding-block: var(--block-gap);
+}
+
+.p-section--dark {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+}
+
+.p-section--light {
+  background: var(--bg-light);
+  color: var(--text-on-light);
+}
+
+.p-section--container {
+  background: var(--bg-light-container);
+  color: var(--text-on-light);
+}
+
+
+/* ==========================================================
+   GRIDS
+   ========================================================== */
+
+.p-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--block-gap);
+}
+
+@media (min-width: 640px) {
+  .p-grid-2 { grid-template-columns: 1fr 1fr; }
+}
+
+.p-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--block-gap);
+}
+
+@media (min-width: 640px) {
+  .p-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 960px) {
+  .p-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+
+/* ==========================================================
+   ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ
+   Garri: итерации в горизонтальном скролле.
+   ========================================================== */
+
+.p-hscroll {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Garri: fade edges */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+}
+
+.p-hscroll::-webkit-scrollbar { display: none; }
+
+.p-hscroll__item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+
+/* ==========================================================
+   DOT NAVIGATION
+   Garri: вертикальные точки справа, tracking скролла.
+   
+   HTML:
+   <nav class="p-dots" aria-label="Навигация">
+     <button class="p-dots__dot p-dots__dot--active" aria-label="Секция 1"></button>
+     <button class="p-dots__dot" aria-label="Секция 2"></button>
+     <button class="p-dots__dot" aria-label="Секция 3"></button>
+   </nav>
+   ========================================================== */
+
+.p-dots {
+  position: fixed;
+  right: var(--space-6);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-dots);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  counter-reset: dot-index;
+}
+
+@media (min-width: 960px) {
+  .p-dots { display: flex; }
+}
+
+.p-dots__dot {
+  width: var(--touch-min);
+  height: 24px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  counter-increment: dot-index;
+}
+
+/* Section number label — left of dot */
+.p-dots__dot::before {
+  content: counter(dot-index, decimal-leading-zero);
+  position: absolute;
+  right: calc(100% - 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--text-on-dark-40);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.p-dots__dot:hover::before {
+  opacity: 1;
+}
+
+.p-dots__dot--active::before {
+  opacity: 1;
+  color: var(--text-on-dark-60);
+}
+
+/* Ring: hollow circle */
+.p-dots__dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--text-on-dark-20);
+  transform: translate(-50%, -50%);
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.p-dots__dot:hover::after {
+  border-color: var(--text-on-dark-40);
+}
+
+/* Active: filled + soft outer ring */
+.p-dots__dot--active::after {
+  background: var(--text-on-dark);
+  border-color: var(--text-on-dark);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.10);
+}
+
+/* На светлом фоне */
+.p-dots--light .p-dots__dot::after {
+  border-color: var(--text-on-light-40);
+}
+
+.p-dots--light .p-dots__dot::before {
+  color: var(--text-on-light-40);
+}
+
+.p-dots--light .p-dots__dot:hover::after {
+  border-color: var(--text-on-light-60);
+}
+
+.p-dots--light .p-dots__dot--active::after {
+  background: var(--text-on-light);
+  border-color: var(--text-on-light);
+  box-shadow: 0 0 0 3px rgba(11, 11, 15, 0.08);
+}
+
+.p-dots--light .p-dots__dot--active::before {
+  color: var(--text-on-light-60);
+}
+
+
+/* ==========================================================
+   STACK UTILITY
+   ========================================================== */
+
+.p-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-stack--xs { gap: var(--space-2); }
+.p-stack--sm { gap: var(--space-4); }
+.p-stack--md { gap: var(--block-gap); }
+.p-stack--lg { gap: var(--section-gap); }

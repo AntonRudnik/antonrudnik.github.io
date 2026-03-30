@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Обо мне — Антон Рудник</title>
+  <meta name="description" content="Senior Product Designer, 7+ лет опыта. Проектирую сложные B2E и B2B системы в финтехе, AI и контактных центрах.">
+  <meta name="theme-color" content="#0b0b0f">
+  <!-- Favicon -->
+  <link rel="icon" href="../favlog/fav-16.svg" type="image/svg+xml">
+  <link rel="icon" href="../favlog/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../favlog/favicon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/layout.css">
+  <link rel="stylesheet" href="../styles/typography.css">
+  <link rel="stylesheet" href="../styles/components.css">
+  <link rel="stylesheet" href="../styles/animations.css">
+  <link rel="stylesheet" href="../styles/about.css">
+
+  <style>
+    /* Testimonials */
+    .ab-testimonials {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-top: var(--space-8);
+    }
+    .ab-testimonial {
+      background: var(--bg-dark-raised);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      position: relative;
+    }
+    .ab-testimonial::before {
+      content: "\201C";
+      position: absolute;
+      top: var(--space-5);
+      right: var(--space-6);
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 2rem + 3vw, 5rem);
+      line-height: 1;
+      color: rgba(255,255,255,0.04);
+    }
+    .ab-testimonial__text {
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
+      color: var(--text-on-dark-60);
+      position: relative;
+      z-index: 1;
+    }
+    .ab-testimonial__author {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-top: auto;
+    }
+    .ab-testimonial__photo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .ab-testimonial__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .ab-testimonial__name {
+      font-size: var(--text-base);
+      font-weight: var(--weight-semibold);
+      color: var(--text-warm);
+    }
+    .ab-testimonial__role {
+      font-size: var(--text-sm);
+      color: var(--text-on-dark-40);
+    }
+    @media (max-width: 640px) {
+      .ab-testimonials { grid-template-columns: 1fr; }
+      .ab-testimonial { padding: var(--space-6); }
+      .ab-testimonial__text { font-size: var(--text-base); }
+      .ab-testimonial__photo { width: 40px; height: 40px; }
+    }
+  </style>
+</head>
+<body class="ab-page">
+
+<!-- ===== HEADER ===== -->
+<header class="p-header p-header--back">
+  <div class="p-contain p-header__inner">
+    <a href="/" class="p-header__name">Антон Рудник</a>
+    <nav class="p-header__nav">
+      <a href="/#cases" class="p-header__link">Кейсы</a>
+      <a href="/about" class="p-header__link">Опыт</a>
+    </nav>
+    <a href="https://t.me/akti_92" class="p-header__cta" data-glow target="_blank" rel="noopener">Написать</a>
+    <button class="p-header__burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="p-mobile-menu" id="mobile-menu" hidden>
+  <nav class="p-mobile-menu__nav">
+    <a href="/#cases" class="p-mobile-menu__link">Кейсы</a>
+    <a href="/about" class="p-mobile-menu__link">Опыт</a>
+    <a href="https://t.me/akti_92" class="p-mobile-menu__link" target="_blank" rel="noopener">Написать</a>
+  </nav>
+</div>
+
+<main>
+
+<!-- ===== PAGE HEADER (name + meta + statement + toc) ===== -->
+<div class="ab-page-header">
+  <div class="ab-page-header__inner">
+    <span class="ab-page-header__label p-reveal">Обо&nbsp;мне</span>
+    <h1 class="ab-page-header__title p-reveal p-reveal--delay-1">Антон Рудник</h1>
+    <p class="ab-page-header__subtitle p-reveal p-reveal--delay-2">Senior Product Designer · 7+&nbsp;лет · Москва</p>
+    <p class="ab-page-header__statement p-reveal p-reveal--delay-3">Превращаю сложные домены в&nbsp;понятные интерфейсы с&nbsp;измеримым результатом</p>
+    <p class="ab-page-header__bio p-reveal p-reveal--delay-3">Проектирую системы на&nbsp;стыке операционных процессов, AI&nbsp;и&nbsp;пользовательского опыта. В&nbsp;Сбере развивал платформу поддержки на&nbsp;8&nbsp;700&nbsp;сотрудников&nbsp;&mdash; от&nbsp;AI&#8209;агентов до&nbsp;менторства дизайнеров и&nbsp;системных улучшений.</p>
+    <nav class="ab-page-header__toc p-reveal p-reveal--delay-4" aria-label="Содержание">
+      <a href="#ab-sec-experience" class="ab-page-header__toc-link">Опыт</a>
+      <span class="ab-page-header__toc-sep" aria-hidden="true">·</span>
+      <a href="#ab-sec-skills" class="ab-page-header__toc-link">Навыки</a>
+      <span class="ab-page-header__toc-sep" aria-hidden="true">·</span>
+      <a href="#ab-sec-education" class="ab-page-header__toc-link">Образование</a>
+      <span class="ab-page-header__toc-sep" aria-hidden="true">·</span>
+      <a href="#ab-sec-photos" class="ab-page-header__toc-link">За&nbsp;кадром</a>
+    </nav>
+  </div>
+</div>
+
+
+<!-- ===== 01 · ОПЫТ РАБОТЫ ===== -->
+<section class="ab-section" id="ab-sec-experience">
+  <div class="ab-section__inner">
+    <div class="ab-section__label p-reveal">01</div>
+    <h2 class="ab-section__title p-reveal">Опыт работы</h2>
+
+    <div class="ab-timeline">
+
+      <!-- Сбербанк -->
+      <article class="ab-job p-reveal">
+        <div class="ab-job__side">
+          <span class="ab-job__company">Сбербанк</span>
+          <span class="ab-job__role">Senior Product Designer</span>
+          <span class="ab-job__period">03.2022 — 12.2025</span>
+          <span class="ab-job__context">Платформа поддержки клиентов: 8&nbsp;700&nbsp;сотрудников, 6,6&nbsp;млн&nbsp;обращений/мес</span>
+        </div>
+        <div class="ab-job__main">
+          <ul class="ab-job__achievements">
+            <li>
+              <strong>AI и&nbsp;автоматизация:</strong> Запустил 2&nbsp;AI&#8209;агента для контакт-центра&nbsp;&mdash; <a href="/case/ai-tax" class="ab-case-link">голосовой по&nbsp;налогу на&nbsp;вклады</a> и&nbsp;<a href="/case/ai-agent-rates" class="ab-case-link">copilot-агент в&nbsp;интерфейсе оператора</a>. Проработал логику, поведение и&nbsp;промпты, доведя качество ответов до&nbsp;<span class="ab-metric">85%</span> и&nbsp;сэкономив бизнесу <span class="ab-metric">14&nbsp;FTE</span>.
+            </li>
+            <li>
+              <strong>Рост бизнес-метрик:</strong> Разработал флоу горячих продаж во&nbsp;входящих звонках и&nbsp;чатах (конверсия <span class="ab-metric">31,5%</span>) и&nbsp;сценарий подбора вклада (конверсия <span class="ab-metric">24,6%</span>).
+            </li>
+            <li>
+              <strong>Операционная эффективность:</strong> Создал интерфейс <a href="/case/arrests" class="ab-case-link">раздела арестов и&nbsp;взысканий</a> (<span class="ab-metric">250&nbsp;000</span>&nbsp;обращений/мес). Оптимизировал раздел <a href="/case/redesign-stavka" class="ab-case-link">«Ставка и&nbsp;надбавки»</a> (36&nbsp;000&nbsp;обращений/мес): перевёл сложные вопросы со&nbsp;2-й линии на&nbsp;1-ю, сократив время ответа с&nbsp;нескольких дней до&nbsp;минут. Скорость обработки остальных кейсов увеличил на&nbsp;<span class="ab-metric">20%</span>.
+            </li>
+            <li>
+              <strong>Процессы и&nbsp;команда:</strong> Отвечал за&nbsp;дизайн 4&nbsp;корневых разделов платформы (<span class="ab-metric">550&nbsp;000+</span>&nbsp;обращений/мес). Наставник дизайнера в&nbsp;продажах, обучил 2&nbsp;исследователей самостоятельному проектированию интерфейсов. Внедрил регулярные разборы кейсов и&nbsp;пополнил дизайн-систему ключевыми компонентами.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <div class="ab-job__divider"></div>
+
+      <!-- Проектная работа -->
+      <article class="ab-job p-reveal">
+        <div class="ab-job__side">
+          <span class="ab-job__company">Проектная работа</span>
+          <span class="ab-job__role">Product Designer · контракт</span>
+          <span class="ab-job__period">2019 — 2022</span>
+        </div>
+        <div class="ab-job__main">
+          <ul class="ab-job__achievements">
+            <li>
+              <strong>Fintech / B2B SaaS (Платформа ОФД):</strong> Разработал первый в&nbsp;истории платформы сценарий подключения и&nbsp;выпуска ЭЦП. Спроектировал многошаговый гибридный флоу, упростив цифровую часть процесса и&nbsp;сохранив compliance для юридически обязательных оффлайн-шагов.
+            </li>
+            <li>
+              <strong>MedTech (iOS / Android):</strong> UI/UX мобильного приложения с&nbsp;нуля. Логика подбора препаратов по&nbsp;симптоматике на&nbsp;основе глубинных интервью с&nbsp;3&nbsp;практикующими врачами. Подготовил MVP и&nbsp;передал артефакты в&nbsp;разработку.
+            </li>
+            <li>
+              <strong>Стриминговая платформа:</strong> Информационная архитектура и&nbsp;ключевые флоу от&nbsp;онбординга до&nbsp;панели управления трансляциями для аудитории в&nbsp;тысячи пользователей.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <div class="ab-job__divider"></div>
+
+      <!-- Яндекс -->
+      <article class="ab-job p-reveal">
+        <div class="ab-job__side">
+          <span class="ab-job__company">Яндекс</span>
+          <span class="ab-job__role">Product Designer · стажировка</span>
+          <span class="ab-job__period">2019 · 3 месяца</span>
+        </div>
+        <div class="ab-job__main">
+          <ul class="ab-job__achievements">
+            <li>Спроектировал сервис рассылок Яндекс Почты&nbsp;&mdash; <span class="ab-metric">75&nbsp;млн</span>&nbsp;писем/мес для 62&nbsp;аккаунтов.</li>
+            <li>Участвовал в&nbsp;миграции дизайн-команды Почты со&nbsp;Sketch на&nbsp;Figma.</li>
+          </ul>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Micro-CTA -->
+    <div class="ab-micro-cta p-reveal">
+      <span class="ab-micro-cta__text">Давайте пообщаемся</span>
+      <a href="https://t.me/akti_92" class="ab-micro-cta__link" target="_blank" rel="noopener">Написать в&nbsp;Telegram&nbsp;→</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===== ОТЗЫВЫ КОЛЛЕГ ===== -->
+<section class="ab-section" id="ab-sec-testimonials">
+  <div class="ab-section__inner">
+    <h2 class="ab-section__title p-reveal">Коллеги обо&nbsp;мне</h2>
+
+    <div class="ab-testimonials">
+      <figure class="ab-testimonial p-reveal">
+        <p class="ab-testimonial__text">Антон&nbsp;&mdash; ответственный и&nbsp;внимательный к&nbsp;деталям дизайнер. Его скрупулёзность гарантирует высокое качество макетов. Быстро адаптируется к&nbsp;новым требованиям и&nbsp;всегда учитывает комментарии аналитика. Открыто воспринимает обратную связь и&nbsp;готов вносить правки, чтобы добиться лучшего результата.</p>
+        <div class="ab-testimonial__author">
+          <img class="ab-testimonial__photo" src="../images/People/tanya-mukhina.jpg" alt="Таня Мухина" loading="lazy">
+          <div class="ab-testimonial__info">
+            <span class="ab-testimonial__name">Таня Мухина</span>
+            <span class="ab-testimonial__role">Аналитик · SmartCare, Сбер</span>
+          </div>
+        </div>
+      </figure>
+
+      <figure class="ab-testimonial p-reveal p-reveal--delay-1">
+        <p class="ab-testimonial__text">Работали вместе над внутренним продуктом в&nbsp;Сбере. Антон умеет превращать размытые идеи в&nbsp;чёткие решения&nbsp;&mdash; быстро схватывает контекст, задаёт правильные вопросы и&nbsp;не&nbsp;даёт команде уйти в&nbsp;сторону. Решения всегда системные: после каждой итерации продукт становился цельнее и&nbsp;точнее закрывал потребности пользователей.</p>
+        <div class="ab-testimonial__author">
+          <img class="ab-testimonial__photo" src="../images/People/alexander-fedorchuk.jpg" alt="Александр Федорчук" loading="lazy">
+          <div class="ab-testimonial__info">
+            <span class="ab-testimonial__name">Александр Федорчук</span>
+            <span class="ab-testimonial__role">Исследователь · SmartCare, Сбер</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== 02 · НАВЫКИ ===== -->
+<section class="ab-section" id="ab-sec-skills">
+  <div class="ab-section__inner">
+    <div class="ab-section__label p-reveal">02</div>
+    <h2 class="ab-section__title p-reveal">Навыки и&nbsp;инструменты</h2>
+
+    <div class="ab-skills">
+
+      <div class="ab-skill-group p-reveal">
+        <span class="ab-skill-group__title">Product &amp; UX</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">CJM</span>
+          <span class="ab-skill-tag">JTBD</span>
+          <span class="ab-skill-tag">Design Sprint</span>
+          <span class="ab-skill-tag">UX/UI-дизайн</span>
+          <span class="ab-skill-tag">Прототипирование</span>
+          <span class="ab-skill-tag">UX-исследования</span>
+          <span class="ab-skill-tag">Юзабилити-тестирование</span>
+          <span class="ab-skill-tag">IA</span>
+          <span class="ab-skill-tag">UX-тексты</span>
+          <span class="ab-skill-tag">Дизайн-системы</span>
+        </div>
+      </div>
+
+      <div class="ab-skill-group p-reveal p-reveal--delay-1">
+        <span class="ab-skill-group__title">AI и&nbsp;автоматизация</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">Prompt Engineering</span>
+          <span class="ab-skill-tag">AI-прототипирование</span>
+          <span class="ab-skill-tag">Claude</span>
+          <span class="ab-skill-tag">Claude Code</span>
+          <span class="ab-skill-tag">Cursor</span>
+          <span class="ab-skill-tag">Gemini</span>
+          <span class="ab-skill-tag">OpenAI Codex</span>
+        </div>
+      </div>
+
+      <div class="ab-skill-group p-reveal p-reveal--delay-2">
+        <span class="ab-skill-group__title">Инструменты</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">Figma</span>
+          <span class="ab-skill-tag">Pixso</span>
+          <span class="ab-skill-tag">Adobe CC</span>
+          <span class="ab-skill-tag">Miro</span>
+          <span class="ab-skill-tag">Storybook</span>
+        </div>
+      </div>
+
+      <div class="ab-skill-group p-reveal">
+        <span class="ab-skill-group__title">Домен</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">Финтех</span>
+          <span class="ab-skill-tag">B2E-системы</span>
+          <span class="ab-skill-tag">Контакт-центры</span>
+          <span class="ab-skill-tag">Compliance</span>
+          <span class="ab-skill-tag">B2B SaaS</span>
+        </div>
+      </div>
+
+      <div class="ab-skill-group p-reveal p-reveal--delay-1">
+        <span class="ab-skill-group__title">Коммуникация</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">Стейкхолдеры</span>
+          <span class="ab-skill-tag">Презентация решений</span>
+          <span class="ab-skill-tag">Менторство</span>
+          <span class="ab-skill-tag">Публичные выступления</span>
+        </div>
+      </div>
+
+      <div class="ab-skill-group p-reveal p-reveal--delay-2">
+        <span class="ab-skill-group__title">Языки</span>
+        <div class="ab-skill-group__list">
+          <span class="ab-skill-tag">Русский — носитель</span>
+          <span class="ab-skill-tag">English — B1</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== 03 · ОБРАЗОВАНИЕ И СЕРТИФИКАТЫ ===== -->
+<section class="ab-section" id="ab-sec-education">
+  <div class="ab-section__inner">
+    <div class="ab-section__label p-reveal">03</div>
+    <h2 class="ab-section__title p-reveal">Образование и&nbsp;сертификаты</h2>
+
+    <!-- Образование -->
+    <article class="ab-edu p-reveal">
+      <span class="ab-edu__year">2009 — 2014</span>
+      <div class="ab-edu__body">
+        <span class="ab-edu__school">Московский государственный университет дизайна и&nbsp;технологии</span>
+        <span class="ab-edu__degree">Специалитет · Факультет рекламы</span>
+      </div>
+    </article>
+
+    <div class="ab-subsection-divider"></div>
+
+    <!-- Сертификаты -->
+    <div class="ab-talks">
+
+      <article class="ab-talk ab-talk--zoomable p-reveal">
+        <div class="ab-talk__img-wrap">
+          <img src="../images/about/talk-ai-agents.png" alt="Введение в ИИ-агенты" class="ab-talk__img" loading="lazy">
+          <span class="ab-talk__zoom-hint" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="M21 21l-5.2-5.2"/><path d="M10.5 7v7M7 10.5h7"/></svg>
+          </span>
+        </div>
+        <div class="ab-talk__body">
+          <span class="ab-talk__title">Введение в&nbsp;ИИ-агенты</span>
+          <span class="ab-talk__meta">Сбербанк · 2025</span>
+        </div>
+      </article>
+
+      <article class="ab-talk ab-talk--zoomable p-reveal p-reveal--delay-1">
+        <div class="ab-talk__img-wrap">
+          <img src="../images/about/talk-product-design.png" alt="От UX/UI к продуктовому дизайну" class="ab-talk__img" loading="lazy">
+          <span class="ab-talk__zoom-hint" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="M21 21l-5.2-5.2"/><path d="M10.5 7v7M7 10.5h7"/></svg>
+          </span>
+        </div>
+        <div class="ab-talk__body">
+          <span class="ab-talk__title">От&nbsp;UX/UI к&nbsp;продуктовому дизайну</span>
+          <span class="ab-talk__meta">Сбербанк · 2023</span>
+        </div>
+      </article>
+
+      <article class="ab-talk ab-talk--zoomable p-reveal p-reveal--delay-2">
+        <div class="ab-talk__img-wrap">
+          <img src="../images/about/talk-llm-gigachat.png" alt="Работа с LLM GigaChat" class="ab-talk__img" loading="lazy">
+          <span class="ab-talk__zoom-hint" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="M21 21l-5.2-5.2"/><path d="M10.5 7v7M7 10.5h7"/></svg>
+          </span>
+        </div>
+        <div class="ab-talk__body">
+          <span class="ab-talk__title">Работа с&nbsp;LLM GigaChat</span>
+          <span class="ab-talk__meta">Сбербанк · 2025</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== 04 · ЖИЗНЬ В КОМПАНИИ ===== -->
+<section class="ab-section" id="ab-sec-photos">
+  <div class="ab-section__inner">
+    <div class="ab-section__label p-reveal">04</div>
+    <h2 class="ab-section__title p-reveal">За&nbsp;кадром</h2>
+
+    <div class="ab-photos">
+      <figure class="ab-photo p-reveal">
+        <img src="../images/about/intensive-product-design.jpg" alt="Обучение в Корпоративном университете Сбера" loading="lazy">
+        <div class="ab-photo__overlay">
+          <span class="ab-photo__tag">Корпоративный университет</span>
+          <span class="ab-photo__caption">От&nbsp;UX/UI к&nbsp;продуктовому дизайну</span>
+          <span class="ab-photo__sub">Интенсив для дизайнеров Сбера</span>
+        </div>
+      </figure>
+      <figure class="ab-photo p-reveal p-reveal--delay-1">
+        <img src="../images/about/kids-day-sber.jpg" alt="День для детей в офисе Сбера" loading="lazy">
+        <div class="ab-photo__overlay">
+          <span class="ab-photo__tag">Офис Сбера</span>
+          <span class="ab-photo__caption">День для детей</span>
+          <span class="ab-photo__sub">Стенд, где ребята собирали свой дизайн интерфейса</span>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== СМОТРЕТЬ КЕЙСЫ ===== -->
+<div class="ab-section ab-cases-cta" aria-label="Навигация к кейсам">
+  <div class="ab-section__inner">
+    <a href="/" class="ab-cases-cta__link p-reveal">Смотреть кейсы&nbsp;&rarr;</a>
+  </div>
+</div>
+
+</main>
+
+
+<!-- ===== FOOTER ===== -->
+<section class="p-screen--dark p-screen--footer ab-footer-section">
+<footer class="p-footer">
+  <div class="p-contain">
+
+    <!-- CTA -->
+    <div class="p-footer__cta">
+      <p class="p-display p-display--lg p-footer__title">Ищу<br class="p-br--mobile"> команду,&nbsp;где<br class="p-br--mobile"> <span class="p-transformer" data-words="сложно,масштабно,системно,думают">сложно</span></p>
+      <p class="p-body--lg p-prose p-footer__subtitle">Свободен и&nbsp;буду рад послушать про&nbsp;ваш продукт.<br class="p-br--2k"> Москва или удалённо&nbsp;&mdash; пишите.</p>
+      <div class="p-footer__actions">
+        <a href="https://t.me/akti_92" class="p-hero__btn p-hero__btn--primary p-btn--rainbow" target="_blank" rel="noopener">
+          <img src="../images/Icons/Telegram App.svg" alt="" class="p-hero__btn-icon p-hero__btn-icon--tg" aria-hidden="true">
+          Написать
+        </a>
+        <a href="../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-hero__btn p-hero__btn--ghost p-footer__resume-btn" data-glow>
+          <svg class="p-hero__btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 4V15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M8 11L12 15L16 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 20H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          Скачать резюме
+        </a>
+        <a href="../%D0%A0%D0%B5%D0%B7%D1%8E%D0%BC%D0%B5%20-%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%20%D0%A0%D1%83%D0%B4%D0%BD%D0%B8%D0%BA.pdf" download class="p-footer__resume-link p-body--lg"><span aria-hidden="true">↓</span>Скачать резюме</a>
+      </div>
+    </div>
+
+    <!-- Vibes credit -->
+    <div class="p-footer__credit">
+      <p class="p-body--sm">Сайт собран на&nbsp;вайбах&nbsp;&mdash; я&nbsp;задаю направление, AI&nbsp;пишет&nbsp;код</p>
+      <div class="p-footer__tools">
+        <a href="https://cursor.com" target="_blank" rel="noopener"><img src="../images/logos/cursor.svg" alt="Cursor" loading="lazy"></a>
+        <a href="https://claude.ai" target="_blank" rel="noopener"><img src="../images/logos/claude.svg" alt="Claude" loading="lazy"></a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener"><img src="../images/logos/gemini.svg" alt="Gemini" loading="lazy"></a>
+        <span class="p-mono--sm">HTML · CSS · JS</span>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="p-footer__bottom">
+      <span class="p-body--sm">© 2026 Антон Рудник</span>
+      <div class="p-footer__links">
+        <a href="tel:+79057890075" class="p-link p-body--sm">+7&nbsp;905&nbsp;789-00-75</a>
+        <a href="mailto:z-ark@yandex.ru" class="p-link p-body--sm">Почта</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+</section>
+
+<!-- Lightbox -->
+<div class="ab-lightbox" id="ab-lightbox" role="dialog" aria-modal="true" aria-label="Просмотр сертификата">
+  <button class="ab-lightbox__close" aria-label="Закрыть">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <img alt="">
+</div>
+
+<script src="../interactions.js" defer></script>
+<script>
+  (function() {
+    /* ── Lightbox ── */
+    var lb = document.getElementById('ab-lightbox');
+    var lbImg = lb.querySelector('img');
+    var closeBtn = lb.querySelector('.ab-lightbox__close');
+    var cards = document.querySelectorAll('.ab-talk--zoomable');
+    var mainEl = document.querySelector('main');
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var img = card.querySelector('.ab-talk__img');
+        if (img) {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('ab-lightbox--open');
+          document.body.style.overflow = 'hidden';
+          if (mainEl) mainEl.setAttribute('inert', '');
+          closeBtn.focus();
+        }
+      });
+    });
+
+    function closeLb() {
+      lb.classList.remove('ab-lightbox--open');
+      document.body.style.overflow = '';
+      if (mainEl) mainEl.removeAttribute('inert');
+      setTimeout(function() { lbImg.removeAttribute('src'); }, 300);
+    }
+
+    closeBtn.addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e) {
+      if (e.target === lb) closeLb();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLb();
+    });
+
+    /* ── Smooth scroll for TOC links ── */
+    document.querySelectorAll('.ab-page-header__toc-link').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        var target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  })();
+</script>
+</body>
+</html>
