@@ -56,7 +56,7 @@
         '<p class="p-case-lock__desc">Введите пароль для&nbsp;просмотра</p>' +
         '<form class="p-case-lock__form" autocomplete="off">' +
           '<input type="password" class="p-case-lock__input" placeholder="Пароль" autocomplete="off">' +
-          '<button type="submit" class="p-btn p-btn--outline">→</button>' +
+          '<button type="submit" class="p-btn p-btn--outline">Открыть</button>' +
         '</form>' +
         '<a href="https://t.me/akti_92" class="p-case-lock__tg" target="_blank" rel="noopener">Написать в&nbsp;Telegram</a>';
 
