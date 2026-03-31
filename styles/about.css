@@ -72,8 +72,10 @@
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out);
 }
-.ab-page-header__toc-link:hover {
-  color: var(--text-on-dark);
+@media (hover: hover) {
+  .ab-page-header__toc-link:hover {
+    color: var(--text-on-dark);
+  }
 }
 .ab-page-header__toc-sep {
   color: var(--text-on-dark-20);
@@ -205,9 +207,11 @@
   border-bottom: 1px solid var(--text-on-dark-20);
   transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
-.ab-case-link:hover {
-  color: var(--text-on-dark);
-  border-color: var(--text-on-dark-40);
+@media (hover: hover) {
+  .ab-case-link:hover {
+    color: var(--text-on-dark);
+    border-color: var(--text-on-dark-40);
+  }
 }
 
 .ab-job__divider {
@@ -240,8 +244,10 @@
   border-bottom: 1px solid var(--text-on-dark-20);
   transition: border-color var(--dur-fast) var(--ease-out);
 }
-.ab-micro-cta__link:hover {
-  border-color: var(--text-on-dark);
+@media (hover: hover) {
+  .ab-micro-cta__link:hover {
+    border-color: var(--text-on-dark);
+  }
 }
 
 @media (max-width: 960px) {
@@ -321,9 +327,11 @@
 .ab-talk--zoomable {
   cursor: zoom-in;
 }
-.ab-talk--zoomable:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
+@media (hover: hover) {
+  .ab-talk--zoomable:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
 }
 .ab-talk__img-wrap {
   position: relative;
@@ -351,8 +359,10 @@
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
-.ab-talk--zoomable:hover .ab-talk__zoom-hint {
-  opacity: 1;
+@media (hover: hover) {
+  .ab-talk--zoomable:hover .ab-talk__zoom-hint {
+    opacity: 1;
+  }
 }
 .ab-talk__zoom-hint svg {
   width: 16px;
@@ -450,8 +460,10 @@
   aspect-ratio: 3 / 2;
   transition: transform var(--dur-slow) var(--ease-out);
 }
-.ab-photo:hover img {
-  transform: scale(1.03);
+@media (hover: hover) {
+  .ab-photo:hover img {
+    transform: scale(1.03);
+  }
 }
 .ab-photo__overlay {
   position: absolute;
@@ -505,8 +517,10 @@
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out);
 }
-.ab-cases-cta__link:hover {
-  color: var(--text-on-dark);
+@media (hover: hover) {
+  .ab-cases-cta__link:hover {
+    color: var(--text-on-dark);
+  }
 }
 
 /* ── Footer wrapper ── */
@@ -571,4 +585,6 @@
   opacity: 0.7;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
-.ab-lightbox__close:hover { opacity: 1; }
+@media (hover: hover) {
+  .ab-lightbox__close:hover { opacity: 1; }
+}

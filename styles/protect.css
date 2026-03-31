@@ -136,8 +136,10 @@ body:not(.is-locked) .p-case-lock {
   transition: color 0.2s;
 }
 
-.p-case-lock__tg:hover {
-  color: var(--text-on-dark-60);
+@media (hover: hover) {
+  .p-case-lock__tg:hover {
+    color: var(--text-on-dark-60);
+  }
 }
 
 @keyframes p-shake {
@@ -217,7 +219,7 @@ body:not(.is-locked) .p-case-lock {
   border-radius: var(--radius-pill);
   color: var(--text-on-dark);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
+  font-size: max(var(--text-base), 16px);
   outline: none;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -250,9 +252,11 @@ body:not(.is-locked) .p-case-lock {
   white-space: nowrap;
 }
 
-.p-password-overlay__btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.2);
+@media (hover: hover) {
+  .p-password-overlay__btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 }
 
 .p-password-overlay__links {
@@ -268,8 +272,10 @@ body:not(.is-locked) .p-case-lock {
   transition: color 0.2s;
 }
 
-.p-password-overlay__link:hover {
-  color: var(--text-on-dark-60);
+@media (hover: hover) {
+  .p-password-overlay__link:hover {
+    color: var(--text-on-dark-60);
+  }
 }
 
 

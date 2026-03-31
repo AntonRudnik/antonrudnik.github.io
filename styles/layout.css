@@ -321,8 +321,10 @@
   white-space: nowrap;
 }
 
-.p-dots__dot:hover::before {
-  opacity: 1;
+@media (hover: hover) {
+  .p-dots__dot:hover::before {
+    opacity: 1;
+  }
 }
 
 .p-dots__dot--active::before {
@@ -347,8 +349,10 @@
               box-shadow var(--dur-base) var(--ease-out);
 }
 
-.p-dots__dot:hover::after {
-  border-color: var(--text-on-dark-40);
+@media (hover: hover) {
+  .p-dots__dot:hover::after {
+    border-color: var(--text-on-dark-40);
+  }
 }
 
 /* Active: filled + soft outer ring */
@@ -367,8 +371,10 @@
   color: var(--text-on-light-40);
 }
 
-.p-dots--light .p-dots__dot:hover::after {
-  border-color: var(--text-on-light-60);
+@media (hover: hover) {
+  .p-dots--light .p-dots__dot:hover::after {
+    border-color: var(--text-on-light-60);
+  }
 }
 
 .p-dots--light .p-dots__dot--active::after {

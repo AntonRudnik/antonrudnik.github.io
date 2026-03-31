@@ -61,8 +61,10 @@
     color var(--dur-fast) var(--ease-out);
 }
 
-.nf-page__btn:hover {
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .nf-page__btn:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .nf-page__btn--ghost {
@@ -77,9 +79,11 @@
   -webkit-backdrop-filter: blur(18px) saturate(165%);
 }
 
-.nf-page__btn--ghost:hover {
-  background: rgba(240, 247, 250, 0.2);
-  border-color: rgba(255, 255, 255, 0.28);
+@media (hover: hover) {
+  .nf-page__btn--ghost:hover {
+    background: rgba(240, 247, 250, 0.2);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
 }
 
 .nf-page__btn--primary {
@@ -91,8 +95,10 @@
     0 10px 22px rgba(212, 230, 238, 0.16);
 }
 
-.nf-page__btn--primary:hover {
-  background: rgba(248, 251, 252, 0.96);
+@media (hover: hover) {
+  .nf-page__btn--primary:hover {
+    background: rgba(248, 251, 252, 0.96);
+  }
 }
 
 .nf-page {
@@ -297,9 +303,11 @@
   transition: transform var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out);
 }
 
-.nf-photo:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
+@media (hover: hover) {
+  .nf-photo:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+  }
 }
 
 .nf-photo img {
@@ -390,9 +398,11 @@
   transition: opacity var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
 }
 
-.nf-lightbox__close:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.2);
+@media (hover: hover) {
+  .nf-lightbox__close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+  }
 }
 
 @media (max-width: 959px) {

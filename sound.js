@@ -176,7 +176,14 @@
   /* ---- INIT ---- */
 
   function init() {
+    var hasHover = window.matchMedia('(hover: hover)').matches;
     btn = document.querySelector('.p-header__sound');
+
+    if (!hasHover) {
+      if (btn) btn.hidden = true;
+      return;
+    }
+
     if (btn) {
       updateBtn();
       btn.addEventListener('click', function () {
@@ -192,12 +199,10 @@
       initSoundEvents();
       document.removeEventListener('click', activateOnce);
       document.removeEventListener('keydown', activateOnce);
-      document.removeEventListener('touchstart', activateOnce);
     };
 
     document.addEventListener('click', activateOnce);
     document.addEventListener('keydown', activateOnce);
-    document.addEventListener('touchstart', activateOnce);
   }
 
   if (document.readyState === 'loading') {
