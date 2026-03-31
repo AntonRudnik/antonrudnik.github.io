@@ -123,6 +123,7 @@ body:not(.is-locked) .p-case-lock {
 /* Кнопка — p-btn--outline из ДС, overrides только размер */
 .p-case-lock .p-btn {
   font-size: var(--text-sm);
+  line-height: 1;
 }
 
 .p-case-lock__tg {
