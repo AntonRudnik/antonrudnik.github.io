@@ -95,7 +95,7 @@ body:not(.is-locked) .p-case-lock {
 .p-case-lock__input {
   flex: 1;
   padding: var(--space-3) var(--space-5);
-  min-height: calc(var(--touch-min) + 2px);
+  min-height: var(--touch-min);
   background: var(--bg-dark-surface);
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-pill);
@@ -214,6 +214,7 @@ body:not(.is-locked) .p-case-lock {
 .p-password-overlay__input {
   flex: 1;
   padding: var(--space-3) var(--space-5);
+  min-height: var(--touch-min);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-pill);
@@ -240,12 +241,13 @@ body:not(.is-locked) .p-case-lock {
 
 .p-password-overlay__btn {
   padding: var(--space-3) var(--space-5);
+  min-height: var(--touch-min);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-pill);
   color: var(--text-on-dark);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
+  font-size: 16px;
   font-weight: var(--weight-medium);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -324,6 +326,12 @@ body:not(.is-case-locked) > * {
     max-width: none;
     width: 100%;
     margin-top: var(--space-4);
+    flex-direction: column;
+  }
+
+  .p-case-lock__form .p-btn {
+    width: 100%;
+    text-align: center;
   }
 
   .p-case-lock__tg {
