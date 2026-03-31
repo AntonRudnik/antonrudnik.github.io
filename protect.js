@@ -116,6 +116,15 @@
     var form = overlay.querySelector('.p-password-overlay__form');
     var input = overlay.querySelector('.p-password-overlay__input');
 
+    // Prevent iOS Safari zoom on input focus
+    var vpMeta = document.querySelector('meta[name="viewport"]');
+    if (vpMeta) {
+      var vpOriginal = vpMeta.getAttribute('content');
+      var vpNoZoom = vpOriginal.replace(/maximum-scale=[^,]*,?\s*/g, '') + ', maximum-scale=1';
+      input.addEventListener('focus', function () { vpMeta.setAttribute('content', vpNoZoom); });
+      input.addEventListener('blur', function () { vpMeta.setAttribute('content', vpOriginal); });
+    }
+
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       var val = input.value.trim();
