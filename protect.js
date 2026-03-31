@@ -15,6 +15,7 @@
 
   function setUnlocked() {
     localStorage.setItem(STORAGE_KEY, 'true');
+    if (typeof ym === 'function') ym(108317874, 'reachGoal', 'password-entered');
   }
 
   async function checkPassword(value) {
