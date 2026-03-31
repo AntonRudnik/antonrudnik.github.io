@@ -114,7 +114,11 @@
   }
 }
 
-/* Sound toggle */
+/* Sound toggle — only on devices with hover (desktop) */
+@media (hover: none) {
+  .p-header__sound { display: none !important; }
+}
+
 .p-header__sound {
   display: flex;
   align-items: center;

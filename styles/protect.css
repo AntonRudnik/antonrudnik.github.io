@@ -219,7 +219,7 @@ body:not(.is-locked) .p-case-lock {
   border-radius: var(--radius-pill);
   color: var(--text-on-dark);
   font-family: var(--font-sans);
-  font-size: max(var(--text-base), 16px);
+  font-size: 16px;
   outline: none;
   transition: border-color 0.2s, background 0.2s;
 }
