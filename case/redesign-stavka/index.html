@@ -43,13 +43,13 @@
     /* Lightbox */
     .cs-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; padding: var(--space-6); cursor: zoom-in; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; overflow: hidden; }
     .cs-lightbox--open { opacity: 1; pointer-events: auto; }
-    .cs-lightbox--zoomed { cursor: zoom-out; overflow: auto; align-items: flex-start; justify-content: flex-start; }
+    .cs-lightbox--zoomed { cursor: grab; overflow: auto; align-items: flex-start; justify-content: flex-start; padding: 0; }
     .cs-lightbox--zoomed.cs-lightbox--dragging { cursor: grabbing; }
-    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.3s ease, max-height 0.3s ease; }
-    .cs-lightbox--zoomed img { max-width: none; max-height: none; cursor: zoom-out; }
+    .cs-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); transition: max-width 0.2s ease, max-height 0.2s ease; }
+    .cs-lightbox--zoomed img { max-width: var(--lb-zoom-w, 200vw); max-height: none; cursor: grab; }
     .cs-lightbox--zoomed.cs-lightbox--dragging img { cursor: grabbing; }
-    .cs-lightbox__close { position: fixed; top: var(--space-5); right: var(--space-5); z-index: 10000; width: 44px; height: 44px; border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
-    .cs-lightbox__close:hover { opacity: 1; }
+    .cs-lightbox__close { position: fixed; top: calc(var(--space-5) + env(safe-area-inset-top, 0px)); right: calc(var(--space-5) + env(safe-area-inset-right, 0px)); z-index: 10001; width: 44px; height: 44px; border: none; background: rgba(0,0,0,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; border-radius: 50%; font-size: var(--text-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.2s; }
+    @media (hover: hover) { .cs-lightbox__close:hover { opacity: 0.7; } }
     .cs-browser--zoomable { cursor: zoom-in; }
 
     /* Carousel in browser frame */
@@ -594,24 +594,32 @@ document.addEventListener('DOMContentLoaded', function() {
   /* LIGHTBOX */
   var lb=document.getElementById('cs-lightbox');
   var lbImg=lb?lb.querySelector('img'):null;
-  var lbDrag={active:false,x:0,y:0,sx:0,sy:0};
+  var lbDrag={active:false,moved:false,x:0,y:0};
 
   function lbClose(){
     if(!lb)return;
     lb.classList.remove('cs-lightbox--open','cs-lightbox--zoomed','cs-lightbox--dragging');
     lb.setAttribute('aria-hidden','true');
     document.body.style.overflow='';
+    lb.scrollLeft=0;lb.scrollTop=0;
+  }
+
+  function lbOpen(src,alt,zoomW){
+    if(!lb||!lbImg)return;
+    lb.style.setProperty('--lb-zoom-w',zoomW||'200vw');
+    lbImg.src=src;lbImg.alt=alt;
+    lb.classList.remove('cs-lightbox--zoomed');
+    lb.classList.add('cs-lightbox--open');
+    lb.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
   }
 
   document.querySelectorAll('.cs-browser--zoomable').forEach(function(el){
     el.addEventListener('click',function(e){
       if(e.target.closest('.cs-browser__bar'))return;
       var src=el.querySelector('.cs-carousel__slide.is-active')||el.querySelector('img');
-      if(src&&lb&&lbImg){
-        var fullSrc=src.getAttribute('data-full')||src.src;
-        lbImg.src=fullSrc;lbImg.alt=src.alt;
-        lb.classList.remove('cs-lightbox--zoomed');lb.classList.add('cs-lightbox--open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
-      }
+      var zoomW=el.getAttribute('data-zoom')||(el.classList.contains('cs-browser--tall')?'350vw':'200vw');
+      if(src){lbOpen(src.getAttribute('data-full')||src.src,src.alt,zoomW);}
     });
   });
 
@@ -624,14 +632,14 @@ document.addEventListener('DOMContentLoaded', function() {
       if(lbDrag.moved)return;
       var zoomed=lb.classList.contains('cs-lightbox--zoomed');
       if(!zoomed){
+        var rect=lbImg.getBoundingClientRect();
+        var ratioX=(e.clientX-rect.left)/rect.width;
+        var ratioY=(e.clientY-rect.top)/rect.height;
         lb.classList.add('cs-lightbox--zoomed');
-        var rect=lb.getBoundingClientRect();
-        var ratioX=e.clientX/rect.width;
-        var ratioY=e.clientY/rect.height;
-        requestAnimationFrame(function(){
-          lb.scrollLeft=(lb.scrollWidth-rect.width)*ratioX;
-          lb.scrollTop=(lb.scrollHeight-rect.height)*ratioY;
-        });
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          lb.scrollLeft=(lb.scrollWidth-lb.clientWidth)*ratioX;
+          lb.scrollTop=(lb.scrollHeight-lb.clientHeight)*ratioY;
+        });});
       } else {
         lb.classList.remove('cs-lightbox--zoomed');
         lb.scrollLeft=0;lb.scrollTop=0;
@@ -642,7 +650,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if(!lb.classList.contains('cs-lightbox--zoomed'))return;
       lbDrag.active=true;lbDrag.moved=false;
       lbDrag.x=e.clientX;lbDrag.y=e.clientY;
-      lbDrag.sx=lb.scrollLeft;lbDrag.sy=lb.scrollTop;
       lb.classList.add('cs-lightbox--dragging');
       e.preventDefault();
     });
@@ -650,13 +657,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if(!lbDrag.active)return;
       var dx=e.clientX-lbDrag.x,dy=e.clientY-lbDrag.y;
       if(Math.abs(dx)>3||Math.abs(dy)>3)lbDrag.moved=true;
-      lb.scrollLeft=lbDrag.sx-dx;
-      lb.scrollTop=lbDrag.sy-dy;
+      lb.scrollLeft-=dx;lb.scrollTop-=dy;
+      lbDrag.x=e.clientX;lbDrag.y=e.clientY;
     });
-    lb.addEventListener('mouseup',function(){
-      lbDrag.active=false;
-      lb.classList.remove('cs-lightbox--dragging');
-    });
+    lb.addEventListener('mouseup',function(){lbDrag.active=false;lb.classList.remove('cs-lightbox--dragging');});
   }
 
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb&&lb.classList.contains('cs-lightbox--open'))lbClose();});
